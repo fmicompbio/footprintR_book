@@ -1,0 +1,45 @@
+# Introduction
+
+Single-molecule footprinting is a technique used to study protein-DNA
+interactions, chromatin accessibility, and nucleosome positioning at the level
+of individual DNA molecules. Unlike bulk footprinting methods, which provide an
+averaged signal across a population of molecules, single-molecule footprinting
+captures heterogeneity in DNA-protein interactions and chromatin accessibility.
+
+This book covers various tasks for the analysis of single-molecule
+footprinting data using [fmicompbio/footprintR]{.githubpkg}:
+
+@sec-reading-data describes how to read footprinting data from `modBam` files
+and other formats into R. It also introduces how the data is represented in
+memory.
+
+@sec-qc-filtering shows how to create informative summaries to judge the
+quality of an experimental dataset, and how low-quality reads can be filtered
+out from loaded data or from `modBam` files.
+
+@sec-visualize-regions illustrates the use of [plotRegion]{.fn} to visualize
+read- or summary-level information for a single genomic region, optionally
+with additional data and annotation tracks.
+
+@sec-nucleosomes describes various nucleosome-related analyses, such as how
+to measure the average distance between nucleosomes, how to place
+nucleosomes onto individual reads, or how to quantify nucleosome phasing
+in a regions.
+
+@sec-scanning introduces [scanForHighScoringRegions]{.fn}, a modular framework
+that can be used to scan (parts of) the genome for regions of interest, for
+example differentially modified regions or regions containing phased
+nucleosomes. If you are looking for a "peak finder" for footprinting data,
+this is the chapter to read.
+
+@sec-grouping-reads describes how to group reads, for example by allele or
+methylation status using [regroupReads]{.fn}, or across multiple genomic
+regions using [getAnchorRegions]{.fn}. The latter is useful to create
+meta-plots of your data, for example around transcript start sites or
+transcription factor binding sites.
+
+@sec-multiple-modalities illustrates the power of combining multiple data
+modalities (for example genetic variability, accessibility, endogenous CpG
+methylation and ChIP data) into an integrated analysis: The allele-specific
+binding of a transcription factor.
+

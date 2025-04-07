@@ -1,0 +1,44 @@
+---
+author:
+  - name: Charlotte Soneson
+    orcid: 0000-0003-3833-2169
+    email: charlotte.soneson@fmi.ch
+    affiliations:
+      - ref: fmi
+      - ref: sib
+  - name: Michael B Stadler
+    orcid: 0000-0002-2269-4934
+    email: michael.stadler@fmi.ch
+    affiliations:
+      - ref: fmi
+      - ref: unibas
+      - ref: sib
+
+affiliations:
+  - id: fmi
+    name: Friedrich Miescher Institute for Biomedical Research
+    address: Fabrikstrasse 24
+    postal-code: 4056
+    city: Basel
+    country: Switzerland
+  - id: unibas
+    name: University of Basel
+    address: Petersplatz 10
+    postal-code: 4003
+    city: Basel
+    country: Switzerland
+  - id: sib
+    name: SIB Swiss Institute of Bioinformatics
+    address: Fabrikstrasse 24
+    postal-code: 4056
+    city: Basel
+    country: Switzerland
+---
+
+# Preface {.unnumbered}
+
+This is a Quarto book about [fmicompbio/footprintR]{.githubpkg}.
+
+<p xmlns:cc="http://creativecommons.org/ns#" >This book is free and licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-SA 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1" alt=""></a></p>
+Copyright (c) 2025 Friedrich Miescher Institute for Biomedical Research.
+

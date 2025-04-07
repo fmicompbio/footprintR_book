@@ -1,0 +1,129 @@
+# Quality control and filtering {#sec-qc-filtering}
+
+This chapter explains how to use [fmicompbio/footprintR]{.githubpkg} to filter single molecule footprinting data.
+The package contains functionality to calculate a collection of quality statistics for each read, and use these to filter out low-quality reads. This filtering can be done either on the imported `SummarizedExperiment` object, or directly on the `modBam` file (which would generate another, filtered `modBam` file).
+[fmicompbio/footprintR]{.githubpkg} also provides several ways to filter out individual genomic positions based on, e.g. the genomic sequence or the read coverage. 
+
+We start by loading the required packages. 
+In addition to the software package, we load a `BSgenome` object providing the mouse genome sequence.
+
+```{r}
+#| message: false
+
+BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
+
+library(footprintR)
+library(BSgenomeName, character.only = TRUE)
+library(SummarizedExperiment)
+library(SparseArray)
+
+# Load genome
+gnm <- get(BSgenomeName)
+genome(gnm) <- "mm39"
+```
+
+## Creating a QC report
+
+## Position filtering
+
+To illustrate the position-level filtering of imported data, we first read 6mA data from a small genomic region for two samples.
+We add the sequence context (a single nucleotide) to be able to use this information as a basis for filtering.
+
+```{r}
+se <- readModBam(
+    bamfiles = c(wt1 = "data/mESC_wt_6mA_rep1.bam",
+                 wt2 = "data/mESC_wt_6mA_rep2.bam"),
+    modbase = "a", 
+    regions = "chr8:39286301-39287100", 
+    seqinfo = seqinfo(gnm), 
+    sequenceContextWidth = 1, 
+    sequenceReference = gnm
+)
+se
+```
+
+The sequence information is stored in the `rowData` of `se`: 
+
+```{r}
+rowData(se)
+```
+
+Position filtering can now be performed with the [filterPositions]{.fn} function. 
+The `filters` argument define which filters to apply, as well as the order (sequence context, coverage, removal of positions without non-NA values).
+Here, we retain only positions where the genome sequence is an A, and the coverage (the number of overlapping reads) is at least five. 
+The `assayNameCov` argument indicates which assay will be used to define the coverage. 
+If this is a read-level assay (like here), coverage will first be calculated using [flattenReadLevelAssay]{.fn}. 
+For more precise control, the summary assay can also be manually calculated and added to `se` beforehand, and specified in `assayNameCov`.
+
+```{r}
+sefilt <- filterPositions(
+    se, 
+    filters = c("sequenceContext", "coverage", "all.na"),
+    sequenceContext = "A",
+    assayNameCov = "mod_prob",
+    minCov = 5
+)
+sefilt
+```
+
+In this case, the position filtering reduced the number of unique positions from `r nrow(se)` to `r nrow(sefilt)` by `r sprintf("%.1f%%", 100 * (nrow(se) - nrow(sefilt)) / nrow(se))`. 
+However, the number of non-NA values in the matrix is only reduced from `r sum(is_nonna(as.matrix(assay(se, "mod_prob"))))` to `r sum(is_nonna(as.matrix(assay(sefilt, "mod_prob"))))` (`r sprintf("%.1f%%", 100 * (sum(is_nonna(as.matrix(assay(se, "mod_prob")))) - sum(is_nonna(as.matrix(assay(sefilt, "mod_prob"))))) / sum(is_nonna(as.matrix(assay(se, "mod_prob")))))`), confirming that the filtered-out positions are generally covered only by few reads. 
+
+In addition to explicit filtering like here, many other functions in [fmicompbio/footprintR]{.githubpkg} allow built-in filtering for a specific sequence context. 
+
+## Read filtering
+
+### Filtering a `SummarizedExperiment` object
+
+In addition to the position filtering illustrated above, [fmicompbio/footprintR]{.githubpkg} also provides functionality for calculating read-level quality scores and filtering out reads with low quality. 
+The calculation of the quality scores is done using the [addReadStats]{.fn} function, and the filtering is performed via the [filterReads]{.fn} function.
+
+```{r}
+# Calculate read statistics
+sefilt <- addReadStats(
+    sefilt, 
+    name = "QC"
+)
+
+# The calculated read statistics are stored in the colData
+colData(sefilt)
+sefilt$QC$wt1
+
+# In addition, we can filter based on the read info columns added by readModBam
+sefilt$readInfo$wt1
+
+# Visualize the read statistics to set appropriate filter thresholds
+plotReadStats(
+    sefilt
+)
+
+# Perform filtering
+sefilt <- filterReads(
+    sefilt,
+    minQscore = 13,
+    maxFracLowConf = 0.1,
+    minAlignedLength = 5000, 
+    removeAllNApos = TRUE
+)
+```
+
+Filtering statistics are stored in the `metadata` of the filtered `SummarizedExperiment` object.
+
+```{r}
+metadata(sefilt)$filteredOutReads
+```
+
+
+### Filtering a `modBam` file
+
+## Session info
+
+<details>
+<summary><b>
+Click to view session info
+</b></summary>
+```{r}
+sessioninfo::session_info(info = "packages")
+```
+</details>
+

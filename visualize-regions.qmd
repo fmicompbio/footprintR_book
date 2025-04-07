@@ -1,0 +1,376 @@
+# Visualizing regions with `plotRegion` {#sec-visualize-regions}
+
+The [plotRegion]{.fn} function in [fmicompbio/footprintR]{.githubpkg} provides a flexible interface for plotting data in a given genomic region. 
+As will be illustrated below, both read-level data, summary-level data (aggregating across all reads overlapping a position) and data from BigWig files can visualized. 
+In addition, predefined regions can be highlighted with background color in any track, and gene models or any other genomic region indicators can be added. 
+
+Generally, [plotRegion]{.fn} builds up a plot as a combination of individual _tracks_, of different _types_ (representing the different data types mentioned above).
+To add a track to a plot, at least the corresponding `trackType` and `trackData` arguments must be specified. 
+A list of the supported track types is available in the documentation of [plotRegion]{.fn} (see the `tracks` argument).
+The order and content of the tracks are fully customizable by the user. 
+
+## Preparation
+
+We start by loading the required packages. 
+In addition to the software package, we load a `BSgenome` and `TxDb` object providing the mouse genome sequence and transcript annotation.
+
+```{r}
+#| message: false
+
+BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
+TxDbName <- "TxDb.Mmusculus.GENCODE.GRCm39.gencodeM34"
+
+library(footprintR)
+library(patchwork)
+library(GenomicRanges)
+library(BSgenomeName, character.only = TRUE)
+library(TxDbName, character.only = TRUE)
+
+# Load genome
+gnm <- get(BSgenomeName)
+genome(gnm) <- "mm39"
+
+# Load TxDb and create GRangesList with transcript annotations
+txdb <- get(TxDbName)
+ebt <- exonsBy(txdb, "tx", use.names = TRUE)
+```
+
+## Read data
+
+To exemplify the plotting capabilities of [plotRegion]{.fn}, we use `modBam` files from two wild-type samples, for which 6mA modification calling has been performed. 
+We use the [readModBam]{.fn} function to read data from an 800-bp region on chromosome 8 and store it in a `SummarizedExperiment` object. 
+For more information about reading data with [fmicompbio/footprintR]{.githubpkg}, see @sec-reading-data. 
+
+```{r}
+# Read data 
+se <- readModBam(
+    bamfiles = c(wt1 = "data/mESC_wt_6mA_rep1.bam",
+                 wt2 = "data/mESC_wt_6mA_rep2.bam"),
+    modbase = "a", 
+    regions = "chr8:39286301-39287100", 
+    seqinfo = seqinfo(gnm), 
+    sequenceContextWidth = 1, 
+    sequenceReference = gnm
+)
+```
+
+
+## Read-level plots
+
+Read-level plots can be generated using either the `Heatmap` or the `Lollipop` track type, assuming that there is at least one assay with read-level data present in the provided `SummarizedExperiment` object.
+The heatmap visualizes each base with a modification call as a filled rectangle, with optional interpolation between observations. 
+The lollipop plot visualizes each base with a modification call as a filled circle. 
+In both cases, the fill color represents the recorded modification probability of the base. 
+For the read-level plot tracks, the `trackData` argument specifies the name of the (read-level) assay that should be displayed.
+
+```{r}
+#| fig.height: 8
+#| fig.width: 7
+
+plotRegion(
+    se, 
+    region = as("chr8:39286600-39286800", "GRanges"), 
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob"),
+        list(trackType = "Lollipop", trackData = "mod_prob")
+    )
+)
+```
+
+In the current plot, reads on both strands are visualized, and can be distinguished based on the position of the modified bases (the As).
+It is possible to visualize only the reads on one strand, by providing a stranded region to [plotRegion]{.fn}.
+
+```{r}
+#| fig.height: 6
+#| fig.width: 7
+
+plotRegion(
+    se, 
+    region = as("chr8:39286600-39286800:+", "GRanges"), 
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob"),
+        list(trackType = "Lollipop", trackData = "mod_prob")
+    )
+)
+```
+
+Moreover, we can limit the display to only positions where the annotated genome has a given sequence (here, an A).
+This is often helpful to minimize the impact of base calling errors. 
+
+```{r}
+#| fig.height: 6
+#| fig.width: 7
+
+plotRegion(
+    se, 
+    region = as("chr8:39286600-39286800:+", "GRanges"), 
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob"),
+        list(trackType = "Lollipop", trackData = "mod_prob")
+    ), 
+    sequenceContext = "A"
+)
+```
+
+Each plot function comes with a set of arguments that can be used to control the way that data is displayed in the track (see the documentation of [plotRegion]{.fn} for the full list).
+For example, we can add interpolation to our heatmap, disable the automatic clustering of the reads, and add custom track and legend titles. 
+For the lollipop plot, we can similarly change the size of the circles and the linewidth of the circle outline.
+
+```{r}
+#| fig.height: 8
+#| fig.width: 7
+
+plotRegion(
+    se, 
+    region = as("chr8:39286600-39286800", "GRanges"), 
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = NULL, trackTitle = "Heatmap",
+             legendTitle = "6mA"),
+        list(trackType = "Lollipop", trackData = "mod_prob",
+             orderReads = NULL, trackTitle = "Lollipop",
+             legendTitle = "6mA", size = 2, stroke = 0.1)
+    ), 
+    sequenceContext = "A"
+)
+```
+
+
+By default, the x-axis of the plots represent genomic coordinates. 
+In some cases (especially if the modified bases are unevenly distributed), the plot may be easier to read if only the modified bases are displayed, evenly spaced along the x-axis. 
+This can be achieved by setting `modbaseSpace = TRUE` in [plotRegion]{.fn}.
+
+```{r}
+#| fig.height: 8
+#| fig.width: 7
+
+plotRegion(
+    se, 
+    region = as("chr8:39286600-39286800", "GRanges"), 
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = FALSE, orderReads = NULL, trackTitle = "Heatmap",
+             legendTitle = "6mA"),
+        list(trackType = "Lollipop", trackData = "mod_prob",
+             orderReads = NULL, trackTitle = "Lollipop",
+             legendTitle = "6mA", size = 2, stroke = 0.1)
+    ), 
+    sequenceContext = "A",
+    modbaseSpace = TRUE
+)
+```
+
+Another alternative is to anchor the x-axis at a given genomic position, and display the coordinates as distances from this anchor point. 
+This is achieved by setting the `referenceCoordinate` argument to the numeric position that should be used as the anchor.
+Note how the x-axis title changes to reflect the current coordinate system. 
+
+```{r}
+#| fig.height: 8
+#| fig.width: 7
+
+plotRegion(
+    se, 
+    region = as("chr8:39286600-39286800", "GRanges"), 
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = NULL, trackTitle = "Heatmap",
+             legendTitle = "6mA"),
+        list(trackType = "Lollipop", trackData = "mod_prob",
+             orderReads = NULL, trackTitle = "Lollipop",
+             legendTitle = "6mA", size = 2, stroke = 0.1)
+    ), 
+    sequenceContext = "A",
+    referenceCoordinate = 39286700
+)
+```
+
+
+## Summary-level plots
+
+In addition to read-level plots, [plotRegion]{.fn} can also display summary-level data (a single value per genomic position and sample), if they are present in the `SummarizedExperiment` object. 
+These values can be displayed as individual points, and/or with a smooth curve. 
+Summary-level assays can be generated from read-level values using, e.g., the [flattenReadLevelAssay]{.fn} function. 
+
+```{r}
+#| fig.height: 7
+#| fig.width: 7
+
+# Flatten read-level assay
+se <- flattenReadLevelAssay(
+    se, 
+    assayName = "mod_prob",
+    statistics = c("Nmod", "Nvalid", "FracMod")
+)
+
+# Add summary-level track
+plotRegion(
+    se, 
+    region = as("chr8:39286300-39287100", "GRanges"), 
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = NULL, 
+             legendTitle = "6mA"),
+        list(trackType = "Smooth", trackData = "FracMod")
+    ), 
+    sequenceContext = "A"
+) + 
+    plot_layout(heights = c(2, 1))
+```
+
+In an analogous way to the read-level plots, we can control the display of summary information using the arguments to [PlotSummaryPointSmooth]{.fn}. 
+For example, we can change the smoothing function and the degree of smoothing. 
+We can also add the individual points (summary values for individual positions) to the summary plot.
+
+```{r}
+#| fig.height: 7
+#| fig.width: 7
+
+# Add summary-level plot
+plotRegion(
+    se, 
+    region = as("chr8:39286300-39287100", "GRanges"), 
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = NULL, 
+             legendTitle = "6mA"),
+        list(trackType = "PointSmooth", trackData = "FracMod", 
+             arglistPoint = list(size = 1, alpha = 0.25),
+             smoothMethod = "rollingMean", windowSize = 15,
+             arglistSmooth = list(linewidth = 1))
+    ), 
+    sequenceContext = "A"
+) + 
+    plot_layout(heights = c(2, 1))
+```
+
+
+## Highlight regions
+
+Sometimes it is helpful to be able to highlight specific genomic regions in the plots. 
+These could be, for example, regions that have been identified as harboring an interesting signal. 
+In [plotRegion]{.fn}, this can be achieved via the `highlightRegions` argument to the respective tracks. 
+The input provided to this argument should be a `GRanges` object. 
+
+```{r}
+#| fig.height: 7
+#| fig.width: 7
+
+# Define regions to highlight
+reg_to_highlight <- GRanges(
+    seqnames = "chr8",
+    ranges = IRanges(
+        start = c(39286800, 39286950),
+        end = c(39286900, 39287000)
+    )
+)
+
+plotRegion(
+    se, 
+    region = as("chr8:39286300-39287100", "GRanges"), 
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = NULL, 
+             legendTitle = "6mA"),
+        list(trackType = "PointSmooth", trackData = "FracMod", 
+             arglistPoint = list(size = 1, alpha = 0.25),
+             smoothMethod = "rollingMean", windowSize = 15,
+             arglistSmooth = list(linewidth = 1),
+             highlightRegions = reg_to_highlight)
+    ), 
+    sequenceContext = "A"
+) + 
+    plot_layout(heights = c(2, 1))
+```
+
+## Annotation tracks
+
+To further relate the observed data to existing annotations, [plotRegion]{.fn} also allows the user to add one or several tracks representing genomic regions (e.g., gene models). 
+Here, we exemplify how to generate such a track to visualize annotated transcripts in the displayed region.
+
+```{r}
+#| fig.height: 7
+#| fig.width: 7
+
+# Read data from a different region than above (as the previous one does not 
+# overlap annotated genes)
+se <- readModBam(
+    bamfiles = c(wt1 = "data/mESC_wt_6mA_rep1.bam",
+                 wt2 = "data/mESC_wt_6mA_rep2.bam"),
+    modbase = "a", 
+    regions = "chr8:39126917-39128220", 
+    level = "quickread", 
+    seqinfo = seqinfo(gnm), 
+    sequenceContextWidth = 1, 
+    sequenceReference = gnm
+)
+se <- flattenReadLevelAssay(
+    se, 
+    assayName = "mod_prob",
+    statistics = c("Nmod", "Nvalid", "FracMod")
+)
+
+plotRegion(
+    se, 
+    region = as("chr8:39126917-39128220", "GRanges"), 
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = NULL, 
+             legendTitle = "6mA"),
+        list(trackType = "GenomicRegion", 
+             trackData = subsetByOverlaps(ebt, as("chr8:39126917-39128220", "GRanges"))),
+        list(trackType = "PointSmooth", trackData = "FracMod", 
+             arglistPoint = list(size = 1, alpha = 0.25),
+             smoothMethod = "rollingMean", windowSize = 15,
+             arglistSmooth = list(linewidth = 1))
+    ), 
+    sequenceContext = "A"
+) + 
+    plot_layout(heights = c(2, 1, 1))
+```
+
+## `BigWig` tracks
+
+Finally, [plotRegion]{.fn} allows the user to include tracks defined by arbitrary BigWig files. 
+Here, we illustrate this by adding a track containing the coverage obtained from a CTCF ChIP-seq experiment. 
+We also modify the colors used to display the summary-level data. 
+
+```{r}
+#| fig.width: 7
+#| fig.height: 8
+
+plotRegion(
+    se, 
+    region = as("chr8:39126917-39128220", "GRanges"), 
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = NULL, 
+             legendTitle = "6mA"),
+        list(trackType = "GenomicRegion", 
+             trackData = subsetByOverlaps(ebt, as("chr8:39126917-39128220", "GRanges"))),
+        list(trackType = "BigWig", trackData = c(wt = "data/mESC_wt_CTCF_ChIP_rep1.bw"),
+             yAxisLabel = "CTCF", showLegend = FALSE,
+             colors = c(wt = "forestgreen")),
+        list(trackType = "PointSmooth", trackData = "FracMod", 
+             arglistPoint = list(size = 1, alpha = 0.25),
+             smoothMethod = "rollingMean", windowSize = 15,
+             arglistSmooth = list(linewidth = 1),
+             colors = c(wt1 = "steelblue", wt2 = "firebrick2"))
+    ), 
+    sequenceContext = "A"
+) + 
+    plot_layout(heights = c(2, 1, 0.5, 1))
+```
+
+
+## Session info
+
+<details>
+<summary><b>
+Click to view session info
+</b></summary>
+```{r}
+sessioninfo::session_info(info = "packages")
+```
+</details>
+
+

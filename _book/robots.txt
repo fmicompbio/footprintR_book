@@ -1,0 +1,1 @@
+Sitemap: https://fmicompbio.github.io/footprintR_book/sitemap.xml

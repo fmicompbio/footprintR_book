@@ -1,0 +1,109 @@
+# Scanning the genome for regions of interest {#sec-scanning}
+
+[fmicompbio/footprintR]{.githubpkg} provides a flexible scanning framework, which can be used to partition the genome (or a subset thereof) into windows and calculate a custom score for each window. 
+Optionally, neighboring windows with similar scores can then be merged into larger signal regions. 
+In this chapter, we show some examples of how this framework can be used to scan the genome for various types of signals of interest.
+
+Introduce the modular scanning framework (schematic?).
+Between- versus within sample scanning.
+
+```{r}
+#| message: false
+
+BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
+
+library(footprintR)
+library(ggplot2)
+library(BSgenomeName, character.only = TRUE)
+
+# Load genome
+gnm <- get(BSgenomeName)
+genome(gnm) <- "mm39"
+
+# Define parallelization backend
+bpParam <- MulticoreParam(workers = 24L, RNGseed = 42L)
+```
+
+## Genome-wide DMR scanning (between samples)
+
+## Genome-wide nucleosome phasing (within samples)
+
+## Genome-wide estimation of CpG methylation levels (within samples)
+
+In the examples above, the scores were calculated over windows of varying size. 
+By setting the window size to 1, we can also calculate single nucleotide-level scores. 
+Here, as an example, we illustrate how to estimate the global distribution of methylation levels across all CpGs in the genome. 
+For time reasons, we only consider chromosome 19 here - a genome-wide scanning can be obtained by expanding the `chromosomeLengths` argument to all chromosomes. 
+
+In this case, we again use `sumNmodNvalid` as the `quantFunction`, as it provides an estimate of the fraction modified bases for each window (in this case, since the window size is 1, for each modified base). 
+We use `getRangesWithAssayValues` as the `scoreFunction`, which will move the calculated values from the `FracMod` and `Nvalid` assays to the metadata columns of the nucleotide-level `GRanges` object. 
+By setting `scoreAction` to "pass", we instruct the scanning framework to not process the nucleotide-level scores further, but simply return the `GRanges` object with the added metadata columns. 
+Finally, by setting the `sequenceContext` to "NCG", we make sure to only retain positions where the genomic sequence is CG. 
+
+
+```{r}
+# Define the bam file to use and generate sample annotation table
+bamfiles <- c(wt2 = "data/mESC_wt_5mCG_5hmCG_rep2.bam")
+sampleAnnot <- data.frame(sample = names(bamfiles))
+
+# Run scanning
+system.time({
+    rescpg <- scanForHighScoringRegions(
+        bamfiles = bamfiles,
+        sampleAnnot = sampleAnnot,
+        chromosomeLengths = seqlengths(gnm)[paste0("chr", 19)],
+        quantFunction = "sumNmodNvalid",
+        quantFunctionArgs = list(),
+        scoreFunction = "getRangesWithAssayValues",
+        scoreFunctionArgs = list(assayName = c("FracMod", "Nvalid")),
+        modbase = "m",
+        modProbThreshold = 0.5,
+        tileSize = 1e6,
+        seqinfo = seqinfo(gnm),
+        sequenceContextWidth = 3,
+        sequenceReference = gnm,
+        sequenceContext = "NCG",
+        windowMode = "fixed",
+        windowSize = 1,
+        windowStep = 1,
+        scoreCol = paste0("FracMod.", names(bamfiles)[1]),
+        scoreAction = "pass",
+        BPPARAM = bpParam,
+        verbose = FALSE
+    )
+})
+```
+
+Next, we plot the distribution of modification fractions. 
+
+```{r}
+plotdf <- as.data.frame(unname(rescpg)) |>
+    tidyr::pivot_longer(cols = -c(seqnames, start, end, width, strand), 
+                        names_to = c(".value", "sample"),
+                        names_pattern = '(FracMod|Nvalid)\\.(.*)') |> 
+    dplyr::mutate(FracModBin = Hmisc::cut2(FracMod,cuts = seq(0, 1, by = 0.1)))
+head(plotdf)
+
+ggplot(plotdf, aes(x = FracModBin)) + 
+    geom_bar() + 
+    labs(title = "All CpGs", x = "FracMod (binned)") + 
+    theme_bw() + 
+    theme(axis.text.y = element_text(size = 12),
+          axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
+          axis.title = element_text(size = 14))
+```
+
+
+## Session info
+
+<details>
+<summary><b>
+Click to view session info
+</b></summary>
+```{r}
+sessioninfo::session_info(info = "packages")
+```
+</details>
+
+
+

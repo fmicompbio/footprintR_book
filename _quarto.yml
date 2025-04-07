@@ -1,0 +1,46 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "**[fmicompbio/footprintR]{.githubpkg}** book"
+  subtitle: "A guide to analyzing single molecule footprinting data with R and [fmicompbio/footprintR]{.githubpkg}"
+  license: CC BY-SA 4.0
+  date: today
+  cover-image: images/footprintR_logo.png
+  cover-image-alt: |
+    The footprintR logo is a stylized foot made of a DNA double helix
+  favicon: images/footprintR_logo.png
+  site-url: https://fmicompbio.github.io/footprintR_book
+  repo-url: https://github.com/fmicompbio/footprintR_book/
+  repo-branch: main
+  repo-actions: [edit, issue]
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - reading-data.qmd
+    - qc-filtering.qmd
+    - visualize-regions.qmd
+    - nucleosomes.qmd
+    - scanning.qmd
+    - grouping-reads.qmd
+    - multiple-modalities.qmd
+    - references.qmd
+
+filters:
+  - filter_links.lua
+
+bibliography: references.bib
+
+execute:
+  freeze: auto  # re-render only when source changes
+
+format:
+  html:
+    theme: lumen
+    # fig-cap-location: bottom
+  # pdf:
+  #   documentclass: scrreprt
+
+
+

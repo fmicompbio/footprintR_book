@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>7&nbsp; Grouping reads – **[fmicompbio/footprintR]{.githubpkg}** book</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./multiple-modalities.html" rel="next">
+<link href="./scanning.html" rel="prev">
+<link href="./images/footprintR_logo.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./grouping-reads.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Grouping reads</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./"><strong></strong></a><strong><a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a></strong> book 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/fmicompbio/footprintR_book/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reading-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Reading data from files</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./qc-filtering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Quality control and filtering</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualize-regions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Visualizing regions with <code>plotRegion</code></span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nucleosomes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Nucleosome analyses</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scanning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Scanning the genome for regions of interest</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./grouping-reads.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Grouping reads</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./multiple-modalities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Combining and comparing multiple data modalities</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#preparation" id="toc-preparation" class="nav-link active" data-scroll-target="#preparation"><span class="header-section-number">7.1</span> Preparation</a></li>
+  <li><a href="#using-sequence-variation" id="toc-using-sequence-variation" class="nav-link" data-scroll-target="#using-sequence-variation"><span class="header-section-number">7.2</span> Using sequence variation</a></li>
+  <li><a href="#modification-based" id="toc-modification-based" class="nav-link" data-scroll-target="#modification-based"><span class="header-section-number">7.3</span> Modification based</a></li>
+  <li><a href="#across-different-regions" id="toc-across-different-regions" class="nav-link" data-scroll-target="#across-different-regions"><span class="header-section-number">7.4</span> Across different regions</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/fmicompbio/footprintR_book/edit/main/grouping-reads.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/fmicompbio/footprintR_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-grouping-reads" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Grouping reads</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>When reading data with <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a>, the reads will automatically be grouped by <em>sample</em> (i.e., the name assigned to each input files). As we have seen in earlier chapters, this is reflected by the columns of the <code>SummarizedExperiment</code> object generated by the reading functions corresponding to samples, with individual reads stored in a nested fashion within the samples. In practice, this means that any summary statistics, e.g.&nbsp;calculated by <a href="https://fmicompbio.github.io/footprintR/reference/flattenReadLevelAssay.html"><code>flattenReadLevelAssay</code></a>, will be calculated by sample, and <a href="https://fmicompbio.github.io/footprintR/reference/plotRegion.html"><code>plotRegion</code></a> will facet the reads by sample. In some situations, we may wish to group the reads by something other than the sample that they stem from. How to achieve this will be the focus of the current chapter.</p>
+<section id="preparation" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="preparation"><span class="header-section-number">7.1</span> Preparation</h2>
+<p>We first load the packages and the genome needed for these tasks.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(VariantAnnotation)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringdist)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gnm) <span class="ot">&lt;-</span> <span class="st">"mm39"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="using-sequence-variation" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="using-sequence-variation"><span class="header-section-number">7.2</span> Using sequence variation</h2>
+<p>One reason for regrouping reads could be to sort them using genetic variation (e.g., single nucleotide variants), e.g.&nbsp;with the purpose of studying allele-specific signals. Typically, the heterozygous loci on which we would like to base such read grouping are known in advance (alternatively, we can use all positions within a given genomic region). In such cases, <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> can automatically add “sequence labels” (consisting of the observed nucleotide in the indicated positions) to reads when reading the data, and these labels can later be used to regroup the reads.</p>
+<p>Let’s consider an example. We start by defining a region of interest, and reading a file with known heterozygous SNVs (for the purposes of this report, we have subset the complete VCF file to only SNVs overlapping the region of interest, but this is not necessary in general).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>reg <span class="ot">&lt;-</span> <span class="fu">resize</span>(<span class="fu">as</span>(<span class="st">"chr7:23987184-23987363"</span>, <span class="st">"GRanges"</span>), <span class="at">width =</span> <span class="dv">1300</span>, <span class="at">fix =</span> <span class="st">"center"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>hetsnv <span class="ot">&lt;-</span> <span class="fu">readVcf</span>(<span class="st">"data/het_snp_chr7_23987184-23987363.vcf.gz"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>hetpos <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="fu">rowRanges</span>(hetsnv), <span class="st">"GPos"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>hetpos<span class="sc">$</span>ALT <span class="ot">&lt;-</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>hetpos</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>UnstitchedGPos object with 13 positions and 5 metadata columns:
+                    seqnames       pos strand | paramRangeID            REF            ALT      QUAL      FILTER
+                       &lt;Rle&gt; &lt;integer&gt;  &lt;Rle&gt; |     &lt;factor&gt; &lt;DNAStringSet&gt; &lt;DNAStringSet&gt; &lt;numeric&gt; &lt;character&gt;
+  chr7:23986770_G/T     chr7  23986770      * |           NA              G              T   504.609           .
+  chr7:23986885_G/A     chr7  23986885      * |           NA              G              A   485.725           .
+  chr7:23987082_T/G     chr7  23987082      * |           NA              T              G   421.622           .
+  chr7:23987109_G/A     chr7  23987109      * |           NA              G              A   420.142           .
+  chr7:23987130_A/C     chr7  23987130      * |           NA              A              C   509.378           .
+                ...      ...       ...    ... .          ...            ...            ...       ...         ...
+  chr7:23987468_A/G     chr7  23987468      * |           NA              A              G   480.559           .
+  chr7:23987586_G/C     chr7  23987586      * |           NA              G              C   425.562           .
+  chr7:23987658_A/G     chr7  23987658      * |           NA              A              G   336.694           .
+  chr7:23987665_C/A     chr7  23987665      * |           NA              C              A   338.173           .
+  chr7:23987670_C/T     chr7  23987670      * |           NA              C              T   372.650           .
+  -------
+  seqinfo: 61 sequences from an unspecified genome</code></pre>
+</div>
+</div>
+<p>We next generate “expected” REF and ALT sequences by concatenating the sequences of the heterozygous SNVs overlapping the region of interest. These sequences will later be used to group reads into one of two categories (REF or ALT), based on the agreement with the expected sequences. Note that with this approach, we’re making the implicit assumption that the SNVs are phased (and thus that a read will not typically harbor a mix of the REF and ALT nucleotides) - for most reads in our example this turns out to be a valid assumption, but in other cases other grouping schemes may be preferable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># subset to SNVs in region of interest</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>hetpos1 <span class="ot">&lt;-</span> <span class="fu">subsetByOverlaps</span>(hetpos, reg, <span class="at">ignore.strand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>(seqREF <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">as.character</span>(hetpos1<span class="sc">$</span>REF), <span class="at">collapse =</span> <span class="st">""</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "GGTGATGTAGACC"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(seqALT <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">as.character</span>(hetpos1<span class="sc">$</span>ALT), <span class="at">collapse =</span> <span class="st">""</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "TAGACCACGCGAT"</code></pre>
+</div>
+</div>
+<p>Next, we generate two versions of the genome sequence, obtained by injecting, respectively, the REF and ALT nucleotide above into the corresponding positions. These genomes will later be used to generate sequence contexts for the positions seen in the data, and filter out positions that are not annotated as (in the case below) CpGs. For more information about filtering, and how it can reduce the effect of sequencing errors, see <a href="qc-filtering.html" class="quarto-xref"><span>Chapter 3</span></a> and <a href="visualize-regions.html" class="quarto-xref"><span>Chapter 4</span></a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gnmREF <span class="ot">&lt;-</span> gnmALT <span class="ot">&lt;-</span> <span class="fu">getSeq</span>(gnm)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (chr <span class="cf">in</span> <span class="fu">names</span>(gnmREF)) {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">seqnames</span>(hetpos) <span class="sc">==</span> chr)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    gnmREF[[chr]] <span class="ot">&lt;-</span> <span class="fu">replaceLetterAt</span>(<span class="at">x =</span> gnmREF[[chr]],</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">at =</span> <span class="fu">start</span>(hetpos)[i],</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">letter =</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>REF[i]),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    gnmALT[[chr]] <span class="ot">&lt;-</span> <span class="fu">replaceLetterAt</span>(<span class="at">x =</span> gnmALT[[chr]],</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">at =</span> <span class="fu">start</span>(hetpos)[i],</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">letter =</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT[i]),</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After this preparation, we read the data. In this case, we will work with a <code>modBam</code> file from a wild-type sample, for which 5mCpG modification calling has been performed. We specify the positions of the heterozygous SNVs to the <code>variantPositions</code> argument, which will generate a sequence label for each read.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="st">"data/mESC_wt_5mCG_5hmCG_rep2.bam"</span>, </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> reg,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"m"</span>, </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">level =</span> <span class="st">"read"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">variantPositions =</span> hetpos1, </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="fu">interactive</span>()</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># derived sequence labels</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>seC<span class="sc">$</span>readInfo<span class="sc">$</span>s1<span class="sc">$</span>variant_label</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "TATACTGCGCGAT" "TAGACCAAGCCA-" "TAT-CAAGGCGAT" "TATAC--------" "GGAGATGTAGACC" "TAGACCA-GCGAT" "GGTGATGTAGACC"
+ [8] "TAGACCACGCGAT" "GGTGA-GTAGACC" "TGCACACCGCAAT" "CATACTACGGG-T" "GGTGATGTAGACC" "GGTGACGTAGACC" "TAGACCA-GCGAT"
+[15] "TAGACTACGCGAT" "-A-ACTGTGCA-C" "TAGACCACGCGAC" "GGTGATGTAGACC" "TAGACCACGCGAT" "GGTGATGTAGAT-" "TAGACCACGCGAT"
+[22] "TAGACCACGCGAT" "TAGACCACGCGAT" "GATGATGTAGGCC" "GGTGATGTAGACC" "GGTGATGTAGATA" "GGTGATGTAGACC" "-ATAC-A-GTGAT"
+[29] "GGTGATGTAGACC" "TAGA-CATGCGGT" "GGTGATG-AGACC" "TATACCACGCGAT" "TAGACTACGCGAT" "TAGACCACGCGAT" "TAGACCACGCGAT"
+[36] "TAGACCACGCGGT" "TAGACTACGCGAT" "GGTGATGTAGACC" "GGTGATGTAGACC" "TAGACCACGCGAT" "TGGACCACGCGAT" "TAGA-CACGCGAT"
+[43] "GGTGATGTAGACC" "GGTGATGTAGACC" "-ATACCACGCGA-" "-GTGATGTAGACC" "--TGATGTAGACC" "--TGATGTAGATC" "----CCACGCGAT"
+[50] "-------TGCGCT" "-------TAGACC" "-------TAGACC" "--------AGACC" "----------GAT" "----------ACC" "-------------"
+[57] "-------------"</code></pre>
+</div>
+</div>
+<p>Next, we filter the data by sequence context, to only retain positions annotated as <code>CG</code> in both the REF and ALT genomes generated above. We achieve this by sequentially adding the sequence context from each of the genomes, and filtering by this sequence context.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># REF genome</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">addSeqContext</span>(<span class="at">x =</span> seC, <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sequenceReference =</span> gnmREF)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seC, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">sequenceContext =</span> <span class="st">"NCG"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">addSeqContext</span>(<span class="at">x =</span> seC, <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sequenceReference =</span> gnmALT)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seC, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">sequenceContext =</span> <span class="st">"NCG"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>With the clean data, we next cluster the reads into two groups, based on which of the two expected sequences (<code>seqREF</code> or <code>seqALT</code> above) the respective sequence labels are most similar to. We request a Hamming distance of at most 0.34 based on the positions covered by the read - otherwise, the read is assigned to an <code>NA</code> category</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>(varlabels <span class="ot">&lt;-</span> <span class="fu">structure</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unlist</span>(<span class="fu">lapply</span>(seC<span class="sc">$</span>readInfo, <span class="st">"[["</span>, <span class="st">"variant_label"</span>), <span class="at">use.names =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(seC<span class="sc">$</span>readInfo, rownames), <span class="at">use.names =</span> <span class="cn">FALSE</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>s1-6e3b7da7-1cbb-467a-9824-e12f949740b9 s1-74ec6632-693e-4e13-a8a4-4946fa63f477 s1-f6296e8a-c87d-4ae0-8e5c-ed928ada2544 
+                        "TATACTGCGCGAT"                         "TAGACCAAGCCA-"                         "TAT-CAAGGCGAT" 
+s1-cd98081d-7042-4ce7-8a6e-67c835c5242d s1-ca720391-dd3b-4448-8388-ec7bafe86221 s1-07c46b8a-69cf-4a1d-87cd-d787193c56d8 
+                        "TATAC--------"                         "GGAGATGTAGACC"                         "TAGACCA-GCGAT" 
+s1-8a78dd6b-5ec1-4caf-959c-bb13647fec0d s1-c6860136-5766-487e-b264-34e0820e81ad s1-2b6c19d4-553c-4986-b8cd-27f71205a23a 
+                        "GGTGATGTAGACC"                         "TAGACCACGCGAT"                         "GGTGA-GTAGACC" 
+s1-889002b9-1f49-4b54-a6ae-becfc63973ba s1-8086a333-caa3-4fe0-a24e-eb0477ab70da s1-c3eda2bf-3db4-4c01-8535-b70a764dcce8 
+                        "TGCACACCGCAAT"                         "CATACTACGGG-T"                         "GGTGATGTAGACC" 
+s1-ec9c9f06-9f37-47da-a9de-9f872a28622d s1-5dc9d447-fd02-4493-8c12-2de2b705f0a7 s1-c23f32ba-6e41-4238-8f2f-5d7dc567094c 
+                        "GGTGACGTAGACC"                         "TAGACCA-GCGAT"                         "TAGACTACGCGAT" 
+s1-6b217655-278b-4a52-b76a-60e0b919e1bc s1-b8ec4fdc-2339-4a7a-acea-8d36a8c6191e s1-f7b1f575-bfad-46ee-bf0a-c252f41998e5 
+                        "-A-ACTGTGCA-C"                         "TAGACCACGCGAC"                         "GGTGATGTAGACC" 
+s1-d09a3082-8290-4a64-a1b0-16b955e9d377 s1-47422c66-d8d9-4cd5-bc63-253f8c664ce4 s1-e21ea203-8b2b-4db3-82e7-3872c3aedbdb 
+                        "TAGACCACGCGAT"                         "GGTGATGTAGAT-"                         "TAGACCACGCGAT" 
+s1-6fe85a60-5c2b-4ab9-8eb8-c31c9823c52c s1-16ed4c6b-d7c4-45cf-a0ee-b5417715bd05 s1-4db7595b-53a5-43a0-8f26-4bf7c4eb8e2c 
+                        "TAGACCACGCGAT"                         "TAGACCACGCGAT"                         "GATGATGTAGGCC" 
+s1-b292d6ed-c3f1-4996-8c09-758ee688d157 s1-8147266c-9bdf-48c1-95a2-3a8fe543072f s1-144ab6dd-2c83-4116-b742-f0767a0d78bd 
+                        "GGTGATGTAGACC"                         "GGTGATGTAGATA"                         "GGTGATGTAGACC" 
+s1-bd1e55f8-aa2d-4746-9018-769f3c2cf7cc s1-0298ccd2-51a4-4567-bd62-9f7c08ebe222 s1-4e1b345e-d1a2-470c-b123-096f1b89ffc9 
+                        "-ATAC-A-GTGAT"                         "GGTGATGTAGACC"                         "TAGA-CATGCGGT" 
+s1-ab4e005c-d6bd-46c0-bf70-880811d9a4cb s1-f47dafdf-2e54-473c-8c91-de47074168c8 s1-f972a57a-22e0-4dda-9cbd-c9a9546ef7d4 
+                        "GGTGATG-AGACC"                         "TATACCACGCGAT"                         "TAGACTACGCGAT" 
+s1-bc571ef1-141b-499f-a0ec-f8ed4d304b36 s1-f93df80d-7a5b-40fe-a704-611e87857ef7 s1-bedd36a7-b697-4ade-8d9d-84c21a7a1bce 
+                        "TAGACCACGCGAT"                         "TAGACCACGCGAT"                         "TAGACCACGCGGT" 
+s1-197fa983-613c-40cf-bfc6-195d57250b61 s1-09ca0166-cded-466c-90d7-074b76f6c462 s1-39a0b0f7-ed43-44a4-931f-649b94858fd5 
+                        "TAGACTACGCGAT"                         "GGTGATGTAGACC"                         "GGTGATGTAGACC" 
+s1-1575671f-db5c-4840-8903-e049f5d1c191 s1-13cf1365-9558-4731-b905-9375968236ce s1-cf62e24a-3b16-4984-9dce-722d83114a04 
+                        "TAGACCACGCGAT"                         "TGGACCACGCGAT"                         "TAGA-CACGCGAT" 
+s1-635eac53-bf72-4595-8f0a-ed25889ade7c s1-6bce848a-e1e3-4c58-ae13-782de5ad8353 s1-f8708894-fcdc-4bb4-b4f0-85962022c458 
+                        "GGTGATGTAGACC"                         "GGTGATGTAGACC"                         "-ATACCACGCGA-" 
+s1-21af2d84-95cc-4038-92de-ca10dc907c1b s1-18b3d1ae-13bc-4167-a62d-985df0226d5d s1-84372ce1-9eb4-49a1-bfdf-0fcfe550a1e3 
+                        "-GTGATGTAGACC"                         "--TGATGTAGACC"                         "--TGATGTAGATC" 
+s1-2e5ac26d-fb0d-4960-a990-717820ea5489 s1-a11ee0c2-efe1-49db-a777-fd693d49f644 s1-77d34112-3371-4dc4-90e2-c5fce537de28 
+                        "----CCACGCGAT"                         "-------TGCGCT"                         "-------TAGACC" 
+s1-1193f97a-20eb-43b0-856f-6ce487960d71 s1-ceaddd34-9916-435c-8d7d-624ee5aa2f7c s1-be1188b2-5e8e-4c3b-b1c9-f745fb787f02 
+                        "-------TAGACC"                         "--------AGACC"                         "----------GAT" 
+s1-30b6af10-7d70-4ace-b40a-4fdb7d97d600 s1-4c257eb0-b51a-4e0d-bb99-fc072f15f8fd 
+                        "----------ACC"                         "-------------" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dists <span class="ot">&lt;-</span> <span class="fu">stringdistmatrix</span>(<span class="at">a =</span> <span class="fu">c</span>(seqREF, seqALT),</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">b =</span> varlabels, <span class="at">method =</span> <span class="st">"hamming"</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nthread =</span> <span class="dv">2</span>) <span class="sc">/</span> <span class="fu">nchar</span>(varlabels[<span class="dv">1</span>])</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>methGroup <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">colMins</span>(dists) <span class="sc">&lt;</span> <span class="fl">0.34</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"REF"</span>, <span class="st">"ALT"</span>), <span class="st">": "</span>, <span class="fu">c</span>(seqREF, seqALT))[<span class="fu">apply</span>(dists, <span class="dv">2</span>, which.min)], <span class="cn">NA</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(methGroup, <span class="at">useNA =</span> <span class="st">"ifany"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>methGroup
+ALT: TAGACCACGCGAT REF: GGTGATGTAGACC               &lt;NA&gt; 
+                24                 20                 12 </code></pre>
+</div>
+</div>
+<p>Based on this read grouping, we can now regroup the reads in such a way that the columns of the <code>SummarizedExperiment</code> object corresponds to allele (REF or ALT) rather than the sample. This is achieved with the <a href="https://fmicompbio.github.io/footprintR/reference/regroupReads.html"><code>regroupReads</code></a> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate named list of read groups</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>methGroupList <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">names</span>(varlabels), methGroup)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># regroup reads</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>seCgrouped <span class="ot">&lt;-</span> <span class="fu">regroupReads</span>(seC, methGroupList)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate average modification fraction by allele</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>seCgrouped <span class="ot">&lt;-</span> <span class="fu">flattenReadLevelAssay</span>(seCgrouped, <span class="at">keepReads =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRegion</span>(seCgrouped, <span class="at">region =</span> reg,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">tracks =</span> <span class="fu">list</span>(</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>               <span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"mod_prob"</span>, <span class="at">trackType =</span> <span class="st">"Lollipop"</span>,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">legendTitle =</span> <span class="st">"5mCpG"</span>),</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>               <span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Point"</span>,</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>                    <span class="at">arglistPoint =</span> <span class="fu">list</span>(<span class="at">size =</span> <span class="dv">3</span>)))) <span class="sc">+</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="fl">7.5</span>, <span class="fl">1.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="grouping-reads_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this example, we notice a clear difference in methylation between the two alleles.</p>
+</section>
+<section id="modification-based" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="modification-based"><span class="header-section-number">7.3</span> Modification based</h2>
+<p>As an alternative to the genetic grouping used above, we could also group the reads based on the observed data. To exemplify this, we will look at a known imprinted locus in the Peg10 gene, split the reads based on the average CpG methylation in the locus, and compare the levels of 6mA modifications between the groups.</p>
+<p>First, we read the CpG methylation data and filter positions to only retain those in a CpG context.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>peg10 <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="st">"chr6:4746792-4748791"</span>, <span class="st">"GRanges"</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="st">"data/mESC_wt_5mCG_5hmCG_rep2.bam"</span>, </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> peg10,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"m"</span>, </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm),</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(),</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="fu">interactive</span>()</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    seC, </span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContext =</span> <span class="st">"NCG"</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, we calculate the average modification fraction per read. We note a clear bimodality of the distribution, and define two groups of reads based on this.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate average modification fraction per read</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>avgmod <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(<span class="fu">as.matrix</span>(<span class="fu">assay</span>(seC, <span class="st">"mod_prob"</span>)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">avgmod =</span> avgmod), <span class="fu">aes</span>(<span class="at">x =</span> avgmod)) <span class="sc">+</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Average modification probability per read (CpG)"</span>) <span class="sc">+</span> </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="grouping-reads_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>read_groups <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">colnames</span>(<span class="fu">as.matrix</span>(<span class="fu">assay</span>(seC, <span class="st">"mod_prob"</span>))), </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">c</span>(<span class="st">"paternal"</span>, <span class="st">"maternal"</span>)[(avgmod <span class="sc">&gt;</span> <span class="fl">0.5</span>) <span class="sc">+</span> <span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, we read the 6mA data for the same sample, filter by sequence context and regroup the reads based on the split defined above.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>seA <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>, </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> peg10,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm),</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(),</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="fu">interactive</span>()</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>seA <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    seA, </span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContext =</span> <span class="st">"A"</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>seA <span class="ot">&lt;-</span> <span class="fu">regroupReads</span>(seA, <span class="at">readGroups =</span> read_groups)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co"># check that the columns of seA now correspond to read groups</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(seA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "maternal" "paternal"</code></pre>
+</div>
+</div>
+<p>With the new read grouping, we next calculate summary statistics and visualize the 6mA data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>seA <span class="ot">&lt;-</span> <span class="fu">flattenReadLevelAssay</span>(seA)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRegion</span>(seA, <span class="at">region =</span> peg10, <span class="at">sequenceContext =</span> <span class="st">"A"</span>, </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackType =</span> <span class="st">"Heatmap"</span>, <span class="at">trackData =</span> <span class="st">"mod_prob"</span>, </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">interpolate =</span> <span class="cn">TRUE</span>, <span class="at">legendTitle =</span> <span class="st">"6mA"</span>, </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">orderReads =</span> <span class="st">"squish"</span>),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">list</span>(<span class="at">trackType =</span> <span class="st">"Smooth"</span>, <span class="at">trackData =</span> <span class="st">"FracMod"</span>))) <span class="sc">+</span> </span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="grouping-reads_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="across-different-regions" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="across-different-regions"><span class="header-section-number">7.4</span> Across different regions</h2>
+<p>example of meta plot <a href="https://fmicompbio.github.io/footprintR/reference/getAnchorRegions.html"><code>getAnchorRegions</code></a>.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/fmicompbio\.github\.io\/footprintR_book");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./scanning.html" class="pagination-link" aria-label="Scanning the genome for regions of interest">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Scanning the genome for regions of interest</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./multiple-modalities.html" class="pagination-link" aria-label="Combining and comparing multiple data modalities">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Combining and comparing multiple data modalities</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/fmicompbio/footprintR_book/edit/main/grouping-reads.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/fmicompbio/footprintR_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

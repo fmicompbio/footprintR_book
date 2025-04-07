@@ -1,0 +1,6 @@
+# Combining and comparing multiple data modalities {#sec-multiple-modalities}
+
+Example use cases
+
+## Heterozygous CTCF sites (changes of motif score, ChIP and 6mA or 5mCpG)
+
