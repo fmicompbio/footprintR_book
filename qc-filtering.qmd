@@ -1,7 +1,8 @@
 # Quality control and filtering {#sec-qc-filtering}
 
 This chapter explains how to use [fmicompbio/footprintR]{.githubpkg} to filter single molecule footprinting data.
-The package contains functionality to calculate a collection of quality statistics for each read, and use these to filter out low-quality reads. This filtering can be done either on the imported `SummarizedExperiment` object, or directly on the `modBam` file (which would generate another, filtered `modBam` file).
+The package contains functionality to calculate a collection of quality statistics for each read, and use these to filter out low-quality reads. 
+This filtering can be done either on the imported `SummarizedExperiment` object, or directly on the `modBam` file (which would generate another, filtered `modBam` file).
 [fmicompbio/footprintR]{.githubpkg} also provides several ways to filter out individual genomic positions based on, e.g. the genomic sequence or the read coverage. 
 
 We start by loading the required packages. 
@@ -9,6 +10,7 @@ In addition to the software package, we load a `BSgenome` object providing the m
 
 ```{r}
 #| message: false
+#| label: load-packages
 
 BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
 
@@ -22,7 +24,7 @@ gnm <- get(BSgenomeName)
 genome(gnm) <- "mm39"
 ```
 
-## Creating a QC report
+<!-- ## Creating a QC report -->
 
 ## Position filtering
 
@@ -30,6 +32,8 @@ To illustrate the position-level filtering of imported data, we first read 6mA d
 We add the sequence context (a single nucleotide) to be able to use this information as a basis for filtering.
 
 ```{r}
+#| label: read-data
+
 se <- readModBam(
     bamfiles = c(wt1 = "data/mESC_wt_6mA_rep1.bam",
                  wt2 = "data/mESC_wt_6mA_rep2.bam"),
@@ -45,6 +49,8 @@ se
 The sequence information is stored in the `rowData` of `se`: 
 
 ```{r}
+#| label: show-rowdata
+
 rowData(se)
 ```
 
@@ -56,6 +62,8 @@ If this is a read-level assay (like here), coverage will first be calculated usi
 For more precise control, the summary assay can also be manually calculated and added to `se` beforehand, and specified in `assayNameCov`.
 
 ```{r}
+#| label: filter-positions
+
 sefilt <- filterPositions(
     se, 
     filters = c("sequenceContext", "coverage", "all.na"),
@@ -79,6 +87,8 @@ In addition to the position filtering illustrated above, [fmicompbio/footprintR]
 The calculation of the quality scores is done using the [addReadStats]{.fn} function, and the filtering is performed via the [filterReads]{.fn} function.
 
 ```{r}
+#| label: fig-filter-reads
+
 # Calculate read statistics
 sefilt <- addReadStats(
     sefilt, 
@@ -110,11 +120,50 @@ sefilt <- filterReads(
 Filtering statistics are stored in the `metadata` of the filtered `SummarizedExperiment` object.
 
 ```{r}
+#| label: show-metadata
+
 metadata(sefilt)$filteredOutReads
 ```
 
 
 ### Filtering a `modBam` file
+
+As mentioned above, [fmicompbio/footprintR]{.githubpkg} can also be used to directly filter alignments in a `modBam` file.
+The [filterReadsBam]{.fn} function reads the alignments in the input file, parses them, and writes them to the output file if they pass all the designated filters. 
+These filters are treated hierarchically - in other words, if a read does not pass a given filter, the remaining filters will not be examined and the processing continues with the next read.
+Here we illustrate the `modBam` filtering using two small example `modBam` files, each with 10 reads. 
+
+```{r}
+#| label: filter-bamfile
+
+# input files
+modbamfiles <- c("data/6mA_1_10reads.bam", "data/6mA_2_10reads.bam")
+
+# output files
+filtbamfiles <- sub("\\.bam", "_filtered.bam", modbamfiles)
+
+res <- filterReadsBam(infiles = modbamfiles, outfiles = filtbamfiles,
+                      modbase = "a", indexOutfiles = FALSE, minReadLength = 6746,
+                      minAlignedLength = 6896, minAlignedFraction = 0.56,
+                      minQscore = 9.7, maxFracLowConf = 0.11, maxEntropy = 0.29,
+                      BPPARAM = BiocParallel::SerialParam(), verbose = TRUE)
+```
+
+The `res` object provides details about the number of reads that were filtered out at each stage. 
+
+```{r}
+#| label: show-filter-bamfile
+
+res
+```
+
+```{r}
+#| echo: false
+#| label: remove-filtered-bamfiles
+
+unlink(filtbamfiles)
+```
+
 
 ## Session info
 
@@ -123,6 +172,8 @@ metadata(sefilt)$filteredOutReads
 Click to view session info
 </b></summary>
 ```{r}
+#| label: session-info
+
 sessioninfo::session_info(info = "packages")
 ```
 </details>
