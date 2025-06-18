@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -20,7 +20,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -38,10 +92,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-6082b3b653f69b4bc1378a5897c1dc6c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -180,7 +234,15 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#heterozygous-ctcf-sites-changes-of-motif-score-chip-and-6ma-or-5mcpg" id="toc-heterozygous-ctcf-sites-changes-of-motif-score-chip-and-6ma-or-5mcpg" class="nav-link active" data-scroll-target="#heterozygous-ctcf-sites-changes-of-motif-score-chip-and-6ma-or-5mcpg"><span class="header-section-number">8.1</span> Heterozygous CTCF sites (changes of motif score, ChIP and 6mA or 5mCpG)</a></li>
+  <li><a href="#load-data-and-packages" id="toc-load-data-and-packages" class="nav-link active" data-scroll-target="#load-data-and-packages"><span class="header-section-number">8.1</span> Load data and packages</a></li>
+  <li><a href="#scan-the-genome-with-the-ctcf-motif-and-identify-sites-that-overlap-sequence-variants" id="toc-scan-the-genome-with-the-ctcf-motif-and-identify-sites-that-overlap-sequence-variants" class="nav-link" data-scroll-target="#scan-the-genome-with-the-ctcf-motif-and-identify-sites-that-overlap-sequence-variants"><span class="header-section-number">8.2</span> Scan the genome with the CTCF motif and identify sites that overlap sequence variants</a></li>
+  <li><a href="#annotate-heterozygous-ctcf-sites" id="toc-annotate-heterozygous-ctcf-sites" class="nav-link" data-scroll-target="#annotate-heterozygous-ctcf-sites"><span class="header-section-number">8.3</span> Annotate heterozygous CTCF sites</a></li>
+  <li><a href="#visualize-differences-between-alleles-at-each-heterozygous-ctcf-site" id="toc-visualize-differences-between-alleles-at-each-heterozygous-ctcf-site" class="nav-link" data-scroll-target="#visualize-differences-between-alleles-at-each-heterozygous-ctcf-site"><span class="header-section-number">8.4</span> Visualize differences between alleles at each heterozygous CTCF site</a>
+  <ul class="collapse">
+  <li><a href="#ctcf-binding-chip-versus-accessibility-6ma" id="toc-ctcf-binding-chip-versus-accessibility-6ma" class="nav-link" data-scroll-target="#ctcf-binding-chip-versus-accessibility-6ma"><span class="header-section-number">8.4.1</span> CTCF binding (ChIP) versus accessibility (6mA)</a></li>
+  </ul></li>
+  <li><a href="#ctcf-binding-chip-versus-dna-methylation-5mcpg" id="toc-ctcf-binding-chip-versus-dna-methylation-5mcpg" class="nav-link" data-scroll-target="#ctcf-binding-chip-versus-dna-methylation-5mcpg"><span class="header-section-number">8.5</span> CTCF binding (ChIP) versus DNA methylation (5mCpG)</a></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info"><span class="header-section-number">8.6</span> Session info</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/fmicompbio/footprintR_book/edit/main/multiple-modalities.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/fmicompbio/footprintR_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -189,7 +251,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-multiple-modalities" class="quarto-section-identifier"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Combining and comparing multiple data modalities</span></span></h1>
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-multiple-modalities" class="quarto-section-identifier"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Combining and comparing multiple data modalities</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -206,11 +268,622 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Example use cases</p>
-<section id="heterozygous-ctcf-sites-changes-of-motif-score-chip-and-6ma-or-5mcpg" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="heterozygous-ctcf-sites-changes-of-motif-score-chip-and-6ma-or-5mcpg"><span class="header-section-number">8.1</span> Heterozygous CTCF sites (changes of motif score, ChIP and 6mA or 5mCpG)</h2>
+<p>Single molecule footprinting data itself may already provide more than a single data modality: While 6mA calls provide information about the accessiblity of sequenced molecules, additional base modifications such as 5mCpG and 5hmCpG inform about endogenous modification states. When working with data from diploid organisms, the sequence at heterozygous loci allows separate quantification of individual alleles (see <a href="grouping-reads.html#sec-group-by-sequence" class="quarto-xref"><span>Section 7.2</span></a>).</p>
+<p>In the sections below we are illustrating the integration of the above data modalities (allele-specific accessibility and DNA methylation at CpG dinucleotides) with ChIP-seq data at heterozygous CTCF binding sites. This illustrates how the sequence variation that discriminates the two alleles affects the binding of CTCF, and consequently also the chromatin accessibility and DNA methylation of each allele.</p>
+<section id="load-data-and-packages" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="load-data-and-packages"><span class="header-section-number">8.1</span> Load data and packages</h2>
+<p>We start by loading the required packages, high-confidence heterozygous SNVs and preparing reference (<code>REF</code>) and alternative (<code>ALT</code>) version of the genome by injecting the SNVs into the genome assembly.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicAlignments)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(VariantAnnotation)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(JASPAR2024)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(TFBSTools)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(universalmotif)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Hmisc)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringdist)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SparseArray)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># number of CPUs to use for parallel tasks</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>ncpu <span class="ot">&lt;-</span> <span class="dv">24</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># modBam files</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>bamfilesC <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">WT_1 =</span> <span class="st">"data/mESC_wt_5mCG_5hmCG_rep1.bam"</span>,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>               <span class="at">WT_2 =</span> <span class="st">"data/mESC_wt_5mCG_5hmCG_rep2.bam"</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>bamfilesA <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">WT_1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>               <span class="at">WT_2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># ChIP bam files</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>chipbam <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">CTCF_1 =</span> <span class="st">"data/mESC_wt_CTCF_ChIP_rep1.bam"</span>, <span class="co"># GSM747534</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>             <span class="at">CTCF_2 =</span> <span class="st">"data/mESC_wt_CTCF_ChIP_rep2.bam"</span>, <span class="co"># GSM747535</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>             <span class="at">CTCF_3 =</span> <span class="st">"data/mESC_wt_CTCF_ChIP_rep3.bam"</span>) <span class="co"># GSM747534</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Heterozygous SNVs</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>hetsnv <span class="ot">&lt;-</span> <span class="fu">readVcf</span>(<span class="st">"data/het_snp.vcf.gz"</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># ... extract SNV positions and make sure they are not indels</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>hetpos <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="fu">rowRanges</span>(hetsnv), <span class="st">"GPos"</span>)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">width</span>(hetpos<span class="sc">$</span>REF) <span class="sc">==</span> <span class="dv">1</span>L))</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">lengths</span>(hetpos<span class="sc">$</span>ALT) <span class="sc">==</span> <span class="dv">1</span>L))</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">width</span>(<span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT)) <span class="sc">==</span> <span class="dv">1</span>L))</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>hetpos<span class="sc">$</span>ALT <span class="ot">&lt;-</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="co"># ... create refernce and alternative genomes by injecting SNVs</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>gnmREF <span class="ot">&lt;-</span> gnmALT <span class="ot">&lt;-</span> <span class="fu">getSeq</span>(gnm)</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (chr <span class="cf">in</span> <span class="fu">names</span>(gnmREF)) {</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">seqnames</span>(hetpos) <span class="sc">==</span> chr)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    gnmREF[[chr]] <span class="ot">&lt;-</span> <span class="fu">replaceLetterAt</span>(<span class="at">x =</span> gnmREF[[chr]],</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">at =</span> <span class="fu">start</span>(hetpos)[i],</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">letter =</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>REF[i]),</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    gnmALT[[chr]] <span class="ot">&lt;-</span> <span class="fu">replaceLetterAt</span>(<span class="at">x =</span> gnmALT[[chr]],</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">at =</span> <span class="fu">start</span>(hetpos)[i],</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">letter =</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT[i]),</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="scan-the-genome-with-the-ctcf-motif-and-identify-sites-that-overlap-sequence-variants" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="scan-the-genome-with-the-ctcf-motif-and-identify-sites-that-overlap-sequence-variants"><span class="header-section-number">8.2</span> Scan the genome with the CTCF motif and identify sites that overlap sequence variants</h2>
+<p>We next get the CTCF motif from the Jaspar database (<span class="citation" data-cites="Rauluseviciute2024-bc">Rauluseviciute et al. (<a href="references.html#ref-Rauluseviciute2024-bc" role="doc-biblioref">2024</a>)</span>) and scan the genome for high scoring matches that overlap heterozygous SNVs.</p>
+<p>We will scan both reference and alternative version of the genome and combine them afterwards, in order to not miss any high-scoring CTCF motif matches due to the presence of SNVs.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get CTCF motif from Jaspar</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>jaspar <span class="ot">&lt;-</span> <span class="fu">JASPAR2024</span>()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dbfunc <span class="ot">&lt;-</span> <span class="fu">getFromNamespace</span>(<span class="at">x =</span> <span class="st">"db"</span>, <span class="at">ns =</span> <span class="st">"JASPAR2024"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>mdb <span class="ot">&lt;-</span> RSQLite<span class="sc">::</span><span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="fu">dbfunc</span>(jaspar))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>tf_motif <span class="ot">&lt;-</span> <span class="fu">getMatrixByID</span>(<span class="at">x =</span> mdb, <span class="at">ID =</span> <span class="st">"MA0139.2"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>RSQLite<span class="sc">::</span><span class="fu">dbDisconnect</span>(mdb)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">seqLogo</span>(<span class="fu">toICM</span>(tf_motif), <span class="at">xaxis =</span> <span class="cn">FALSE</span>, <span class="at">yaxis =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-motif" class="quarto-float quarto-figure quarto-figure-center anchored" width="576">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-motif-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="multiple-modalities_files/figure-html/fig-motif-1.png" id="fig-motif" class="img-fluid figure-img" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-motif-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8.1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scan REF and ALT genomes for motif hits</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>hitsREF <span class="ot">&lt;-</span> <span class="fu">scan_sequences</span>(<span class="at">motifs =</span> tf_motif,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">sequences =</span> gnmREF,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">threshold =</span> <span class="fl">8e-5</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">threshold.type =</span> <span class="st">"pvalue"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">RC =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">use.gaps =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                          <span class="at">return.granges =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nthreads =</span> ncpu,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="cf">if</span>(<span class="fu">interactive</span>()) <span class="dv">2</span> <span class="cf">else</span> <span class="dv">0</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>hitsALT <span class="ot">&lt;-</span> <span class="fu">scan_sequences</span>(<span class="at">motifs =</span> tf_motif,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                          <span class="at">sequences =</span> gnmALT,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                          <span class="at">threshold =</span> <span class="fl">8e-5</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                          <span class="at">threshold.type =</span> <span class="st">"pvalue"</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                          <span class="at">RC =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">use.gaps =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                          <span class="at">return.granges =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nthreads =</span> ncpu,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="cf">if</span>(<span class="fu">interactive</span>()) <span class="dv">2</span> <span class="cf">else</span> <span class="dv">0</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co"># combine (remove overlapping hits on the same strand)</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>hits <span class="ot">&lt;-</span> <span class="fu">reduce</span>(<span class="fu">c</span>(hitsREF, hitsALT))</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>hits <span class="ot">&lt;-</span> hits[<span class="fu">width</span>(hits) <span class="sc">==</span> <span class="fu">length</span>(tf_motif)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>At this point, we have 539 thousand hits to the CTCF motif in the genome. We next select the sites that overlap any of our heterozygous SNVs.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>hits_het <span class="ot">&lt;-</span> <span class="fu">subsetByOverlaps</span>(hits, hetpos, <span class="at">ignore.strand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># filter out sites with more than 4 overlapping SNVs</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>nSNVs <span class="ot">&lt;-</span> <span class="fu">countOverlaps</span>(hits_het, hetpos, <span class="at">ignore.strand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(nSNVs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>nSNVs
+   1    2    3    4    5    6 
+5136  651   96   25    4    2 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>hits_het <span class="ot">&lt;-</span> hits_het[nSNVs <span class="sc">&lt;=</span> <span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Finally, we score the 5908 heterozygous hits to get a motif match score for both reference and alternative alleles. We get a symmetric distribution around zero with similar numbers of motifs that increase and decrease there match score in ALT compared to REF. Only few motifs change there score by more than 50% of the maximal score (22.6).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># score hits</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>seqsREF <span class="ot">&lt;-</span> <span class="fu">getSeq</span>(gnmREF, hits_het)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>seqsALT <span class="ot">&lt;-</span> <span class="fu">getSeq</span>(gnmALT, hits_het)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreREF <span class="ot">&lt;-</span> <span class="fu">score_match</span>(<span class="at">motif =</span> tf_motif, <span class="at">match =</span> <span class="fu">as.character</span>(seqsREF))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreALT <span class="ot">&lt;-</span> <span class="fu">score_match</span>(<span class="at">motif =</span> tf_motif, <span class="at">match =</span> <span class="fu">as.character</span>(seqsALT))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreDelta <span class="ot">&lt;-</span> hits_het<span class="sc">$</span>scoreREF <span class="sc">-</span> hits_het<span class="sc">$</span>scoreALT</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreDeltaPercent <span class="ot">&lt;-</span> hits_het<span class="sc">$</span>scoreDelta <span class="sc">/</span> hitsREF<span class="sc">$</span>max.score[<span class="dv">1</span>] <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreDeltaBinned <span class="ot">&lt;-</span> Hmisc<span class="sc">::</span><span class="fu">cut2</span>(</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> hits_het<span class="sc">$</span>scoreDelta,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">cuts =</span> <span class="fu">c</span>(<span class="fu">min</span>(hits_het<span class="sc">$</span>scoreDelta) <span class="sc">-</span> <span class="fl">0.1</span>, <span class="sc">-</span><span class="dv">10</span>, <span class="sc">-</span><span class="dv">5</span>, <span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">10</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>             <span class="fu">max</span>(hits_het<span class="sc">$</span>scoreDelta) <span class="sc">+</span> <span class="fl">0.1</span>))</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreDeltaBinned <span class="ot">&lt;-</span> <span class="fu">fct_rev</span>(hits_het<span class="sc">$</span>scoreDeltaBinned)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>scoreDeltaBinnedCols <span class="ot">&lt;-</span> <span class="fu">structure</span>(<span class="fu">c</span>(<span class="st">"#611300"</span>, <span class="st">"#CC4E25"</span>, <span class="st">"#EBB0A8"</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"#CCCCCC"</span>, <span class="st">"#B3D0E4"</span>, <span class="st">"#008BBD"</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"#003560"</span>),</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">names =</span> <span class="fu">levels</span>(hits_het<span class="sc">$</span>scoreDeltaBinned))</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(hits_het), <span class="fu">aes</span>(scoreDeltaPercent)) <span class="sc">+</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_bin</span>(<span class="at">bins =</span> <span class="dv">20</span>, <span class="at">geom =</span> <span class="st">"col"</span>,</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(count), <span class="at">fill =</span> <span class="fu">after_stat</span>(x))) <span class="sc">+</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> scoreDeltaBinnedCols[<span class="dv">1</span>],</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>                         <span class="at">mid =</span> scoreDeltaBinnedCols[<span class="dv">4</span>],</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>                         <span class="at">high =</span> scoreDeltaBinnedCols[<span class="dv">7</span>]) <span class="sc">+</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">50</span>, <span class="dv">50</span>), <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">100</span>, <span class="dv">100</span>)) <span class="sc">+</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Change of motif score (% of maximal score, REF - ALT)"</span>,</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Number of CTCF motif hits"</span>,</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill =</span> <span class="st">"Change of</span><span class="sc">\n</span><span class="st">motif score"</span>) <span class="sc">+</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"inside"</span>,</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.position.inside =</span> <span class="fu">c</span>(.<span class="dv">02</span>, .<span class="dv">98</span>),</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-score-changes" class="quarto-float quarto-figure quarto-figure-center anchored" width="576">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-score-changes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="multiple-modalities_files/figure-html/fig-score-changes-1.png" id="fig-score-changes" class="img-fluid figure-img" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-score-changes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8.2
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="annotate-heterozygous-ctcf-sites" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="annotate-heterozygous-ctcf-sites"><span class="header-section-number">8.3</span> Annotate heterozygous CTCF sites</h2>
+<p>We next annotate our CTCF sites with experimental measurements. To account for the limited resolution and exploit the autocorrelation of our experimental data, we will include the data in a small window of 180bp around each CTCF site. Furthermore, we will run the calculations in parallel over the sites using <code>mclapply</code> from the <code>parallel</code> package. This step is nevertheless slow and takes about ~13 seconds per site and CPU on our system.</p>
+<p>All measurements will be calculated separately for each allele. For single molecule footprinting data, we do this by grouping the reads based on overlapping SNVs, as outlined in <a href="grouping-reads.html#sec-group-by-sequence" class="quarto-xref"><span>Section 7.2</span></a>. For the ChIP-seq data, we load the read sequences using <code>stackStringsFromBam</code> from the <a href="https://bioconductor.org/packages/GenomicAlignments"><em>GenomicAlignments</em></a> package and separate them by allele based on overlapping SNVs. The CTCF ChIP samples correspond to the samples GSM747534, GSM747535 and GSM747536 from <span class="citation" data-cites="Stadler2011-xd">Stadler et al. (<a href="references.html#ref-Stadler2011-xd" role="doc-biblioref">2011</a>)</span>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># expand sites to 180 bp windows centered on motif mid</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>hits_hetExt <span class="ot">&lt;-</span> <span class="fu">resize</span>(hits_het, <span class="at">width =</span> <span class="dv">180</span>, <span class="at">fix =</span> <span class="st">"center"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># iterate over sites and combine individual results</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>pd <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">mclapply</span>(<span class="fu">seq_along</span>(hits_hetExt), <span class="cf">function</span>(i) {</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># allocate empty result</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    hetpos1 <span class="ot">&lt;-</span> <span class="fu">subsetByOverlaps</span>(<span class="at">x =</span> hetpos, <span class="at">ranges =</span> hits_hetExt[i])</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    seqREF <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">as.character</span>(hetpos1<span class="sc">$</span>REF), <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    seqALT <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">as.character</span>(hetpos1<span class="sc">$</span>ALT), <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    seq1 <span class="ot">&lt;-</span> <span class="fu">getSeq</span>(gnm, hits_hetExt[i])</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">locus =</span> <span class="fu">as.character</span>(hits_hetExt[i]),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                      <span class="at">nA =</span> <span class="fu">countPattern</span>(<span class="st">"A"</span>, seq1[[<span class="dv">1</span>]], <span class="at">fixed =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>                      <span class="at">nCpG =</span> <span class="fu">countPattern</span>(<span class="st">"CG"</span>, seq1[[<span class="dv">1</span>]], <span class="at">fixed =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                      <span class="at">motifScoreREF =</span> hits_hetExt<span class="sc">$</span>scoreREF[i],</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                      <span class="at">motifScoreALT =</span> hits_hetExt<span class="sc">$</span>scoreALT[i],</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                      <span class="at">motifScoreDelta =</span> hits_hetExt<span class="sc">$</span>scoreDelta[i],</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                      <span class="at">motifScoreDeltaBinned =</span> hits_het<span class="sc">$</span>scoreDeltaBinned[i],</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                      <span class="at">varlabelREF =</span> seqREF,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>                      <span class="at">varlabelALT =</span> seqALT,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGmethNumReadsREF =</span> <span class="dv">0</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGmethNumReadsALT =</span> <span class="dv">0</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGmethNumReadsNA =</span> <span class="dv">0</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGfracmodREF =</span> <span class="cn">NA</span>,</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGfracmodALT =</span> <span class="cn">NA</span>,</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGfracmodDelta =</span> <span class="cn">NA</span>,</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AmethNumReadsREF =</span> <span class="dv">0</span>,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AmethNumReadsALT =</span> <span class="dv">0</span>,</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AmethNumReadsNA =</span> <span class="dv">0</span>,</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AfracmodREF =</span> <span class="cn">NA</span>,</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AfracmodALT =</span> <span class="cn">NA</span>,</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AfracmodDelta =</span> <span class="cn">NA</span>,</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>                      <span class="at">chipNumReadsREF =</span> <span class="dv">0</span>,</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>                      <span class="at">chipNumReadsALT =</span> <span class="dv">0</span>,</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>                      <span class="at">chipNumReadsNA =</span> <span class="dv">0</span>,</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>                      <span class="at">chipLog2FC =</span> <span class="dv">0</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># load read-level data</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... 5mCpG</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (res[<span class="dv">1</span>, <span class="st">"nCpG"</span>] <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>        seC <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(<span class="at">bamfiles =</span> bamfilesC,</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>                          <span class="at">regions =</span> hits_hetExt[i],</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>                          <span class="at">modbase =</span> <span class="st">"m"</span>, <span class="at">level =</span> <span class="st">"read"</span>,</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>                          <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>, <span class="at">sequenceReference =</span> gnmREF,</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>                          <span class="at">variantPositions =</span> hetpos1, </span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>                          <span class="at">trim =</span> <span class="cn">TRUE</span>, <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(),</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="fu">nrow</span>(seC) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>            <span class="co"># ... filter out non-CpGs (in any genome)</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>            seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seC, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">sequenceContext =</span> <span class="st">"NCG"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (<span class="fu">nrow</span>(seC) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>                seC <span class="ot">&lt;-</span> <span class="fu">addSeqContext</span>(<span class="at">x =</span> seC, <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>,</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">sequenceReference =</span> gnmALT)</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>                seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seC, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">sequenceContext =</span> <span class="st">"NCG"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> (<span class="fu">nrow</span>(seC) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># cluster by allele</span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>                    varlabels <span class="ot">&lt;-</span> <span class="fu">structure</span>(</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">unlist</span>(<span class="fu">lapply</span>(seC<span class="sc">$</span>readInfo, <span class="st">"[["</span>, <span class="st">"variant_label"</span>), <span class="at">use.names =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>                        <span class="at">names =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(seC<span class="sc">$</span>readInfo, rownames), <span class="at">use.names =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>                    dists <span class="ot">&lt;-</span> <span class="fu">stringdistmatrix</span>(<span class="at">a =</span> <span class="fu">c</span>(seqREF, seqALT),</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">b =</span> varlabels, <span class="at">method =</span> <span class="st">"hamming"</span>,</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">nthread =</span> <span class="dv">2</span>) <span class="sc">/</span> <span class="fu">nchar</span>(varlabels[<span class="dv">1</span>])</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>                    methGroup <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">colMins</span>(dists) <span class="sc">&lt;</span> <span class="fl">0.34</span>,</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">c</span>(<span class="st">"REF"</span>, <span class="st">"ALT"</span>)[<span class="fu">apply</span>(dists, <span class="dv">2</span>, which.min)], <span class="cn">NA</span>)</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># calculate average modification fraction</span></span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>                    modprob <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">assay</span>(seC, <span class="st">"mod_prob"</span>))</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>                    percmeth <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">split</span>(<span class="fu">names</span>(varlabels), methGroup), <span class="cf">function</span>(rid) {</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>                        nmod <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">nnavals</span>(modprob[, rid]) <span class="sc">&gt;=</span> <span class="fl">0.5</span>)</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>                        nvalid <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">is_nonna</span>(modprob)[, rid])</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>                        nmod <span class="sc">/</span> nvalid</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>                    })</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># add to `res`</span></span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>                    res[<span class="dv">1</span>, <span class="fu">c</span>(<span class="st">"CpGmethNumReadsREF"</span>, <span class="st">"CpGmethNumReadsALT"</span>, <span class="st">"CpGmethNumReadsNA"</span>,</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"CpGfracmodREF"</span>, <span class="st">"CpGfracmodALT"</span>, <span class="st">"CpGfracmodDelta"</span>)] <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGmethNumReadsREF =</span> <span class="fu">sum</span>(methGroup <span class="sc">==</span> <span class="st">"REF"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGmethNumReadsALT =</span> <span class="fu">sum</span>(methGroup <span class="sc">==</span> <span class="st">"ALT"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGmethNumReadsNA =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(methGroup)),</span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGfracmodREF =</span> percmeth<span class="sc">$</span>REF <span class="sc">%||%</span> <span class="cn">NA</span>,</span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGfracmodALT =</span> percmeth<span class="sc">$</span>ALT <span class="sc">%||%</span> <span class="cn">NA</span>,</span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGfracmodDelta =</span> (percmeth<span class="sc">$</span>REF <span class="sc">%||%</span> <span class="cn">NA</span>) <span class="sc">-</span> (percmeth<span class="sc">$</span>ALT <span class="sc">%||%</span> <span class="cn">NA</span>))</span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... 6mA</span></span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (res[<span class="dv">1</span>, <span class="st">"nA"</span>] <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>        seA <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(<span class="at">bamfiles =</span> bamfilesA,</span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>                          <span class="at">regions =</span> hits_hetExt[i],</span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>                          <span class="at">modbase =</span> <span class="st">"a"</span>, <span class="at">level =</span> <span class="st">"read"</span>,</span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>                          <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>, <span class="at">sequenceReference =</span> gnmREF,</span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>                          <span class="at">variantPositions =</span> hetpos1, </span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>                          <span class="at">trim =</span> <span class="cn">TRUE</span>, <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(),</span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="fu">nrow</span>(seA) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>            <span class="co"># ... filter out non-As (in any genome)</span></span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>            seA <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seA, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">sequenceContext =</span> <span class="st">"A"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (<span class="fu">nrow</span>(seA) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>                seA <span class="ot">&lt;-</span> <span class="fu">addSeqContext</span>(<span class="at">x =</span> seA, <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>,</span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">sequenceReference =</span> gnmALT)</span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>                seA <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seA, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">sequenceContext =</span> <span class="st">"A"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> (<span class="fu">nrow</span>(seA) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># cluster by allele</span></span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>                    varlabels <span class="ot">&lt;-</span> <span class="fu">structure</span>(</span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">unlist</span>(<span class="fu">lapply</span>(seA<span class="sc">$</span>readInfo, <span class="st">"[["</span>, <span class="st">"variant_label"</span>), <span class="at">use.names =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>                        <span class="at">names =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(seA<span class="sc">$</span>readInfo, rownames), <span class="at">use.names =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>                    dists <span class="ot">&lt;-</span> <span class="fu">stringdistmatrix</span>(<span class="at">a =</span> <span class="fu">c</span>(seqREF, seqALT),</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">b =</span> varlabels, <span class="at">method =</span> <span class="st">"hamming"</span>,</span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">nthread =</span> <span class="dv">2</span>) <span class="sc">/</span> <span class="fu">nchar</span>(varlabels[<span class="dv">1</span>])</span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>                    methGroup <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">colMins</span>(dists) <span class="sc">&lt;</span> <span class="fl">0.34</span>,</span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">c</span>(<span class="st">"REF"</span>, <span class="st">"ALT"</span>)[<span class="fu">apply</span>(dists, <span class="dv">2</span>, which.min)], <span class="cn">NA</span>)</span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># calculate average modification fraction</span></span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>                    modprob <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">assay</span>(seA, <span class="st">"mod_prob"</span>))</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>                    percmeth <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">split</span>(<span class="fu">names</span>(varlabels), methGroup), <span class="cf">function</span>(rid) {</span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>                        nmod <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">nnavals</span>(modprob[, rid]) <span class="sc">&gt;=</span> <span class="fl">0.5</span>)</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>                        nvalid <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">is_nonna</span>(modprob)[, rid])</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>                        nmod <span class="sc">/</span> nvalid</span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>                    })</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># add to `res`</span></span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>                    res[<span class="dv">1</span>, <span class="fu">c</span>(<span class="st">"AmethNumReadsREF"</span>, <span class="st">"AmethNumReadsALT"</span>, <span class="st">"AmethNumReadsNA"</span>,</span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"AfracmodREF"</span>, <span class="st">"AfracmodALT"</span>, <span class="st">"AfracmodDelta"</span>)] <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AmethNumReadsREF =</span> <span class="fu">sum</span>(methGroup <span class="sc">==</span> <span class="st">"REF"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AmethNumReadsALT =</span> <span class="fu">sum</span>(methGroup <span class="sc">==</span> <span class="st">"ALT"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AmethNumReadsNA =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(methGroup)),</span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AfracmodREF =</span> percmeth<span class="sc">$</span>REF <span class="sc">%||%</span> <span class="cn">NA</span>,</span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AfracmodALT =</span> percmeth<span class="sc">$</span>ALT <span class="sc">%||%</span> <span class="cn">NA</span>,</span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AfracmodDelta =</span> (percmeth<span class="sc">$</span>REF <span class="sc">%||%</span> <span class="cn">NA</span>) <span class="sc">-</span> (percmeth<span class="sc">$</span>ALT <span class="sc">%||%</span> <span class="cn">NA</span>))</span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... CTCF ChIP-seq</span></span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>    reads <span class="ot">&lt;-</span> <span class="fu">do.call</span>(c, <span class="fu">unname</span>(<span class="fu">lapply</span>(chipbam, <span class="cf">function</span>(bam1) {</span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stackStringsFromBam</span>(<span class="at">file =</span> bam1, <span class="at">param =</span> <span class="fu">unstrand</span>(hits_hetExt[i]), <span class="at">what =</span> <span class="st">"seq"</span>)</span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>    })))</span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(reads) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>        varlabels <span class="ot">&lt;-</span> <span class="fu">apply</span>(<span class="fu">do.call</span>(cbind, <span class="fu">lapply</span>(<span class="fu">start</span>(hetpos1) <span class="sc">-</span> <span class="fu">start</span>(hits_hetExt[i]) <span class="sc">+</span> <span class="dv">1</span>, <span class="cf">function</span>(pos) {</span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>            <span class="fu">as.character</span>(<span class="fu">subseq</span>(<span class="at">x =</span> reads, <span class="at">start =</span> pos, <span class="at">width =</span> <span class="dv">1</span>))</span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>        })), <span class="dv">1</span>, paste, <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a>        dists <span class="ot">&lt;-</span> <span class="fu">stringdistmatrix</span>(<span class="at">a =</span> <span class="fu">c</span>(seqREF, seqALT),</span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">b =</span> varlabels, <span class="at">method =</span> <span class="st">"hamming"</span>,</span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">nthread =</span> <span class="dv">2</span>)</span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>        chipGroup <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(dists[<span class="dv">1</span>,] <span class="sc">&lt;</span> dists[<span class="dv">2</span>,], <span class="st">"REF"</span>,</span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">ifelse</span>(dists[<span class="dv">2</span>,] <span class="sc">&lt;</span> dists[<span class="dv">1</span>,], <span class="st">"ALT"</span>, <span class="cn">NA</span>))</span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>        chipGroup <span class="ot">&lt;-</span> <span class="fu">character</span>(<span class="dv">0</span>)</span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add to `res`</span></span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>    res[<span class="dv">1</span>, <span class="fu">c</span>(<span class="st">"chipNumReadsREF"</span>, <span class="st">"chipNumReadsALT"</span>,</span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>             <span class="st">"chipNumReadsNA"</span>, <span class="st">"chipLog2FC"</span>)] <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a>                 <span class="at">chipNumReadsREF =</span> <span class="fu">sum</span>(chipGroup <span class="sc">==</span> <span class="st">"REF"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a>                 <span class="at">chipNumReadsALT =</span> <span class="fu">sum</span>(chipGroup <span class="sc">==</span> <span class="st">"ALT"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>                 <span class="at">chipNumReadsNA =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(chipGroup)),</span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>                 <span class="at">chipLog2FC =</span> <span class="fu">log2</span>((<span class="fu">sum</span>(chipGroup <span class="sc">==</span> <span class="st">"REF"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="dv">16</span>) <span class="sc">/</span></span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>                                       (<span class="fu">sum</span>(chipGroup <span class="sc">==</span> <span class="st">"ALT"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="dv">16</span>)))</span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(res)</span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a>}, <span class="at">mc.cores =</span> ncpu, <span class="at">mc.preschedule =</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="visualize-differences-between-alleles-at-each-heterozygous-ctcf-site" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="visualize-differences-between-alleles-at-each-heterozygous-ctcf-site"><span class="header-section-number">8.4</span> Visualize differences between alleles at each heterozygous CTCF site</h2>
+<p>We know that the binding of a transcription factor leads to an increase of local chromatin accessibility, as well as a decrease in local DNA methylation. We thus expect to find clear associations between the allelic changes of these two and CTCF ChIP signals, and also with changes of motif scores that are the underlying cause of allelic differences.</p>
+<section id="ctcf-binding-chip-versus-accessibility-6ma" class="level3" data-number="8.4.1">
+<h3 data-number="8.4.1" class="anchored" data-anchor-id="ctcf-binding-chip-versus-accessibility-6ma"><span class="header-section-number">8.4.1</span> CTCF binding (ChIP) versus accessibility (6mA)</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pdsel <span class="ot">&lt;-</span> pd <span class="sc">|&gt;</span> <span class="fu">filter</span>(CpGmethNumReadsREF <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                      CpGmethNumReadsALT <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                      chipNumReadsREF <span class="sc">+</span> chipNumReadsALT <span class="sc">&gt;</span> <span class="dv">5</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pdsel, <span class="at">mapping =</span> <span class="fu">aes</span>(chipLog2FC, AfracmodDelta)) <span class="sc">+</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> motifScoreDeltaBinned)) <span class="sc">+</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_colour_manual</span>(<span class="at">values =</span>  scoreDeltaBinnedCols) <span class="sc">+</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_cor</span>(<span class="at">label.x.npc =</span> <span class="st">"left"</span>) <span class="sc">+</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"Predicted CTCF sites overlapping heterozygous SNVs (n="</span>, <span class="fu">nrow</span>(pdsel), <span class="st">")"</span>),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"Change of CTCF binding (log2 ref/alt)"</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Change of accessibility (fraction 6mA, ref - alt)"</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">colour =</span> <span class="st">"Change of motif</span><span class="sc">\n</span><span class="st">score (ref - alt)"</span>) <span class="sc">+</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"inside"</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.position.inside =</span> <span class="fu">c</span>(<span class="fl">0.98</span>, <span class="fl">0.02</span>),</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-chip-vs-6mA" class="quarto-float quarto-figure quarto-figure-center anchored" width="720">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-chip-vs-6mA-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="multiple-modalities_files/figure-html/fig-chip-vs-6mA-1.png" id="fig-chip-vs-6mA" class="img-fluid figure-img" width="720">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-chip-vs-6mA-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8.3
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="ctcf-binding-chip-versus-dna-methylation-5mcpg" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="ctcf-binding-chip-versus-dna-methylation-5mcpg"><span class="header-section-number">8.5</span> CTCF binding (ChIP) versus DNA methylation (5mCpG)</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pdsel <span class="ot">&lt;-</span> pd <span class="sc">|&gt;</span> <span class="fu">filter</span>(CpGmethNumReadsREF <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                      CpGmethNumReadsALT <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                      chipNumReadsREF <span class="sc">+</span> chipNumReadsALT <span class="sc">&gt;</span> <span class="dv">5</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pdsel, <span class="at">mapping =</span> <span class="fu">aes</span>(chipLog2FC, CpGfracmodDelta)) <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> motifScoreDeltaBinned)) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> scoreDeltaBinnedCols) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    ggpubr<span class="sc">::</span><span class="fu">stat_cor</span>(<span class="at">label.x.npc =</span> <span class="st">"right"</span>, <span class="at">hjust =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"Predicted CTCF sites overlapping heterozygous SNVs (n="</span>, <span class="fu">nrow</span>(pdsel), <span class="st">")"</span>),</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"Change of CTCF binding (log2 ref/alt)"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Change of 5mCpG (ref - alt)"</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">colour =</span> <span class="st">"Change of motif</span><span class="sc">\n</span><span class="st">score (ref - alt)"</span>) <span class="sc">+</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"inside"</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.position.inside =</span> <span class="fu">c</span>(<span class="fl">0.02</span>, <span class="fl">0.02</span>),</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-chip-vs-5mCpG" class="quarto-float quarto-figure quarto-figure-center anchored" width="720">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-chip-vs-5mCpG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="multiple-modalities_files/figure-html/fig-chip-vs-5mCpG-1.png" id="fig-chip-vs-5mCpG" class="img-fluid figure-img" width="720">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-chip-vs-5mCpG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8.4
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="session-info" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="session-info"><span class="header-section-number">8.6</span> Session info</h2>
+<details>
+<summary>
+<b> Click to view session info </b>
+</summary>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>═ Session info ═══════════════════════════════════════════════════════════════
+─ Packages ───────────────────────────────────────────────────────────────────
+ package                                      * version   date (UTC) lib source
+ abind                                        * 1.4-8     2024-09-12 [1] CRAN (R 4.5.0)
+ AnnotationDbi                                  1.70.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ backports                                      1.5.0     2024-05-23 [1] CRAN (R 4.5.0)
+ base64enc                                      0.1-3     2015-07-28 [1] CRAN (R 4.5.0)
+ Biobase                                      * 2.68.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BiocFileCache                                * 2.16.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BiocGenerics                                 * 0.54.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BiocIO                                       * 1.18.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BiocParallel                                   1.42.1    2025-06-01 [1] Bioconductor 3.21 (R 4.5.0)
+ Biostrings                                   * 2.76.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ bit                                            4.6.0     2025-03-06 [1] CRAN (R 4.5.0)
+ bit64                                          4.6.0-1   2025-01-16 [1] CRAN (R 4.5.0)
+ bitops                                         1.0-9     2024-10-03 [1] CRAN (R 4.5.0)
+ blob                                           1.2.4     2023-03-17 [1] CRAN (R 4.5.0)
+ broom                                          1.0.8     2025-03-28 [1] CRAN (R 4.5.0)
+ BSgenome                                     * 1.76.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34 * 0.1.0     2025-04-17 [1] Bioconductor
+ cachem                                         1.1.0     2024-05-16 [1] CRAN (R 4.5.0)
+ car                                            3.1-3     2024-09-27 [1] CRAN (R 4.5.0)
+ carData                                        3.0-5     2022-01-06 [1] CRAN (R 4.5.0)
+ caTools                                        1.18.3    2024-09-04 [1] CRAN (R 4.5.0)
+ checkmate                                      2.3.2     2024-07-29 [1] CRAN (R 4.5.0)
+ cli                                            3.6.5     2025-04-23 [1] CRAN (R 4.5.0)
+ cluster                                        2.1.8.1   2025-03-12 [2] CRAN (R 4.5.0)
+ codetools                                      0.2-20    2024-03-31 [2] CRAN (R 4.5.0)
+ colorspace                                     2.1-1     2024-07-26 [1] CRAN (R 4.5.0)
+ crayon                                         1.5.3     2024-06-20 [1] CRAN (R 4.5.0)
+ curl                                           6.3.0     2025-06-06 [1] CRAN (R 4.5.0)
+ data.table                                     1.17.4    2025-05-26 [1] CRAN (R 4.5.0)
+ DBI                                            1.2.3     2024-06-02 [1] CRAN (R 4.5.0)
+ dbplyr                                       * 2.5.0     2024-03-19 [1] CRAN (R 4.5.0)
+ DelayedArray                                   0.34.1    2025-04-17 [1] Bioconductor 3.21 (R 4.5.0)
+ dichromat                                      2.0-0.1   2022-05-02 [1] CRAN (R 4.5.0)
+ digest                                         0.6.37    2024-08-19 [1] CRAN (R 4.5.0)
+ DirichletMultinomial                           1.50.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ dplyr                                        * 1.1.4     2023-11-17 [1] CRAN (R 4.5.0)
+ evaluate                                       1.0.3     2025-01-10 [1] CRAN (R 4.5.0)
+ farver                                         2.1.2     2024-05-13 [1] CRAN (R 4.5.0)
+ fastmap                                        1.2.0     2024-05-15 [1] CRAN (R 4.5.0)
+ filelock                                       1.0.3     2023-12-11 [1] CRAN (R 4.5.0)
+ footprintR                                   * 0.3.5     2025-06-04 [1] Github (fmicompbio/footprintR@612f713)
+ forcats                                      * 1.0.0     2023-01-29 [1] CRAN (R 4.5.0)
+ foreign                                        0.8-90    2025-03-31 [2] CRAN (R 4.5.0)
+ Formula                                        1.2-5     2023-02-24 [1] CRAN (R 4.5.0)
+ generics                                     * 0.1.4     2025-05-09 [1] CRAN (R 4.5.0)
+ GenomeInfoDb                                 * 1.44.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ GenomeInfoDbData                               1.2.14    2025-04-17 [1] Bioconductor
+ GenomicAlignments                            * 1.44.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ GenomicFeatures                                1.60.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ GenomicRanges                                * 1.60.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ ggforce                                        0.4.2     2024-02-19 [1] CRAN (R 4.5.0)
+ ggplot2                                      * 3.5.2     2025-04-09 [1] CRAN (R 4.5.0)
+ ggpubr                                       * 0.6.0     2023-02-10 [1] CRAN (R 4.5.0)
+ ggsignif                                       0.6.4     2022-10-13 [1] CRAN (R 4.5.0)
+ glue                                           1.8.0     2024-09-30 [1] CRAN (R 4.5.0)
+ gridExtra                                      2.3       2017-09-09 [1] CRAN (R 4.5.0)
+ gtable                                         0.3.6     2024-10-25 [1] CRAN (R 4.5.0)
+ gtools                                         3.9.5     2023-11-20 [1] CRAN (R 4.5.0)
+ Hmisc                                        * 5.2-3     2025-03-16 [1] CRAN (R 4.5.0)
+ htmlTable                                      2.4.3     2024-07-21 [1] CRAN (R 4.5.0)
+ htmltools                                      0.5.8.1   2024-04-04 [1] CRAN (R 4.5.0)
+ htmlwidgets                                    1.6.4     2023-12-06 [1] CRAN (R 4.5.0)
+ httr                                           1.4.7     2023-08-15 [1] CRAN (R 4.5.0)
+ IRanges                                      * 2.42.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ JASPAR2024                                   * 0.99.7    2024-11-13 [1] Bioconductor 3.21 (R 4.5.0)
+ jsonlite                                       2.0.0     2025-03-27 [1] CRAN (R 4.5.0)
+ KEGGREST                                       1.48.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ knitr                                          1.50      2025-03-16 [1] CRAN (R 4.5.0)
+ labeling                                       0.4.3     2023-08-29 [1] CRAN (R 4.5.0)
+ lattice                                        0.22-7    2025-04-02 [1] CRAN (R 4.5.0)
+ lifecycle                                      1.0.4     2023-11-07 [1] CRAN (R 4.5.0)
+ magrittr                                       2.0.3     2022-03-30 [1] CRAN (R 4.5.0)
+ MASS                                           7.3-65    2025-02-28 [2] CRAN (R 4.5.0)
+ Matrix                                       * 1.7-3     2025-03-11 [2] CRAN (R 4.5.0)
+ MatrixGenerics                               * 1.20.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ matrixStats                                  * 1.5.0     2025-01-07 [1] CRAN (R 4.5.0)
+ memoise                                        2.0.1     2021-11-26 [1] CRAN (R 4.5.0)
+ nnet                                           7.3-20    2025-01-01 [2] CRAN (R 4.5.0)
+ patchwork                                    * 1.3.0     2024-09-16 [1] CRAN (R 4.5.0)
+ pillar                                         1.10.2    2025-04-05 [1] CRAN (R 4.5.0)
+ pkgconfig                                      2.0.3     2019-09-22 [1] CRAN (R 4.5.0)
+ png                                            0.1-8     2022-11-29 [1] CRAN (R 4.5.0)
+ polyclip                                       1.10-7    2024-07-23 [1] CRAN (R 4.5.0)
+ purrr                                          1.0.4     2025-02-05 [1] CRAN (R 4.5.0)
+ pwalign                                        1.4.0     2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ R6                                             2.6.1     2025-02-15 [1] CRAN (R 4.5.0)
+ RColorBrewer                                   1.1-3     2022-04-03 [1] CRAN (R 4.5.0)
+ Rcpp                                           1.0.14    2025-01-12 [1] CRAN (R 4.5.0)
+ RCurl                                          1.98-1.17 2025-03-22 [1] CRAN (R 4.5.0)
+ restfulr                                       0.0.15    2022-06-16 [1] CRAN (R 4.5.0)
+ rjson                                          0.2.23    2024-09-16 [1] CRAN (R 4.5.0)
+ rlang                                          1.1.6     2025-04-11 [1] CRAN (R 4.5.0)
+ rmarkdown                                      2.29      2024-11-04 [1] CRAN (R 4.5.0)
+ rpart                                          4.1.24    2025-01-07 [2] CRAN (R 4.5.0)
+ Rsamtools                                    * 2.24.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ RSQLite                                        2.4.1     2025-06-08 [1] CRAN (R 4.5.0)
+ rstatix                                        0.7.2     2023-02-01 [1] CRAN (R 4.5.0)
+ rstudioapi                                     0.17.1    2024-10-22 [1] CRAN (R 4.5.0)
+ rtracklayer                                  * 1.68.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ S4Arrays                                     * 1.8.1     2025-06-01 [1] Bioconductor 3.21 (R 4.5.0)
+ S4Vectors                                    * 0.46.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ scales                                         1.4.0     2025-04-24 [1] CRAN (R 4.5.0)
+ seqLogo                                        1.74.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ sessioninfo                                    1.2.3     2025-02-05 [1] CRAN (R 4.5.0)
+ SparseArray                                  * 1.8.0     2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ stringdist                                   * 0.9.15    2025-01-10 [1] CRAN (R 4.5.0)
+ stringi                                        1.8.7     2025-03-27 [1] CRAN (R 4.5.0)
+ stringr                                        1.5.1     2023-11-14 [1] CRAN (R 4.5.0)
+ SummarizedExperiment                         * 1.38.1    2025-04-30 [1] Bioconductor 3.21 (R 4.5.0)
+ TFBSTools                                    * 1.46.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ TFMPvalue                                      0.0.9     2022-10-21 [1] CRAN (R 4.5.0)
+ tibble                                         3.3.0     2025-06-08 [1] CRAN (R 4.5.0)
+ tidyr                                          1.3.1     2024-01-24 [1] CRAN (R 4.5.0)
+ tidyselect                                     1.2.1     2024-03-11 [1] CRAN (R 4.5.0)
+ tweenr                                         2.0.3     2024-02-26 [1] CRAN (R 4.5.0)
+ UCSC.utils                                     1.4.0     2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ universalmotif                               * 1.26.2    2025-04-23 [1] Bioconductor 3.21 (R 4.5.0)
+ VariantAnnotation                            * 1.54.1    2025-05-11 [1] Bioconductor 3.21 (R 4.5.0)
+ vctrs                                          0.6.5     2023-12-01 [1] CRAN (R 4.5.0)
+ withr                                          3.0.2     2024-10-28 [1] CRAN (R 4.5.0)
+ xfun                                           0.52      2025-04-02 [1] CRAN (R 4.5.0)
+ XML                                            3.99-0.18 2025-01-01 [1] CRAN (R 4.5.0)
+ XVector                                      * 0.48.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ yaml                                           2.3.10    2024-07-26 [1] CRAN (R 4.5.0)
+ zoo                                            1.8-14    2025-04-10 [1] CRAN (R 4.5.0)
+
+ [1] /tungstenfs/groups/gbioinfo/Appz/R/BioC/R-4.5-release-foss-2024.05_BioC-3.21-release-foss-2024.05
+ [2] /tachyon/groups/gbioinfo/Appz/easybuild/software/R/4.5.0-foss-2024.05/lib64/R/library
+ * ── Packages attached to the search path.
+
+──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+</details>
 
 
+<!-- -->
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Rauluseviciute2024-bc" class="csl-entry" role="listitem">
+Rauluseviciute, Ieva, Rafael Riudavets-Puig, Romain Blanc-Mathieu, Jaime A Castro-Mondragon, Katalin Ferenc, Vipin Kumar, Roza Berhanu Lemma, et al. 2024. <span>“<span>JASPAR</span> 2024: 20th Anniversary of the Open-Access Database of Transcription Factor Binding Profiles.”</span> <em>Nucleic Acids Res.</em> 52 (D1): D174–82.
+</div>
+<div id="ref-Stadler2011-xd" class="csl-entry" role="listitem">
+Stadler, Michael B, Rabih Murr, Lukas Burger, Robert Ivanek, Florian Lienert, Anne Schöler, Erik van Nimwegen, et al. 2011. <span>“<span class="nocase">DNA-binding</span> Factors Shape the Mouse Methylome at Distal Regulatory Regions.”</span> <em>Nature</em> 480 (7378): 490–95.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -296,13 +969,62 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
     });
     clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
@@ -408,7 +1130,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
@@ -645,7 +1366,494 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
-</nav>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb13" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Combining and comparing multiple data modalities {#sec-multiple-modalities}</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>Single molecule footprinting data itself may already provide more than</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>a single data modality: While 6mA calls provide information about the</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>accessiblity of sequenced molecules, additional base modifications such as</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>5mCpG and 5hmCpG inform about endogenous modification states. When working</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>with data from diploid organisms, the sequence at heterozygous loci allows </span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>separate quantification of individual alleles (see @sec-group-by-sequence).</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>In the sections below we are illustrating the integration of the above</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>data modalities (allele-specific accessibility and DNA methylation at</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>CpG dinucleotides) with ChIP-seq data at heterozygous CTCF binding sites.</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>This illustrates how the sequence variation that discriminates the two</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>alleles affects the binding of CTCF, and consequently also the chromatin</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>accessibility and DNA methylation of each allele.</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Load data and packages</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>We start by loading the required packages, high-confidence heterozygous</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>SNVs and preparing reference (<span class="in">`REF`</span>) and alternative (<span class="in">`ALT`</span>) version of the</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>genome by injecting the SNVs into the genome assembly.</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load-packages</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Packages</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicAlignments)</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(VariantAnnotation)</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(JASPAR2024)</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(TFBSTools)</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(universalmotif)</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Hmisc)</span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringdist)</span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SparseArray)</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a><span class="co"># number of CPUs to use for parallel tasks</span></span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>ncpu <span class="ot">&lt;-</span> <span class="dv">24</span></span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a><span class="co"># modBam files</span></span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>bamfilesC <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">WT_1 =</span> <span class="st">"data/mESC_wt_5mCG_5hmCG_rep1.bam"</span>,</span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>               <span class="at">WT_2 =</span> <span class="st">"data/mESC_wt_5mCG_5hmCG_rep2.bam"</span>)</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>bamfilesA <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">WT_1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>,</span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>               <span class="at">WT_2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>)</span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a><span class="co"># ChIP bam files</span></span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>chipbam <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">CTCF_1 =</span> <span class="st">"data/mESC_wt_CTCF_ChIP_rep1.bam"</span>, <span class="co"># GSM747534</span></span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>             <span class="at">CTCF_2 =</span> <span class="st">"data/mESC_wt_CTCF_ChIP_rep2.bam"</span>, <span class="co"># GSM747535</span></span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>             <span class="at">CTCF_3 =</span> <span class="st">"data/mESC_wt_CTCF_ChIP_rep3.bam"</span>) <span class="co"># GSM747534</span></span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Heterozygous SNVs</span></span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>hetsnv <span class="ot">&lt;-</span> <span class="fu">readVcf</span>(<span class="st">"data/het_snp.vcf.gz"</span>)</span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a><span class="co"># ... extract SNV positions and make sure they are not indels</span></span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a>hetpos <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="fu">rowRanges</span>(hetsnv), <span class="st">"GPos"</span>)</span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">width</span>(hetpos<span class="sc">$</span>REF) <span class="sc">==</span> <span class="dv">1</span>L))</span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">lengths</span>(hetpos<span class="sc">$</span>ALT) <span class="sc">==</span> <span class="dv">1</span>L))</span>
+<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">width</span>(<span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT)) <span class="sc">==</span> <span class="dv">1</span>L))</span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a>hetpos<span class="sc">$</span>ALT <span class="ot">&lt;-</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT)</span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
+<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a><span class="co"># ... create refernce and alternative genomes by injecting SNVs</span></span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a>gnmREF <span class="ot">&lt;-</span> gnmALT <span class="ot">&lt;-</span> <span class="fu">getSeq</span>(gnm)</span>
+<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (chr <span class="cf">in</span> <span class="fu">names</span>(gnmREF)) {</span>
+<span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">seqnames</span>(hetpos) <span class="sc">==</span> chr)</span>
+<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>    gnmREF[[chr]] <span class="ot">&lt;-</span> <span class="fu">replaceLetterAt</span>(<span class="at">x =</span> gnmREF[[chr]],</span>
+<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">at =</span> <span class="fu">start</span>(hetpos)[i],</span>
+<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">letter =</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>REF[i]),</span>
+<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>    gnmALT[[chr]] <span class="ot">&lt;-</span> <span class="fu">replaceLetterAt</span>(<span class="at">x =</span> gnmALT[[chr]],</span>
+<span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">at =</span> <span class="fu">start</span>(hetpos)[i],</span>
+<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">letter =</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT[i]),</span>
+<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-90"><a href="#cb13-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-93"><a href="#cb13-93" aria-hidden="true" tabindex="-1"></a><span class="fu">## Scan the genome with the CTCF motif and identify sites that overlap sequence variants</span></span>
+<span id="cb13-94"><a href="#cb13-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a>We next get the CTCF motif from the Jaspar database (@Rauluseviciute2024-bc)</span>
+<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a>and scan the genome for high scoring matches that overlap heterozygous SNVs.</span>
+<span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a>We will scan both reference and alternative version of the genome and combine</span>
+<span id="cb13-99"><a href="#cb13-99" aria-hidden="true" tabindex="-1"></a>them afterwards, in order to not miss any high-scoring CTCF motif matches</span>
+<span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a>due to the presence of SNVs.</span>
+<span id="cb13-101"><a href="#cb13-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-104"><a href="#cb13-104" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-105"><a href="#cb13-105" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-motif</span></span>
+<span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 6</span></span>
+<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 3</span></span>
+<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a><span class="co"># get CTCF motif from Jaspar</span></span>
+<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a>jaspar <span class="ot">&lt;-</span> <span class="fu">JASPAR2024</span>()</span>
+<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a>dbfunc <span class="ot">&lt;-</span> <span class="fu">getFromNamespace</span>(<span class="at">x =</span> <span class="st">"db"</span>, <span class="at">ns =</span> <span class="st">"JASPAR2024"</span>)</span>
+<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a>mdb <span class="ot">&lt;-</span> RSQLite<span class="sc">::</span><span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="fu">dbfunc</span>(jaspar))</span>
+<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a>tf_motif <span class="ot">&lt;-</span> <span class="fu">getMatrixByID</span>(<span class="at">x =</span> mdb, <span class="at">ID =</span> <span class="st">"MA0139.2"</span>)</span>
+<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a>RSQLite<span class="sc">::</span><span class="fu">dbDisconnect</span>(mdb)</span>
+<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a><span class="fu">seqLogo</span>(<span class="fu">toICM</span>(tf_motif), <span class="at">xaxis =</span> <span class="cn">FALSE</span>, <span class="at">yaxis =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: scan-genome-with-motif</span></span>
+<span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a><span class="co"># scan REF and ALT genomes for motif hits</span></span>
+<span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a>hitsREF <span class="ot">&lt;-</span> <span class="fu">scan_sequences</span>(<span class="at">motifs =</span> tf_motif,</span>
+<span id="cb13-126"><a href="#cb13-126" aria-hidden="true" tabindex="-1"></a>                          <span class="at">sequences =</span> gnmREF,</span>
+<span id="cb13-127"><a href="#cb13-127" aria-hidden="true" tabindex="-1"></a>                          <span class="at">threshold =</span> <span class="fl">8e-5</span>,</span>
+<span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a>                          <span class="at">threshold.type =</span> <span class="st">"pvalue"</span>,</span>
+<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a>                          <span class="at">RC =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a>                          <span class="at">use.gaps =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a>                          <span class="at">return.granges =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nthreads =</span> ncpu,</span>
+<span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="cf">if</span>(<span class="fu">interactive</span>()) <span class="dv">2</span> <span class="cf">else</span> <span class="dv">0</span>)</span>
+<span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a>hitsALT <span class="ot">&lt;-</span> <span class="fu">scan_sequences</span>(<span class="at">motifs =</span> tf_motif,</span>
+<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a>                          <span class="at">sequences =</span> gnmALT,</span>
+<span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a>                          <span class="at">threshold =</span> <span class="fl">8e-5</span>,</span>
+<span id="cb13-137"><a href="#cb13-137" aria-hidden="true" tabindex="-1"></a>                          <span class="at">threshold.type =</span> <span class="st">"pvalue"</span>,</span>
+<span id="cb13-138"><a href="#cb13-138" aria-hidden="true" tabindex="-1"></a>                          <span class="at">RC =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-139"><a href="#cb13-139" aria-hidden="true" tabindex="-1"></a>                          <span class="at">use.gaps =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-140"><a href="#cb13-140" aria-hidden="true" tabindex="-1"></a>                          <span class="at">return.granges =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-141"><a href="#cb13-141" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nthreads =</span> ncpu,</span>
+<span id="cb13-142"><a href="#cb13-142" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="cf">if</span>(<span class="fu">interactive</span>()) <span class="dv">2</span> <span class="cf">else</span> <span class="dv">0</span>)</span>
+<span id="cb13-143"><a href="#cb13-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-144"><a href="#cb13-144" aria-hidden="true" tabindex="-1"></a><span class="co"># combine (remove overlapping hits on the same strand)</span></span>
+<span id="cb13-145"><a href="#cb13-145" aria-hidden="true" tabindex="-1"></a>hits <span class="ot">&lt;-</span> <span class="fu">reduce</span>(<span class="fu">c</span>(hitsREF, hitsALT))</span>
+<span id="cb13-146"><a href="#cb13-146" aria-hidden="true" tabindex="-1"></a>hits <span class="ot">&lt;-</span> hits[<span class="fu">width</span>(hits) <span class="sc">==</span> <span class="fu">length</span>(tf_motif)]</span>
+<span id="cb13-147"><a href="#cb13-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-148"><a href="#cb13-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-149"><a href="#cb13-149" aria-hidden="true" tabindex="-1"></a>At this point, we have <span class="in">`r round(length(hits) / 1e3)`</span> thousand hits to the</span>
+<span id="cb13-150"><a href="#cb13-150" aria-hidden="true" tabindex="-1"></a>CTCF motif in the genome. We next select the sites that overlap any of our</span>
+<span id="cb13-151"><a href="#cb13-151" aria-hidden="true" tabindex="-1"></a>heterozygous SNVs.</span>
+<span id="cb13-152"><a href="#cb13-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-155"><a href="#cb13-155" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-156"><a href="#cb13-156" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: select-heterozygous-sites</span></span>
+<span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a>hits_het <span class="ot">&lt;-</span> <span class="fu">subsetByOverlaps</span>(hits, hetpos, <span class="at">ignore.strand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a><span class="co"># filter out sites with more than 4 overlapping SNVs</span></span>
+<span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a>nSNVs <span class="ot">&lt;-</span> <span class="fu">countOverlaps</span>(hits_het, hetpos, <span class="at">ignore.strand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(nSNVs)</span>
+<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a>hits_het <span class="ot">&lt;-</span> hits_het[nSNVs <span class="sc">&lt;=</span> <span class="dv">4</span>]</span>
+<span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a>Finally, we score the <span class="in">`r length(hits_het)`</span> heterozygous hits to get</span>
+<span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a>a motif match score for both reference and alternative alleles.</span>
+<span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a>We get a symmetric distribution around zero with similar numbers of</span>
+<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a>motifs that increase and decrease there match score in ALT compared to REF.</span>
+<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a>Only few motifs change there score by more than 50% of the maximal score</span>
+<span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a>(<span class="in">`r round(hitsREF$max.score[1], 1)`</span>).</span>
+<span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-176"><a href="#cb13-176" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-score-changes</span></span>
+<span id="cb13-177"><a href="#cb13-177" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 6</span></span>
+<span id="cb13-178"><a href="#cb13-178" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 4</span></span>
+<span id="cb13-179"><a href="#cb13-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-180"><a href="#cb13-180" aria-hidden="true" tabindex="-1"></a><span class="co"># score hits</span></span>
+<span id="cb13-181"><a href="#cb13-181" aria-hidden="true" tabindex="-1"></a>seqsREF <span class="ot">&lt;-</span> <span class="fu">getSeq</span>(gnmREF, hits_het)</span>
+<span id="cb13-182"><a href="#cb13-182" aria-hidden="true" tabindex="-1"></a>seqsALT <span class="ot">&lt;-</span> <span class="fu">getSeq</span>(gnmALT, hits_het)</span>
+<span id="cb13-183"><a href="#cb13-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-184"><a href="#cb13-184" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreREF <span class="ot">&lt;-</span> <span class="fu">score_match</span>(<span class="at">motif =</span> tf_motif, <span class="at">match =</span> <span class="fu">as.character</span>(seqsREF))</span>
+<span id="cb13-185"><a href="#cb13-185" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreALT <span class="ot">&lt;-</span> <span class="fu">score_match</span>(<span class="at">motif =</span> tf_motif, <span class="at">match =</span> <span class="fu">as.character</span>(seqsALT))</span>
+<span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreDelta <span class="ot">&lt;-</span> hits_het<span class="sc">$</span>scoreREF <span class="sc">-</span> hits_het<span class="sc">$</span>scoreALT</span>
+<span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreDeltaPercent <span class="ot">&lt;-</span> hits_het<span class="sc">$</span>scoreDelta <span class="sc">/</span> hitsREF<span class="sc">$</span>max.score[<span class="dv">1</span>] <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreDeltaBinned <span class="ot">&lt;-</span> Hmisc<span class="sc">::</span><span class="fu">cut2</span>(</span>
+<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> hits_het<span class="sc">$</span>scoreDelta,</span>
+<span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a>    <span class="at">cuts =</span> <span class="fu">c</span>(<span class="fu">min</span>(hits_het<span class="sc">$</span>scoreDelta) <span class="sc">-</span> <span class="fl">0.1</span>, <span class="sc">-</span><span class="dv">10</span>, <span class="sc">-</span><span class="dv">5</span>, <span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">10</span>,</span>
+<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a>             <span class="fu">max</span>(hits_het<span class="sc">$</span>scoreDelta) <span class="sc">+</span> <span class="fl">0.1</span>))</span>
+<span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a>hits_het<span class="sc">$</span>scoreDeltaBinned <span class="ot">&lt;-</span> <span class="fu">fct_rev</span>(hits_het<span class="sc">$</span>scoreDeltaBinned)</span>
+<span id="cb13-193"><a href="#cb13-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a>scoreDeltaBinnedCols <span class="ot">&lt;-</span> <span class="fu">structure</span>(<span class="fu">c</span>(<span class="st">"#611300"</span>, <span class="st">"#CC4E25"</span>, <span class="st">"#EBB0A8"</span>,</span>
+<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"#CCCCCC"</span>, <span class="st">"#B3D0E4"</span>, <span class="st">"#008BBD"</span>,</span>
+<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"#003560"</span>),</span>
+<span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">names =</span> <span class="fu">levels</span>(hits_het<span class="sc">$</span>scoreDeltaBinned))</span>
+<span id="cb13-198"><a href="#cb13-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-199"><a href="#cb13-199" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(hits_het), <span class="fu">aes</span>(scoreDeltaPercent)) <span class="sc">+</span></span>
+<span id="cb13-200"><a href="#cb13-200" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_bin</span>(<span class="at">bins =</span> <span class="dv">20</span>, <span class="at">geom =</span> <span class="st">"col"</span>,</span>
+<span id="cb13-201"><a href="#cb13-201" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(count), <span class="at">fill =</span> <span class="fu">after_stat</span>(x))) <span class="sc">+</span></span>
+<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> scoreDeltaBinnedCols[<span class="dv">1</span>],</span>
+<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a>                         <span class="at">mid =</span> scoreDeltaBinnedCols[<span class="dv">4</span>],</span>
+<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a>                         <span class="at">high =</span> scoreDeltaBinnedCols[<span class="dv">7</span>]) <span class="sc">+</span></span>
+<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">50</span>, <span class="dv">50</span>), <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span></span>
+<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">100</span>, <span class="dv">100</span>)) <span class="sc">+</span></span>
+<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Change of motif score (% of maximal score, REF - ALT)"</span>,</span>
+<span id="cb13-209"><a href="#cb13-209" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Number of CTCF motif hits"</span>,</span>
+<span id="cb13-210"><a href="#cb13-210" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill =</span> <span class="st">"Change of</span><span class="sc">\n</span><span class="st">motif score"</span>) <span class="sc">+</span></span>
+<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"inside"</span>,</span>
+<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.position.inside =</span> <span class="fu">c</span>(.<span class="dv">02</span>, .<span class="dv">98</span>),</span>
+<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb13-215"><a href="#cb13-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a><span class="fu">## Annotate heterozygous CTCF sites</span></span>
+<span id="cb13-218"><a href="#cb13-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-219"><a href="#cb13-219" aria-hidden="true" tabindex="-1"></a>We next annotate our CTCF sites with experimental measurements. To account for</span>
+<span id="cb13-220"><a href="#cb13-220" aria-hidden="true" tabindex="-1"></a>the limited resolution and exploit the autocorrelation of our experimental data,</span>
+<span id="cb13-221"><a href="#cb13-221" aria-hidden="true" tabindex="-1"></a>we will include the data in a small window of 180bp around each CTCF site.</span>
+<span id="cb13-222"><a href="#cb13-222" aria-hidden="true" tabindex="-1"></a>Furthermore, we will run the calculations in parallel over the sites using</span>
+<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a><span class="in">`mclapply`</span> from the <span class="in">`parallel`</span> package. This step is nevertheless slow and</span>
+<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a>takes about ~13 seconds per site and CPU on our system.</span>
+<span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>All measurements will be calculated separately for each allele. For single</span>
+<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>molecule footprinting data, we do this by grouping the reads based on</span>
+<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a>overlapping SNVs, as outlined in @sec-group-by-sequence.</span>
+<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a>For the ChIP-seq data, we load the read sequences using <span class="in">`stackStringsFromBam`</span></span>
+<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a>from the <span class="co">[</span><span class="ot">GenomicAlignments</span><span class="co">]</span>{.biocpkg} package and separate them by allele based</span>
+<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a>on overlapping SNVs. The CTCF ChIP samples correspond to the samples GSM747534,</span>
+<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a>GSM747535 and GSM747536 from @Stadler2011-xd.</span>
+<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: annotate-heterozygous-sites</span></span>
+<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr isTRUE(exists("params") &amp;&amp; is.list(params) &amp;&amp; isTRUE(params$recompute))</span></span>
+<span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a><span class="co"># expand sites to 180 bp windows centered on motif mid</span></span>
+<span id="cb13-242"><a href="#cb13-242" aria-hidden="true" tabindex="-1"></a>hits_hetExt <span class="ot">&lt;-</span> <span class="fu">resize</span>(hits_het, <span class="at">width =</span> <span class="dv">180</span>, <span class="at">fix =</span> <span class="st">"center"</span>)</span>
+<span id="cb13-243"><a href="#cb13-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-244"><a href="#cb13-244" aria-hidden="true" tabindex="-1"></a><span class="co"># iterate over sites and combine individual results</span></span>
+<span id="cb13-245"><a href="#cb13-245" aria-hidden="true" tabindex="-1"></a>pd <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">mclapply</span>(<span class="fu">seq_along</span>(hits_hetExt), <span class="cf">function</span>(i) {</span>
+<span id="cb13-246"><a href="#cb13-246" aria-hidden="true" tabindex="-1"></a>    <span class="co"># allocate empty result</span></span>
+<span id="cb13-247"><a href="#cb13-247" aria-hidden="true" tabindex="-1"></a>    hetpos1 <span class="ot">&lt;-</span> <span class="fu">subsetByOverlaps</span>(<span class="at">x =</span> hetpos, <span class="at">ranges =</span> hits_hetExt[i])</span>
+<span id="cb13-248"><a href="#cb13-248" aria-hidden="true" tabindex="-1"></a>    seqREF <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">as.character</span>(hetpos1<span class="sc">$</span>REF), <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb13-249"><a href="#cb13-249" aria-hidden="true" tabindex="-1"></a>    seqALT <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">as.character</span>(hetpos1<span class="sc">$</span>ALT), <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb13-250"><a href="#cb13-250" aria-hidden="true" tabindex="-1"></a>    seq1 <span class="ot">&lt;-</span> <span class="fu">getSeq</span>(gnm, hits_hetExt[i])</span>
+<span id="cb13-251"><a href="#cb13-251" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">locus =</span> <span class="fu">as.character</span>(hits_hetExt[i]),</span>
+<span id="cb13-252"><a href="#cb13-252" aria-hidden="true" tabindex="-1"></a>                      <span class="at">nA =</span> <span class="fu">countPattern</span>(<span class="st">"A"</span>, seq1[[<span class="dv">1</span>]], <span class="at">fixed =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-253"><a href="#cb13-253" aria-hidden="true" tabindex="-1"></a>                      <span class="at">nCpG =</span> <span class="fu">countPattern</span>(<span class="st">"CG"</span>, seq1[[<span class="dv">1</span>]], <span class="at">fixed =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-254"><a href="#cb13-254" aria-hidden="true" tabindex="-1"></a>                      <span class="at">motifScoreREF =</span> hits_hetExt<span class="sc">$</span>scoreREF[i],</span>
+<span id="cb13-255"><a href="#cb13-255" aria-hidden="true" tabindex="-1"></a>                      <span class="at">motifScoreALT =</span> hits_hetExt<span class="sc">$</span>scoreALT[i],</span>
+<span id="cb13-256"><a href="#cb13-256" aria-hidden="true" tabindex="-1"></a>                      <span class="at">motifScoreDelta =</span> hits_hetExt<span class="sc">$</span>scoreDelta[i],</span>
+<span id="cb13-257"><a href="#cb13-257" aria-hidden="true" tabindex="-1"></a>                      <span class="at">motifScoreDeltaBinned =</span> hits_het<span class="sc">$</span>scoreDeltaBinned[i],</span>
+<span id="cb13-258"><a href="#cb13-258" aria-hidden="true" tabindex="-1"></a>                      <span class="at">varlabelREF =</span> seqREF,</span>
+<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a>                      <span class="at">varlabelALT =</span> seqALT,</span>
+<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGmethNumReadsREF =</span> <span class="dv">0</span>,</span>
+<span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGmethNumReadsALT =</span> <span class="dv">0</span>,</span>
+<span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGmethNumReadsNA =</span> <span class="dv">0</span>,</span>
+<span id="cb13-263"><a href="#cb13-263" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGfracmodREF =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGfracmodALT =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-265"><a href="#cb13-265" aria-hidden="true" tabindex="-1"></a>                      <span class="at">CpGfracmodDelta =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-266"><a href="#cb13-266" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AmethNumReadsREF =</span> <span class="dv">0</span>,</span>
+<span id="cb13-267"><a href="#cb13-267" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AmethNumReadsALT =</span> <span class="dv">0</span>,</span>
+<span id="cb13-268"><a href="#cb13-268" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AmethNumReadsNA =</span> <span class="dv">0</span>,</span>
+<span id="cb13-269"><a href="#cb13-269" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AfracmodREF =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-270"><a href="#cb13-270" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AfracmodALT =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-271"><a href="#cb13-271" aria-hidden="true" tabindex="-1"></a>                      <span class="at">AfracmodDelta =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-272"><a href="#cb13-272" aria-hidden="true" tabindex="-1"></a>                      <span class="at">chipNumReadsREF =</span> <span class="dv">0</span>,</span>
+<span id="cb13-273"><a href="#cb13-273" aria-hidden="true" tabindex="-1"></a>                      <span class="at">chipNumReadsALT =</span> <span class="dv">0</span>,</span>
+<span id="cb13-274"><a href="#cb13-274" aria-hidden="true" tabindex="-1"></a>                      <span class="at">chipNumReadsNA =</span> <span class="dv">0</span>,</span>
+<span id="cb13-275"><a href="#cb13-275" aria-hidden="true" tabindex="-1"></a>                      <span class="at">chipLog2FC =</span> <span class="dv">0</span></span>
+<span id="cb13-276"><a href="#cb13-276" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-277"><a href="#cb13-277" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-278"><a href="#cb13-278" aria-hidden="true" tabindex="-1"></a>    <span class="co"># load read-level data</span></span>
+<span id="cb13-279"><a href="#cb13-279" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... 5mCpG</span></span>
+<span id="cb13-280"><a href="#cb13-280" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (res[<span class="dv">1</span>, <span class="st">"nCpG"</span>] <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a>        seC <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(<span class="at">bamfiles =</span> bamfilesC,</span>
+<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a>                          <span class="at">regions =</span> hits_hetExt[i],</span>
+<span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a>                          <span class="at">modbase =</span> <span class="st">"m"</span>, <span class="at">level =</span> <span class="st">"read"</span>,</span>
+<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>                          <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>, <span class="at">sequenceReference =</span> gnmREF,</span>
+<span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a>                          <span class="at">variantPositions =</span> hetpos1, </span>
+<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a>                          <span class="at">trim =</span> <span class="cn">TRUE</span>, <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(),</span>
+<span id="cb13-287"><a href="#cb13-287" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb13-288"><a href="#cb13-288" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="fu">nrow</span>(seC) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-289"><a href="#cb13-289" aria-hidden="true" tabindex="-1"></a>            <span class="co"># ... filter out non-CpGs (in any genome)</span></span>
+<span id="cb13-290"><a href="#cb13-290" aria-hidden="true" tabindex="-1"></a>            seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seC, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb13-291"><a href="#cb13-291" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">sequenceContext =</span> <span class="st">"NCG"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
+<span id="cb13-292"><a href="#cb13-292" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (<span class="fu">nrow</span>(seC) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-293"><a href="#cb13-293" aria-hidden="true" tabindex="-1"></a>                seC <span class="ot">&lt;-</span> <span class="fu">addSeqContext</span>(<span class="at">x =</span> seC, <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>,</span>
+<span id="cb13-294"><a href="#cb13-294" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">sequenceReference =</span> gnmALT)</span>
+<span id="cb13-295"><a href="#cb13-295" aria-hidden="true" tabindex="-1"></a>                seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seC, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb13-296"><a href="#cb13-296" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">sequenceContext =</span> <span class="st">"NCG"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
+<span id="cb13-297"><a href="#cb13-297" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> (<span class="fu">nrow</span>(seC) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-298"><a href="#cb13-298" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># cluster by allele</span></span>
+<span id="cb13-299"><a href="#cb13-299" aria-hidden="true" tabindex="-1"></a>                    varlabels <span class="ot">&lt;-</span> <span class="fu">structure</span>(</span>
+<span id="cb13-300"><a href="#cb13-300" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">unlist</span>(<span class="fu">lapply</span>(seC<span class="sc">$</span>readInfo, <span class="st">"[["</span>, <span class="st">"variant_label"</span>), <span class="at">use.names =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb13-301"><a href="#cb13-301" aria-hidden="true" tabindex="-1"></a>                        <span class="at">names =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(seC<span class="sc">$</span>readInfo, rownames), <span class="at">use.names =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb13-302"><a href="#cb13-302" aria-hidden="true" tabindex="-1"></a>                    dists <span class="ot">&lt;-</span> <span class="fu">stringdistmatrix</span>(<span class="at">a =</span> <span class="fu">c</span>(seqREF, seqALT),</span>
+<span id="cb13-303"><a href="#cb13-303" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">b =</span> varlabels, <span class="at">method =</span> <span class="st">"hamming"</span>,</span>
+<span id="cb13-304"><a href="#cb13-304" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">nthread =</span> <span class="dv">2</span>) <span class="sc">/</span> <span class="fu">nchar</span>(varlabels[<span class="dv">1</span>])</span>
+<span id="cb13-305"><a href="#cb13-305" aria-hidden="true" tabindex="-1"></a>                    methGroup <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">colMins</span>(dists) <span class="sc">&lt;</span> <span class="fl">0.34</span>,</span>
+<span id="cb13-306"><a href="#cb13-306" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">c</span>(<span class="st">"REF"</span>, <span class="st">"ALT"</span>)[<span class="fu">apply</span>(dists, <span class="dv">2</span>, which.min)], <span class="cn">NA</span>)</span>
+<span id="cb13-307"><a href="#cb13-307" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># calculate average modification fraction</span></span>
+<span id="cb13-308"><a href="#cb13-308" aria-hidden="true" tabindex="-1"></a>                    modprob <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">assay</span>(seC, <span class="st">"mod_prob"</span>))</span>
+<span id="cb13-309"><a href="#cb13-309" aria-hidden="true" tabindex="-1"></a>                    percmeth <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">split</span>(<span class="fu">names</span>(varlabels), methGroup), <span class="cf">function</span>(rid) {</span>
+<span id="cb13-310"><a href="#cb13-310" aria-hidden="true" tabindex="-1"></a>                        nmod <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">nnavals</span>(modprob[, rid]) <span class="sc">&gt;=</span> <span class="fl">0.5</span>)</span>
+<span id="cb13-311"><a href="#cb13-311" aria-hidden="true" tabindex="-1"></a>                        nvalid <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">is_nonna</span>(modprob)[, rid])</span>
+<span id="cb13-312"><a href="#cb13-312" aria-hidden="true" tabindex="-1"></a>                        nmod <span class="sc">/</span> nvalid</span>
+<span id="cb13-313"><a href="#cb13-313" aria-hidden="true" tabindex="-1"></a>                    })</span>
+<span id="cb13-314"><a href="#cb13-314" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb13-315"><a href="#cb13-315" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># add to `res`</span></span>
+<span id="cb13-316"><a href="#cb13-316" aria-hidden="true" tabindex="-1"></a>                    res[<span class="dv">1</span>, <span class="fu">c</span>(<span class="st">"CpGmethNumReadsREF"</span>, <span class="st">"CpGmethNumReadsALT"</span>, <span class="st">"CpGmethNumReadsNA"</span>,</span>
+<span id="cb13-317"><a href="#cb13-317" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"CpGfracmodREF"</span>, <span class="st">"CpGfracmodALT"</span>, <span class="st">"CpGfracmodDelta"</span>)] <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb13-318"><a href="#cb13-318" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGmethNumReadsREF =</span> <span class="fu">sum</span>(methGroup <span class="sc">==</span> <span class="st">"REF"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-319"><a href="#cb13-319" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGmethNumReadsALT =</span> <span class="fu">sum</span>(methGroup <span class="sc">==</span> <span class="st">"ALT"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-320"><a href="#cb13-320" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGmethNumReadsNA =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(methGroup)),</span>
+<span id="cb13-321"><a href="#cb13-321" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGfracmodREF =</span> percmeth<span class="sc">$</span>REF <span class="sc">%||%</span> <span class="cn">NA</span>,</span>
+<span id="cb13-322"><a href="#cb13-322" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGfracmodALT =</span> percmeth<span class="sc">$</span>ALT <span class="sc">%||%</span> <span class="cn">NA</span>,</span>
+<span id="cb13-323"><a href="#cb13-323" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">CpGfracmodDelta =</span> (percmeth<span class="sc">$</span>REF <span class="sc">%||%</span> <span class="cn">NA</span>) <span class="sc">-</span> (percmeth<span class="sc">$</span>ALT <span class="sc">%||%</span> <span class="cn">NA</span>))</span>
+<span id="cb13-324"><a href="#cb13-324" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb13-325"><a href="#cb13-325" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb13-326"><a href="#cb13-326" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb13-327"><a href="#cb13-327" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-328"><a href="#cb13-328" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-329"><a href="#cb13-329" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... 6mA</span></span>
+<span id="cb13-330"><a href="#cb13-330" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (res[<span class="dv">1</span>, <span class="st">"nA"</span>] <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-331"><a href="#cb13-331" aria-hidden="true" tabindex="-1"></a>        seA <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(<span class="at">bamfiles =</span> bamfilesA,</span>
+<span id="cb13-332"><a href="#cb13-332" aria-hidden="true" tabindex="-1"></a>                          <span class="at">regions =</span> hits_hetExt[i],</span>
+<span id="cb13-333"><a href="#cb13-333" aria-hidden="true" tabindex="-1"></a>                          <span class="at">modbase =</span> <span class="st">"a"</span>, <span class="at">level =</span> <span class="st">"read"</span>,</span>
+<span id="cb13-334"><a href="#cb13-334" aria-hidden="true" tabindex="-1"></a>                          <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>, <span class="at">sequenceReference =</span> gnmREF,</span>
+<span id="cb13-335"><a href="#cb13-335" aria-hidden="true" tabindex="-1"></a>                          <span class="at">variantPositions =</span> hetpos1, </span>
+<span id="cb13-336"><a href="#cb13-336" aria-hidden="true" tabindex="-1"></a>                          <span class="at">trim =</span> <span class="cn">TRUE</span>, <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(),</span>
+<span id="cb13-337"><a href="#cb13-337" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb13-338"><a href="#cb13-338" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="fu">nrow</span>(seA) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-339"><a href="#cb13-339" aria-hidden="true" tabindex="-1"></a>            <span class="co"># ... filter out non-As (in any genome)</span></span>
+<span id="cb13-340"><a href="#cb13-340" aria-hidden="true" tabindex="-1"></a>            seA <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seA, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb13-341"><a href="#cb13-341" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">sequenceContext =</span> <span class="st">"A"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
+<span id="cb13-342"><a href="#cb13-342" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (<span class="fu">nrow</span>(seA) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-343"><a href="#cb13-343" aria-hidden="true" tabindex="-1"></a>                seA <span class="ot">&lt;-</span> <span class="fu">addSeqContext</span>(<span class="at">x =</span> seA, <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>,</span>
+<span id="cb13-344"><a href="#cb13-344" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">sequenceReference =</span> gnmALT)</span>
+<span id="cb13-345"><a href="#cb13-345" aria-hidden="true" tabindex="-1"></a>                seA <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seA, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb13-346"><a href="#cb13-346" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">sequenceContext =</span> <span class="st">"A"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
+<span id="cb13-347"><a href="#cb13-347" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> (<span class="fu">nrow</span>(seA) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-348"><a href="#cb13-348" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># cluster by allele</span></span>
+<span id="cb13-349"><a href="#cb13-349" aria-hidden="true" tabindex="-1"></a>                    varlabels <span class="ot">&lt;-</span> <span class="fu">structure</span>(</span>
+<span id="cb13-350"><a href="#cb13-350" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">unlist</span>(<span class="fu">lapply</span>(seA<span class="sc">$</span>readInfo, <span class="st">"[["</span>, <span class="st">"variant_label"</span>), <span class="at">use.names =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb13-351"><a href="#cb13-351" aria-hidden="true" tabindex="-1"></a>                        <span class="at">names =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(seA<span class="sc">$</span>readInfo, rownames), <span class="at">use.names =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb13-352"><a href="#cb13-352" aria-hidden="true" tabindex="-1"></a>                    dists <span class="ot">&lt;-</span> <span class="fu">stringdistmatrix</span>(<span class="at">a =</span> <span class="fu">c</span>(seqREF, seqALT),</span>
+<span id="cb13-353"><a href="#cb13-353" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">b =</span> varlabels, <span class="at">method =</span> <span class="st">"hamming"</span>,</span>
+<span id="cb13-354"><a href="#cb13-354" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">nthread =</span> <span class="dv">2</span>) <span class="sc">/</span> <span class="fu">nchar</span>(varlabels[<span class="dv">1</span>])</span>
+<span id="cb13-355"><a href="#cb13-355" aria-hidden="true" tabindex="-1"></a>                    methGroup <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">colMins</span>(dists) <span class="sc">&lt;</span> <span class="fl">0.34</span>,</span>
+<span id="cb13-356"><a href="#cb13-356" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">c</span>(<span class="st">"REF"</span>, <span class="st">"ALT"</span>)[<span class="fu">apply</span>(dists, <span class="dv">2</span>, which.min)], <span class="cn">NA</span>)</span>
+<span id="cb13-357"><a href="#cb13-357" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb13-358"><a href="#cb13-358" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># calculate average modification fraction</span></span>
+<span id="cb13-359"><a href="#cb13-359" aria-hidden="true" tabindex="-1"></a>                    modprob <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">assay</span>(seA, <span class="st">"mod_prob"</span>))</span>
+<span id="cb13-360"><a href="#cb13-360" aria-hidden="true" tabindex="-1"></a>                    percmeth <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">split</span>(<span class="fu">names</span>(varlabels), methGroup), <span class="cf">function</span>(rid) {</span>
+<span id="cb13-361"><a href="#cb13-361" aria-hidden="true" tabindex="-1"></a>                        nmod <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">nnavals</span>(modprob[, rid]) <span class="sc">&gt;=</span> <span class="fl">0.5</span>)</span>
+<span id="cb13-362"><a href="#cb13-362" aria-hidden="true" tabindex="-1"></a>                        nvalid <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">is_nonna</span>(modprob)[, rid])</span>
+<span id="cb13-363"><a href="#cb13-363" aria-hidden="true" tabindex="-1"></a>                        nmod <span class="sc">/</span> nvalid</span>
+<span id="cb13-364"><a href="#cb13-364" aria-hidden="true" tabindex="-1"></a>                    })</span>
+<span id="cb13-365"><a href="#cb13-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-366"><a href="#cb13-366" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># add to `res`</span></span>
+<span id="cb13-367"><a href="#cb13-367" aria-hidden="true" tabindex="-1"></a>                    res[<span class="dv">1</span>, <span class="fu">c</span>(<span class="st">"AmethNumReadsREF"</span>, <span class="st">"AmethNumReadsALT"</span>, <span class="st">"AmethNumReadsNA"</span>,</span>
+<span id="cb13-368"><a href="#cb13-368" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"AfracmodREF"</span>, <span class="st">"AfracmodALT"</span>, <span class="st">"AfracmodDelta"</span>)] <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb13-369"><a href="#cb13-369" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AmethNumReadsREF =</span> <span class="fu">sum</span>(methGroup <span class="sc">==</span> <span class="st">"REF"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-370"><a href="#cb13-370" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AmethNumReadsALT =</span> <span class="fu">sum</span>(methGroup <span class="sc">==</span> <span class="st">"ALT"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-371"><a href="#cb13-371" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AmethNumReadsNA =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(methGroup)),</span>
+<span id="cb13-372"><a href="#cb13-372" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AfracmodREF =</span> percmeth<span class="sc">$</span>REF <span class="sc">%||%</span> <span class="cn">NA</span>,</span>
+<span id="cb13-373"><a href="#cb13-373" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AfracmodALT =</span> percmeth<span class="sc">$</span>ALT <span class="sc">%||%</span> <span class="cn">NA</span>,</span>
+<span id="cb13-374"><a href="#cb13-374" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">AfracmodDelta =</span> (percmeth<span class="sc">$</span>REF <span class="sc">%||%</span> <span class="cn">NA</span>) <span class="sc">-</span> (percmeth<span class="sc">$</span>ALT <span class="sc">%||%</span> <span class="cn">NA</span>))</span>
+<span id="cb13-375"><a href="#cb13-375" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb13-376"><a href="#cb13-376" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb13-377"><a href="#cb13-377" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb13-378"><a href="#cb13-378" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-379"><a href="#cb13-379" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb13-380"><a href="#cb13-380" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... CTCF ChIP-seq</span></span>
+<span id="cb13-381"><a href="#cb13-381" aria-hidden="true" tabindex="-1"></a>    reads <span class="ot">&lt;-</span> <span class="fu">do.call</span>(c, <span class="fu">unname</span>(<span class="fu">lapply</span>(chipbam, <span class="cf">function</span>(bam1) {</span>
+<span id="cb13-382"><a href="#cb13-382" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stackStringsFromBam</span>(<span class="at">file =</span> bam1, <span class="at">param =</span> <span class="fu">unstrand</span>(hits_hetExt[i]), <span class="at">what =</span> <span class="st">"seq"</span>)</span>
+<span id="cb13-383"><a href="#cb13-383" aria-hidden="true" tabindex="-1"></a>    })))</span>
+<span id="cb13-384"><a href="#cb13-384" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-385"><a href="#cb13-385" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(reads) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-386"><a href="#cb13-386" aria-hidden="true" tabindex="-1"></a>        varlabels <span class="ot">&lt;-</span> <span class="fu">apply</span>(<span class="fu">do.call</span>(cbind, <span class="fu">lapply</span>(<span class="fu">start</span>(hetpos1) <span class="sc">-</span> <span class="fu">start</span>(hits_hetExt[i]) <span class="sc">+</span> <span class="dv">1</span>, <span class="cf">function</span>(pos) {</span>
+<span id="cb13-387"><a href="#cb13-387" aria-hidden="true" tabindex="-1"></a>            <span class="fu">as.character</span>(<span class="fu">subseq</span>(<span class="at">x =</span> reads, <span class="at">start =</span> pos, <span class="at">width =</span> <span class="dv">1</span>))</span>
+<span id="cb13-388"><a href="#cb13-388" aria-hidden="true" tabindex="-1"></a>        })), <span class="dv">1</span>, paste, <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb13-389"><a href="#cb13-389" aria-hidden="true" tabindex="-1"></a>        dists <span class="ot">&lt;-</span> <span class="fu">stringdistmatrix</span>(<span class="at">a =</span> <span class="fu">c</span>(seqREF, seqALT),</span>
+<span id="cb13-390"><a href="#cb13-390" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">b =</span> varlabels, <span class="at">method =</span> <span class="st">"hamming"</span>,</span>
+<span id="cb13-391"><a href="#cb13-391" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">nthread =</span> <span class="dv">2</span>)</span>
+<span id="cb13-392"><a href="#cb13-392" aria-hidden="true" tabindex="-1"></a>        chipGroup <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(dists[<span class="dv">1</span>,] <span class="sc">&lt;</span> dists[<span class="dv">2</span>,], <span class="st">"REF"</span>,</span>
+<span id="cb13-393"><a href="#cb13-393" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">ifelse</span>(dists[<span class="dv">2</span>,] <span class="sc">&lt;</span> dists[<span class="dv">1</span>,], <span class="st">"ALT"</span>, <span class="cn">NA</span>))</span>
+<span id="cb13-394"><a href="#cb13-394" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb13-395"><a href="#cb13-395" aria-hidden="true" tabindex="-1"></a>        chipGroup <span class="ot">&lt;-</span> <span class="fu">character</span>(<span class="dv">0</span>)</span>
+<span id="cb13-396"><a href="#cb13-396" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-397"><a href="#cb13-397" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add to `res`</span></span>
+<span id="cb13-398"><a href="#cb13-398" aria-hidden="true" tabindex="-1"></a>    res[<span class="dv">1</span>, <span class="fu">c</span>(<span class="st">"chipNumReadsREF"</span>, <span class="st">"chipNumReadsALT"</span>,</span>
+<span id="cb13-399"><a href="#cb13-399" aria-hidden="true" tabindex="-1"></a>             <span class="st">"chipNumReadsNA"</span>, <span class="st">"chipLog2FC"</span>)] <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb13-400"><a href="#cb13-400" aria-hidden="true" tabindex="-1"></a>                 <span class="at">chipNumReadsREF =</span> <span class="fu">sum</span>(chipGroup <span class="sc">==</span> <span class="st">"REF"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-401"><a href="#cb13-401" aria-hidden="true" tabindex="-1"></a>                 <span class="at">chipNumReadsALT =</span> <span class="fu">sum</span>(chipGroup <span class="sc">==</span> <span class="st">"ALT"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-402"><a href="#cb13-402" aria-hidden="true" tabindex="-1"></a>                 <span class="at">chipNumReadsNA =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(chipGroup)),</span>
+<span id="cb13-403"><a href="#cb13-403" aria-hidden="true" tabindex="-1"></a>                 <span class="at">chipLog2FC =</span> <span class="fu">log2</span>((<span class="fu">sum</span>(chipGroup <span class="sc">==</span> <span class="st">"REF"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="dv">16</span>) <span class="sc">/</span></span>
+<span id="cb13-404"><a href="#cb13-404" aria-hidden="true" tabindex="-1"></a>                                       (<span class="fu">sum</span>(chipGroup <span class="sc">==</span> <span class="st">"ALT"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="dv">16</span>)))</span>
+<span id="cb13-405"><a href="#cb13-405" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-406"><a href="#cb13-406" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(res)</span>
+<span id="cb13-407"><a href="#cb13-407" aria-hidden="true" tabindex="-1"></a>}, <span class="at">mc.cores =</span> ncpu, <span class="at">mc.preschedule =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb13-408"><a href="#cb13-408" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-409"><a href="#cb13-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-412"><a href="#cb13-412" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-413"><a href="#cb13-413" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: save-annotated-sites</span></span>
+<span id="cb13-414"><a href="#cb13-414" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr isTRUE(exists("params") &amp;&amp; is.list(params) &amp;&amp; isTRUE(params$recompute))</span></span>
+<span id="cb13-415"><a href="#cb13-415" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb13-416"><a href="#cb13-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-417"><a href="#cb13-417" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">"data/out"</span>)) {</span>
+<span id="cb13-418"><a href="#cb13-418" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dir.create</span>(<span class="st">"data/out"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-419"><a href="#cb13-419" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-420"><a href="#cb13-420" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(pd, <span class="st">"data/out/multiple-modalities_het-CTCF-sites-annotated.rds"</span>)</span>
+<span id="cb13-421"><a href="#cb13-421" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-422"><a href="#cb13-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-425"><a href="#cb13-425" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-426"><a href="#cb13-426" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load-annotated-sites</span></span>
+<span id="cb13-427"><a href="#cb13-427" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb13-428"><a href="#cb13-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-429"><a href="#cb13-429" aria-hidden="true" tabindex="-1"></a>pd <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/out/multiple-modalities_het-CTCF-sites-annotated.rds"</span>)</span>
+<span id="cb13-430"><a href="#cb13-430" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-431"><a href="#cb13-431" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-432"><a href="#cb13-432" aria-hidden="true" tabindex="-1"></a><span class="fu">## Visualize differences between alleles at each heterozygous CTCF site</span></span>
+<span id="cb13-433"><a href="#cb13-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-434"><a href="#cb13-434" aria-hidden="true" tabindex="-1"></a>We know that the binding of a transcription factor leads to an increase</span>
+<span id="cb13-435"><a href="#cb13-435" aria-hidden="true" tabindex="-1"></a>of local chromatin accessibility, as well as a decrease in local DNA methylation.</span>
+<span id="cb13-436"><a href="#cb13-436" aria-hidden="true" tabindex="-1"></a>We thus expect to find clear associations between the allelic</span>
+<span id="cb13-437"><a href="#cb13-437" aria-hidden="true" tabindex="-1"></a>changes of these two and CTCF ChIP signals, and also with changes of</span>
+<span id="cb13-438"><a href="#cb13-438" aria-hidden="true" tabindex="-1"></a>motif scores that are the underlying cause of allelic differences.</span>
+<span id="cb13-439"><a href="#cb13-439" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-440"><a href="#cb13-440" aria-hidden="true" tabindex="-1"></a><span class="fu">### CTCF binding (ChIP) versus accessibility (6mA)</span></span>
+<span id="cb13-441"><a href="#cb13-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-444"><a href="#cb13-444" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-445"><a href="#cb13-445" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-chip-vs-6mA</span></span>
+<span id="cb13-446"><a href="#cb13-446" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 7.5</span></span>
+<span id="cb13-447"><a href="#cb13-447" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 7.5</span></span>
+<span id="cb13-448"><a href="#cb13-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-449"><a href="#cb13-449" aria-hidden="true" tabindex="-1"></a>pdsel <span class="ot">&lt;-</span> pd <span class="sc">|&gt;</span> <span class="fu">filter</span>(CpGmethNumReadsREF <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb13-450"><a href="#cb13-450" aria-hidden="true" tabindex="-1"></a>                      CpGmethNumReadsALT <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb13-451"><a href="#cb13-451" aria-hidden="true" tabindex="-1"></a>                      chipNumReadsREF <span class="sc">+</span> chipNumReadsALT <span class="sc">&gt;</span> <span class="dv">5</span>)</span>
+<span id="cb13-452"><a href="#cb13-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-453"><a href="#cb13-453" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pdsel, <span class="at">mapping =</span> <span class="fu">aes</span>(chipLog2FC, AfracmodDelta)) <span class="sc">+</span></span>
+<span id="cb13-454"><a href="#cb13-454" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> motifScoreDeltaBinned)) <span class="sc">+</span></span>
+<span id="cb13-455"><a href="#cb13-455" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_colour_manual</span>(<span class="at">values =</span>  scoreDeltaBinnedCols) <span class="sc">+</span></span>
+<span id="cb13-456"><a href="#cb13-456" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_cor</span>(<span class="at">label.x.npc =</span> <span class="st">"left"</span>) <span class="sc">+</span></span>
+<span id="cb13-457"><a href="#cb13-457" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"Predicted CTCF sites overlapping heterozygous SNVs (n="</span>, <span class="fu">nrow</span>(pdsel), <span class="st">")"</span>),</span>
+<span id="cb13-458"><a href="#cb13-458" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"Change of CTCF binding (log2 ref/alt)"</span>,</span>
+<span id="cb13-459"><a href="#cb13-459" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Change of accessibility (fraction 6mA, ref - alt)"</span>,</span>
+<span id="cb13-460"><a href="#cb13-460" aria-hidden="true" tabindex="-1"></a>         <span class="at">colour =</span> <span class="st">"Change of motif</span><span class="sc">\n</span><span class="st">score (ref - alt)"</span>) <span class="sc">+</span></span>
+<span id="cb13-461"><a href="#cb13-461" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb13-462"><a href="#cb13-462" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"inside"</span>,</span>
+<span id="cb13-463"><a href="#cb13-463" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.position.inside =</span> <span class="fu">c</span>(<span class="fl">0.98</span>, <span class="fl">0.02</span>),</span>
+<span id="cb13-464"><a href="#cb13-464" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>))</span>
+<span id="cb13-465"><a href="#cb13-465" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-466"><a href="#cb13-466" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-467"><a href="#cb13-467" aria-hidden="true" tabindex="-1"></a><span class="fu">## CTCF binding (ChIP) versus DNA methylation (5mCpG)</span></span>
+<span id="cb13-468"><a href="#cb13-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-471"><a href="#cb13-471" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-472"><a href="#cb13-472" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-chip-vs-5mCpG</span></span>
+<span id="cb13-473"><a href="#cb13-473" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 7.5</span></span>
+<span id="cb13-474"><a href="#cb13-474" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 7.5</span></span>
+<span id="cb13-475"><a href="#cb13-475" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-476"><a href="#cb13-476" aria-hidden="true" tabindex="-1"></a>pdsel <span class="ot">&lt;-</span> pd <span class="sc">|&gt;</span> <span class="fu">filter</span>(CpGmethNumReadsREF <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb13-477"><a href="#cb13-477" aria-hidden="true" tabindex="-1"></a>                      CpGmethNumReadsALT <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb13-478"><a href="#cb13-478" aria-hidden="true" tabindex="-1"></a>                      chipNumReadsREF <span class="sc">+</span> chipNumReadsALT <span class="sc">&gt;</span> <span class="dv">5</span>)</span>
+<span id="cb13-479"><a href="#cb13-479" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-480"><a href="#cb13-480" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pdsel, <span class="at">mapping =</span> <span class="fu">aes</span>(chipLog2FC, CpGfracmodDelta)) <span class="sc">+</span></span>
+<span id="cb13-481"><a href="#cb13-481" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> motifScoreDeltaBinned)) <span class="sc">+</span></span>
+<span id="cb13-482"><a href="#cb13-482" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> scoreDeltaBinnedCols) <span class="sc">+</span></span>
+<span id="cb13-483"><a href="#cb13-483" aria-hidden="true" tabindex="-1"></a>    ggpubr<span class="sc">::</span><span class="fu">stat_cor</span>(<span class="at">label.x.npc =</span> <span class="st">"right"</span>, <span class="at">hjust =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb13-484"><a href="#cb13-484" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"Predicted CTCF sites overlapping heterozygous SNVs (n="</span>, <span class="fu">nrow</span>(pdsel), <span class="st">")"</span>),</span>
+<span id="cb13-485"><a href="#cb13-485" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"Change of CTCF binding (log2 ref/alt)"</span>,</span>
+<span id="cb13-486"><a href="#cb13-486" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Change of 5mCpG (ref - alt)"</span>,</span>
+<span id="cb13-487"><a href="#cb13-487" aria-hidden="true" tabindex="-1"></a>         <span class="at">colour =</span> <span class="st">"Change of motif</span><span class="sc">\n</span><span class="st">score (ref - alt)"</span>) <span class="sc">+</span></span>
+<span id="cb13-488"><a href="#cb13-488" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb13-489"><a href="#cb13-489" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"inside"</span>,</span>
+<span id="cb13-490"><a href="#cb13-490" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.position.inside =</span> <span class="fu">c</span>(<span class="fl">0.02</span>, <span class="fl">0.02</span>),</span>
+<span id="cb13-491"><a href="#cb13-491" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>))</span>
+<span id="cb13-492"><a href="#cb13-492" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-493"><a href="#cb13-493" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-494"><a href="#cb13-494" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session info</span></span>
+<span id="cb13-495"><a href="#cb13-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-496"><a href="#cb13-496" aria-hidden="true" tabindex="-1"></a>&lt;details&gt;</span>
+<span id="cb13-497"><a href="#cb13-497" aria-hidden="true" tabindex="-1"></a>&lt;summary&gt;&lt;b&gt;</span>
+<span id="cb13-498"><a href="#cb13-498" aria-hidden="true" tabindex="-1"></a>Click to view session info</span>
+<span id="cb13-499"><a href="#cb13-499" aria-hidden="true" tabindex="-1"></a>&lt;/b&gt;&lt;/summary&gt;</span>
+<span id="cb13-502"><a href="#cb13-502" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-503"><a href="#cb13-503" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: session-info</span></span>
+<span id="cb13-504"><a href="#cb13-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-505"><a href="#cb13-505" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span>
+<span id="cb13-506"><a href="#cb13-506" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-507"><a href="#cb13-507" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 
 
