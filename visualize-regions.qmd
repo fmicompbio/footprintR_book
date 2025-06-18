@@ -15,12 +15,15 @@ We start by loading the required packages.
 In addition to the software package, we load a `BSgenome` and `TxDb` object providing the mouse genome sequence and transcript annotation.
 
 ```{r}
+#| label: load-packages
 #| message: false
 
 BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
 TxDbName <- "TxDb.Mmusculus.GENCODE.GRCm39.gencodeM34"
 
+library(BiocParallel)
 library(footprintR)
+library(ggplot2)
 library(patchwork)
 library(GenomicRanges)
 library(BSgenomeName, character.only = TRUE)
@@ -42,6 +45,8 @@ We use the [readModBam]{.fn} function to read data from an 800-bp region on chro
 For more information about reading data with [fmicompbio/footprintR]{.githubpkg}, see @sec-reading-data. 
 
 ```{r}
+#| label: read-data
+
 # Read data 
 se <- readModBam(
     bamfiles = c(wt1 = "data/mESC_wt_6mA_rep1.bam",
@@ -66,10 +71,11 @@ For the read-level plot tracks, the `trackData` argument specifies the name of t
 ```{r}
 #| fig.height: 8
 #| fig.width: 7
+#| label: fig-read-level
 
 plotRegion(
     se, 
-    region = as("chr8:39286600-39286800", "GRanges"), 
+    region = "chr8:39286600-39286800", 
     tracks = list(
         list(trackType = "Heatmap", trackData = "mod_prob"),
         list(trackType = "Lollipop", trackData = "mod_prob")
@@ -83,10 +89,11 @@ It is possible to visualize only the reads on one strand, by providing a strande
 ```{r}
 #| fig.height: 6
 #| fig.width: 7
+#| label: fig-read-level-stranded
 
 plotRegion(
     se, 
-    region = as("chr8:39286600-39286800:+", "GRanges"), 
+    region = "chr8:39286600-39286800:+", 
     tracks = list(
         list(trackType = "Heatmap", trackData = "mod_prob"),
         list(trackType = "Lollipop", trackData = "mod_prob")
@@ -100,10 +107,11 @@ This is often helpful to minimize the impact of base calling errors.
 ```{r}
 #| fig.height: 6
 #| fig.width: 7
+#| label: fig-read-level-seqcontext
 
 plotRegion(
     se, 
-    region = as("chr8:39286600-39286800:+", "GRanges"), 
+    region = "chr8:39286600-39286800:+", 
     tracks = list(
         list(trackType = "Heatmap", trackData = "mod_prob"),
         list(trackType = "Lollipop", trackData = "mod_prob")
@@ -119,10 +127,11 @@ For the lollipop plot, we can similarly change the size of the circles and the l
 ```{r}
 #| fig.height: 8
 #| fig.width: 7
+#| label: fig-read-level-interpolate
 
 plotRegion(
     se, 
-    region = as("chr8:39286600-39286800", "GRanges"), 
+    region = "chr8:39286600-39286800",
     tracks = list(
         list(trackType = "Heatmap", trackData = "mod_prob", 
              interpolate = TRUE, orderReads = NULL, trackTitle = "Heatmap",
@@ -130,6 +139,57 @@ plotRegion(
         list(trackType = "Lollipop", trackData = "mod_prob",
              orderReads = NULL, trackTitle = "Lollipop",
              legendTitle = "6mA", size = 2, stroke = 0.1)
+    ), 
+    sequenceContext = "A"
+)
+```
+
+Additional customization options for read-level plots include the possibility to change the color scheme, set the order of the reads, and restricting the set of visualized reads to those that cover a certain fraction of the plot region. 
+Below, we use a 'inferno' color scale for the heatmap, and a gradient from white to blue for the lollipop plot. 
+In addition, we order the reads by the average modification fraction across the region (`orderReads = "regionAvg"`), and exclude any reads that don't cover at least 95% of the plotted region (`minCoveredFraction = 0.95`). 
+
+```{r}
+#| fig.height: 8
+#| fig.width: 7
+#| label: fig-read-level-colors
+
+plotRegion(
+    se, 
+    region = "chr8:39286600-39286800",
+    minCoveredFraction = 0.95,
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = "regionAvg", trackTitle = "Heatmap",
+             legendTitle = "6mA", fillColors = "-inferno"),
+        list(trackType = "Lollipop", trackData = "mod_prob",
+             orderReads = "regionAvg", trackTitle = "Lollipop",
+             legendTitle = "6mA", size = 2, stroke = 0.1, 
+             fillColors = c("white", "blue"))
+    ), 
+    sequenceContext = "A"
+)
+```
+
+
+By default, read-level tracks are facetted by sample (the columns of `se`).
+We can facet by an arbitrary column of `colData(se)` by changing the value of the `facetBy` argument for the track, or set the argument to `NULL` to disable the facetting and show reads from all samples together. 
+
+```{r}
+#| fig.height: 8
+#| fig.width: 7
+#| label: fig-read-level-nofacet
+
+plotRegion(
+    se, 
+    region = "chr8:39286600-39286800",
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = NULL, trackTitle = "Heatmap",
+             legendTitle = "6mA", facetBy = NULL),
+        list(trackType = "Lollipop", trackData = "mod_prob",
+             orderReads = NULL, trackTitle = "Lollipop",
+             legendTitle = "6mA", size = 2, stroke = 0.1,
+             facetBy = "modbase")
     ), 
     sequenceContext = "A"
 )
@@ -143,10 +203,11 @@ This can be achieved by setting `modbaseSpace = TRUE` in [plotRegion]{.fn}.
 ```{r}
 #| fig.height: 8
 #| fig.width: 7
+#| label: fig-read-level-modbasespace
 
 plotRegion(
     se, 
-    region = as("chr8:39286600-39286800", "GRanges"), 
+    region = "chr8:39286600-39286800",
     tracks = list(
         list(trackType = "Heatmap", trackData = "mod_prob", 
              interpolate = FALSE, orderReads = NULL, trackTitle = "Heatmap",
@@ -167,10 +228,11 @@ Note how the x-axis title changes to reflect the current coordinate system.
 ```{r}
 #| fig.height: 8
 #| fig.width: 7
+#| label: fig-read-level-referencecoordinate
 
 plotRegion(
     se, 
-    region = as("chr8:39286600-39286800", "GRanges"), 
+    region = "chr8:39286600-39286800",
     tracks = list(
         list(trackType = "Heatmap", trackData = "mod_prob", 
              interpolate = TRUE, orderReads = NULL, trackTitle = "Heatmap",
@@ -184,6 +246,30 @@ plotRegion(
 )
 ```
 
+As [plotRegion]{.fn} returns a `patchwork`/`ggplot2` object, even finer control over the plot components is possible. For example, you may want to change the number of ticks on the x axis, which is controlled by `ggplot2`'s `scale_x_continuous()`. Changing the x axis scale will throw a warning because by adding the `scale_x_continuous()`, you are replacing the existing default x axis scale.
+
+Note that if you are plotting multiple tracks with [plotRegion]{.fn}, you need to add `scale_x_continuous()` using the `*` or `&` operator from the [patchwork]{.cranpkg} package, instead of [ggplot2]{.cranpkg}'s usual `+` operator. This will make sure that the plot element (here the new x axis scale) is added to all tracks instead of just the last one:
+
+```{r}
+#| fig.height: 8
+#| fig.width: 7
+#| label: fig-read-level-xbreaks
+
+plotRegion(
+    se, 
+    region = "chr8:39286600-39286800",
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = NULL, trackTitle = "Heatmap",
+             legendTitle = "6mA"),
+        list(trackType = "Lollipop", trackData = "mod_prob",
+             orderReads = NULL, trackTitle = "Lollipop",
+             legendTitle = "6mA", size = 2, stroke = 0.1)
+    ), 
+    sequenceContext = "A",
+    referenceCoordinate = 39286700
+) * scale_x_continuous(n.breaks = 3)
+```
 
 ## Summary-level plots
 
@@ -194,6 +280,7 @@ Summary-level assays can be generated from read-level values using, e.g., the [f
 ```{r}
 #| fig.height: 7
 #| fig.width: 7
+#| label: fig-summary-level
 
 # Flatten read-level assay
 se <- flattenReadLevelAssay(
@@ -217,13 +304,14 @@ plotRegion(
     plot_layout(heights = c(2, 1))
 ```
 
-In an analogous way to the read-level plots, we can control the display of summary information using the arguments to [PlotSummaryPointSmooth]{.fn}. 
+In an analogous way to the read-level plots, we can control the display of summary information using the arguments to `PlotSummaryPointSmooth` (see documentation for [plotRegion]{.fn}). 
 For example, we can change the smoothing function and the degree of smoothing. 
 We can also add the individual points (summary values for individual positions) to the summary plot.
 
 ```{r}
 #| fig.height: 7
 #| fig.width: 7
+#| label: fig-summary-level-points
 
 # Add summary-level plot
 plotRegion(
@@ -254,6 +342,7 @@ The input provided to this argument should be a `GRanges` object.
 ```{r}
 #| fig.height: 7
 #| fig.width: 7
+#| label: fig-highlightregions
 
 # Define regions to highlight
 reg_to_highlight <- GRanges(
@@ -290,6 +379,7 @@ Here, we exemplify how to generate such a track to visualize annotated transcrip
 ```{r}
 #| fig.height: 7
 #| fig.width: 7
+#| label: fig-annotation
 
 # Read data from a different region than above (as the previous one does not 
 # overlap annotated genes)
@@ -298,7 +388,6 @@ se <- readModBam(
                  wt2 = "data/mESC_wt_6mA_rep2.bam"),
     modbase = "a", 
     regions = "chr8:39126917-39128220", 
-    level = "quickread", 
     seqinfo = seqinfo(gnm), 
     sequenceContextWidth = 1, 
     sequenceReference = gnm
@@ -337,6 +426,7 @@ We also modify the colors used to display the summary-level data.
 ```{r}
 #| fig.width: 7
 #| fig.height: 8
+#| label: fig-bigwig
 
 plotRegion(
     se, 
