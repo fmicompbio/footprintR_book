@@ -12,6 +12,7 @@ We first load the packages and the genome needed for these tasks.
 
 ```{r}
 #| message: false
+#| label: load-packages
 
 BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
 
@@ -23,13 +24,14 @@ library(SummarizedExperiment)
 library(BSgenomeName, character.only = TRUE)
 library(VariantAnnotation)
 library(stringdist)
+library(BiocParallel)
 
 # Load genome
 gnm <- get(BSgenomeName)
 genome(gnm) <- "mm39"
 ```
 
-## Using sequence variation
+## Using sequence variation {#sec-group-by-sequence}
 
 One reason for regrouping reads could be to sort them using genetic variation (e.g., single nucleotide variants), e.g. with the purpose of studying allele-specific signals. 
 Typically, the heterozygous loci on which we would like to base such read grouping are known in advance (alternatively, we can use all positions within a given genomic region).
@@ -39,6 +41,8 @@ Let's consider an example.
 We start by defining a region of interest, and reading a file with known heterozygous SNVs (for the purposes of this report, we have subset the complete VCF file to only SNVs overlapping the region of interest, but this is not necessary in general). 
 
 ```{r}
+#| label: load-snvs
+
 reg <- resize(as("chr7:23987184-23987363", "GRanges"), width = 1300, fix = "center")
 
 hetsnv <- readVcf("data/het_snp_chr7_23987184-23987363.vcf.gz")
@@ -52,6 +56,8 @@ These sequences will later be used to group reads into one of two categories (RE
 Note that with this approach, we're making the implicit assumption that the SNVs are phased (and thus that a read will not typically harbor a mix of the REF and ALT nucleotides) - for most reads in our example this turns out to be a valid assumption, but in other cases other grouping schemes may be preferable.
 
 ```{r}
+#| label: subset-snvs
+
 # subset to SNVs in region of interest
 hetpos1 <- subsetByOverlaps(hetpos, reg, ignore.strand = TRUE)
 (seqREF <- paste(as.character(hetpos1$REF), collapse = ""))
@@ -63,6 +69,8 @@ These genomes will later be used to generate sequence contexts for the positions
 For more information about filtering, and how it can reduce the effect of sequencing errors, see @sec-qc-filtering and @sec-visualize-regions.
 
 ```{r}
+#| label: inject-snps
+
 gnmREF <- gnmALT <- getSeq(gnm)
 for (chr in names(gnmREF)) {
     i <- which(seqnames(hetpos) == chr)
@@ -81,6 +89,8 @@ After this preparation, we read the data. In this case, we will work with a `mod
 We specify the positions of the heterozygous SNVs to the `variantPositions` argument, which will generate a sequence label for each read.
 
 ```{r}
+#| label: read-data
+
 seC <- readModBam(
     bamfiles = "data/mESC_wt_5mCG_5hmCG_rep2.bam", 
     regions = reg,
@@ -99,11 +109,14 @@ Next, we filter the data by sequence context, to only retain positions annotated
 We achieve this by sequentially adding the sequence context from each of the genomes, and filtering by this sequence context.
 
 ```{r}
+#| label: add-seq-context-filter
+
 # REF genome
 seC <- addSeqContext(x = seC, sequenceContextWidth = 3,
                      sequenceReference = gnmREF)
 seC <- filterPositions(seC, filters = "sequenceContext",
                        sequenceContext = "NCG", assayNameNA = "mod_prob")
+# ALT genome
 seC <- addSeqContext(x = seC, sequenceContextWidth = 3,
                      sequenceReference = gnmALT)
 seC <- filterPositions(seC, filters = "sequenceContext",
@@ -114,6 +127,8 @@ With the clean data, we next cluster the reads into two groups, based on which o
 We request a Hamming distance of at most 0.34 based on the positions covered by the read - otherwise, the read is assigned to an `NA` category
 
 ```{r}
+#| label: classify-reads
+
 (varlabels <- structure(
     unlist(lapply(seC$readInfo, "[[", "variant_label"), use.names = FALSE),
     names = unlist(lapply(seC$readInfo, rownames), use.names = FALSE)))
@@ -131,6 +146,7 @@ This is achieved with the [regroupReads]{.fn} function.
 ```{r}
 #| fig.width: 10
 #| fig.height: 8
+#| label: fig-regroup-reads-snvs
 
 # generate named list of read groups
 methGroupList <- split(names(varlabels), methGroup)
@@ -161,6 +177,8 @@ To exemplify this, we will look at a known imprinted locus in the Peg10 gene, sp
 First, we read the CpG methylation data and filter positions to only retain those in a CpG context.
 
 ```{r}
+#| label: read-data-5mcpg
+
 peg10 <- as("chr6:4746792-4748791", "GRanges")
 
 seC <- readModBam(
@@ -185,6 +203,8 @@ Next, we calculate the average modification fraction per read.
 We note a clear bimodality of the distribution, and define two groups of reads based on this.
 
 ```{r}
+#| label: fig-classify-reads-5mcpg
+
 # calculate average modification fraction per read
 avgmod <- colMeans(as.matrix(assay(seC, "mod_prob")), na.rm = TRUE)
 
@@ -200,6 +220,8 @@ read_groups <- split(colnames(as.matrix(assay(seC, "mod_prob"))),
 Next, we read the 6mA data for the same sample, filter by sequence context and regroup the reads based on the split defined above.
 
 ```{r}
+#| label: read-data-6ma
+
 seA <- readModBam(
     bamfiles = "data/mESC_wt_6mA_rep2.bam", 
     regions = peg10,
@@ -226,6 +248,8 @@ With the new read grouping, we next calculate summary statistics and visualize t
 ```{r}
 #| fig.height: 7
 #| fig.width: 7
+#| label: fig-regrouped-reads-5mcpg
+
 seA <- flattenReadLevelAssay(seA)
 
 plotRegion(seA, region = peg10, sequenceContext = "A", 
@@ -239,6 +263,91 @@ plotRegion(seA, region = peg10, sequenceContext = "A",
 
 ## Across different regions
 
-example of meta plot
-[getAnchorRegions]{.fn}.
+Next, we will illustrate how to use [fmicompbio/footprintR]{.githubpkg} to create metaplots. 
+In these plots, each row represents an (equally sized) genomic region. 
+Here, we will exemplify this by generating a metaplot of a collection of 1,000 strong CTCF sites:
+
+```{r}
+#| label: load-ctcf-sites
+
+(ctcf_sites <- readRDS("data/ctcf_sites_1000.rds"))
+```
+
+We first load summary-level data from all reads overlapping 1.5kb regions centered on these sites, and filter positions based on the sequence context. 
+
+```{r}
+#| label: read-data-ctcf
+
+se <- readModBam(bamfiles = "data/mESC_wt_6mA_rep1.bam",
+                 regions = resize(ctcf_sites, width = 1500, fix = "center"),
+                 modbase = "a",
+                 level = "summary",
+                 trim = TRUE,
+                 seqinfo = seqinfo(gnm),
+                 sequenceContextWidth = 1,
+                 sequenceReference = gnm,
+                 verbose = interactive())
+se <- filterPositions(se, filters = "sequenceContext",
+                      sequenceContext = "A",
+                      assayNameNA = NULL)
+```
+
+Next, we use the [getAnchorRegions]{.fn} function to extract the FracMod values for each of the regions.
+Note that all regions must have the same size.
+Hence, we specify the midpoints of the regions as well as the desired size. 
+
+```{r}
+#| label: get-anchor-regions-ctcf
+
+agg <- getAnchorRegions(se, assayName = "FracMod",
+                        regionMidpoints = as(resize(ctcf_sites, width = 1, fix = "center"), "GPos"),
+                        regionWidth = 1501,
+                        reverseMinusStrandRegions = TRUE,
+                        verbose = interactive())
+```
+
+In the resulting object, the positions are represented on the 'anchor' reference sequence, with positions ranging from -750 to +750. 
+
+```{r}
+#| label: show-anchor-se
+
+agg
+```
+
+We can think of the `FracMod` assay in `agg` as similar to a read-level assay - each column corresponds to a sample, and is represented as an `NaMatrix` with each column corresponding to a region. 
+Consequently, we can calculate additional summary assays, aggregating information across all regions, using [flattenReadLevelAssay]{.fn}.
+
+```{r}
+#| label: flatten-anchor-se
+
+agg <- flattenReadLevelAssay(agg, assayName = "FracMod", statistics = "Pmod")
+```
+
+Finally, we use [plotRegion]{.fn} to create the metaplot. 
+We include both a heatmap where each row corresponds to a region, and a summary plot aggregating across regions.
+
+```{r}
+#| fig.height: 8
+#| label: fig-anchored-ctcf
+
+plotRegion(agg, region = as("anchor:-750-750", "GRanges"), 
+           tracks = list(list(trackData = "FracMod", trackType = "Heatmap",
+                              interpolate = TRUE),
+                         list(trackData = "Pmod", trackType = "Smooth"))) + 
+    patchwork::plot_layout(heights = c(3, 1))
+
+```
+
+## Session info
+
+<details>
+<summary><b>
+Click to view session info
+</b></summary>
+```{r}
+#| label: session-info
+
+sessioninfo::session_info(info = "packages")
+```
+</details>
 

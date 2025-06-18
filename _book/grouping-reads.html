@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,10 +72,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-6082b3b653f69b4bc1378a5897c1dc6c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -215,9 +215,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#preparation" id="toc-preparation" class="nav-link active" data-scroll-target="#preparation"><span class="header-section-number">7.1</span> Preparation</a></li>
-  <li><a href="#using-sequence-variation" id="toc-using-sequence-variation" class="nav-link" data-scroll-target="#using-sequence-variation"><span class="header-section-number">7.2</span> Using sequence variation</a></li>
+  <li><a href="#sec-group-by-sequence" id="toc-sec-group-by-sequence" class="nav-link" data-scroll-target="#sec-group-by-sequence"><span class="header-section-number">7.2</span> Using sequence variation</a></li>
   <li><a href="#modification-based" id="toc-modification-based" class="nav-link" data-scroll-target="#modification-based"><span class="header-section-number">7.3</span> Modification based</a></li>
   <li><a href="#across-different-regions" id="toc-across-different-regions" class="nav-link" data-scroll-target="#across-different-regions"><span class="header-section-number">7.4</span> Across different regions</a></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info"><span class="header-section-number">7.5</span> Session info</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/fmicompbio/footprintR_book/edit/main/grouping-reads.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/fmicompbio/footprintR_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -226,7 +227,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-grouping-reads" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Grouping reads</span></span></h1>
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-grouping-reads" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Grouping reads</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -248,6 +249,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="7.1" class="anchored" data-anchor-id="preparation"><span class="header-section-number">7.1</span> Preparation</h2>
 <p>We first load the packages and the genome needed for these tasks.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
@@ -258,57 +261,83 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(VariantAnnotation)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringdist)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gnm) <span class="ot">&lt;-</span> <span class="st">"mm39"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BiocParallel)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gnm) <span class="ot">&lt;-</span> <span class="st">"mm39"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
-<section id="using-sequence-variation" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="using-sequence-variation"><span class="header-section-number">7.2</span> Using sequence variation</h2>
+<section id="sec-group-by-sequence" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="sec-group-by-sequence"><span class="header-section-number">7.2</span> Using sequence variation</h2>
 <p>One reason for regrouping reads could be to sort them using genetic variation (e.g., single nucleotide variants), e.g.&nbsp;with the purpose of studying allele-specific signals. Typically, the heterozygous loci on which we would like to base such read grouping are known in advance (alternatively, we can use all positions within a given genomic region). In such cases, <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> can automatically add “sequence labels” (consisting of the observed nucleotide in the indicated positions) to reads when reading the data, and these labels can later be used to regroup the reads.</p>
 <p>Let’s consider an example. We start by defining a region of interest, and reading a file with known heterozygous SNVs (for the purposes of this report, we have subset the complete VCF file to only SNVs overlapping the region of interest, but this is not necessary in general).</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>reg <span class="ot">&lt;-</span> <span class="fu">resize</span>(<span class="fu">as</span>(<span class="st">"chr7:23987184-23987363"</span>, <span class="st">"GRanges"</span>), <span class="at">width =</span> <span class="dv">1300</span>, <span class="at">fix =</span> <span class="st">"center"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>hetsnv <span class="ot">&lt;-</span> <span class="fu">readVcf</span>(<span class="st">"data/het_snp_chr7_23987184-23987363.vcf.gz"</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>hetpos <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="fu">rowRanges</span>(hetsnv), <span class="st">"GPos"</span>)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>hetpos<span class="sc">$</span>ALT <span class="ot">&lt;-</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT)</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>hetpos</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>UnstitchedGPos object with 13 positions and 5 metadata columns:
-                    seqnames       pos strand | paramRangeID            REF            ALT      QUAL      FILTER
-                       &lt;Rle&gt; &lt;integer&gt;  &lt;Rle&gt; |     &lt;factor&gt; &lt;DNAStringSet&gt; &lt;DNAStringSet&gt; &lt;numeric&gt; &lt;character&gt;
-  chr7:23986770_G/T     chr7  23986770      * |           NA              G              T   504.609           .
-  chr7:23986885_G/A     chr7  23986885      * |           NA              G              A   485.725           .
-  chr7:23987082_T/G     chr7  23987082      * |           NA              T              G   421.622           .
-  chr7:23987109_G/A     chr7  23987109      * |           NA              G              A   420.142           .
-  chr7:23987130_A/C     chr7  23987130      * |           NA              A              C   509.378           .
-                ...      ...       ...    ... .          ...            ...            ...       ...         ...
-  chr7:23987468_A/G     chr7  23987468      * |           NA              A              G   480.559           .
-  chr7:23987586_G/C     chr7  23987586      * |           NA              G              C   425.562           .
-  chr7:23987658_A/G     chr7  23987658      * |           NA              A              G   336.694           .
-  chr7:23987665_C/A     chr7  23987665      * |           NA              C              A   338.173           .
-  chr7:23987670_C/T     chr7  23987670      * |           NA              C              T   372.650           .
+                    seqnames       pos strand | paramRangeID            REF
+                       &lt;Rle&gt; &lt;integer&gt;  &lt;Rle&gt; |     &lt;factor&gt; &lt;DNAStringSet&gt;
+  chr7:23986770_G/T     chr7  23986770      * |           NA              G
+  chr7:23986885_G/A     chr7  23986885      * |           NA              G
+  chr7:23987082_T/G     chr7  23987082      * |           NA              T
+  chr7:23987109_G/A     chr7  23987109      * |           NA              G
+  chr7:23987130_A/C     chr7  23987130      * |           NA              A
+                ...      ...       ...    ... .          ...            ...
+  chr7:23987468_A/G     chr7  23987468      * |           NA              A
+  chr7:23987586_G/C     chr7  23987586      * |           NA              G
+  chr7:23987658_A/G     chr7  23987658      * |           NA              A
+  chr7:23987665_C/A     chr7  23987665      * |           NA              C
+  chr7:23987670_C/T     chr7  23987670      * |           NA              C
+                               ALT      QUAL      FILTER
+                    &lt;DNAStringSet&gt; &lt;numeric&gt; &lt;character&gt;
+  chr7:23986770_G/T              T   504.609           .
+  chr7:23986885_G/A              A   485.725           .
+  chr7:23987082_T/G              G   421.622           .
+  chr7:23987109_G/A              A   420.142           .
+  chr7:23987130_A/C              C   509.378           .
+                ...            ...       ...         ...
+  chr7:23987468_A/G              G   480.559           .
+  chr7:23987586_G/C              C   425.562           .
+  chr7:23987658_A/G              G   336.694           .
+  chr7:23987665_C/A              A   338.173           .
+  chr7:23987670_C/T              T   372.650           .
   -------
   seqinfo: 61 sequences from an unspecified genome</code></pre>
 </div>
 </div>
 <p>We next generate “expected” REF and ALT sequences by concatenating the sequences of the heterozygous SNVs overlapping the region of interest. These sequences will later be used to group reads into one of two categories (REF or ALT), based on the agreement with the expected sequences. Note that with this approach, we’re making the implicit assumption that the SNVs are phased (and thus that a read will not typically harbor a mix of the REF and ALT nucleotides) - for most reads in our example this turns out to be a valid assumption, but in other cases other grouping schemes may be preferable.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># subset to SNVs in region of interest</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>hetpos1 <span class="ot">&lt;-</span> <span class="fu">subsetByOverlaps</span>(hetpos, reg, <span class="at">ignore.strand =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>(seqREF <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">as.character</span>(hetpos1<span class="sc">$</span>REF), <span class="at">collapse =</span> <span class="st">""</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "GGTGATGTAGACC"</code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(seqALT <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">as.character</span>(hetpos1<span class="sc">$</span>ALT), <span class="at">collapse =</span> <span class="st">""</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "TAGACCACGCGAT"</code></pre>
 </div>
 </div>
 <p>Next, we generate two versions of the genome sequence, obtained by injecting, respectively, the REF and ALT nucleotide above into the corresponding positions. These genomes will later be used to generate sequence contexts for the positions seen in the data, and filter out positions that are not annotated as (in the case below) CpGs. For more information about filtering, and how it can reduce the effect of sequencing errors, see <a href="qc-filtering.html" class="quarto-xref"><span>Chapter 3</span></a> and <a href="visualize-regions.html" class="quarto-xref"><span>Chapter 4</span></a>.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gnmREF <span class="ot">&lt;-</span> gnmALT <span class="ot">&lt;-</span> <span class="fu">getSeq</span>(gnm)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (chr <span class="cf">in</span> <span class="fu">names</span>(gnmREF)) {</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">seqnames</span>(hetpos) <span class="sc">==</span> chr)</span>
@@ -321,9 +350,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">letter =</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT[i]),</span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>After this preparation, we read the data. In this case, we will work with a <code>modBam</code> file from a wild-type sample, for which 5mCpG modification calling has been performed. We specify the positions of the heterozygous SNVs to the <code>variantPositions</code> argument, which will generate a sequence label for each read.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="st">"data/mESC_wt_5mCG_5hmCG_rep2.bam"</span>, </span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> reg,</span>
@@ -336,81 +368,116 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># derived sequence labels</span></span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>seC<span class="sc">$</span>readInfo<span class="sc">$</span>s1<span class="sc">$</span>variant_label</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] "TATACTGCGCGAT" "TAGACCAAGCCA-" "TAT-CAAGGCGAT" "TATAC--------" "GGAGATGTAGACC" "TAGACCA-GCGAT" "GGTGATGTAGACC"
- [8] "TAGACCACGCGAT" "GGTGA-GTAGACC" "TGCACACCGCAAT" "CATACTACGGG-T" "GGTGATGTAGACC" "GGTGACGTAGACC" "TAGACCA-GCGAT"
-[15] "TAGACTACGCGAT" "-A-ACTGTGCA-C" "TAGACCACGCGAC" "GGTGATGTAGACC" "TAGACCACGCGAT" "GGTGATGTAGAT-" "TAGACCACGCGAT"
-[22] "TAGACCACGCGAT" "TAGACCACGCGAT" "GATGATGTAGGCC" "GGTGATGTAGACC" "GGTGATGTAGATA" "GGTGATGTAGACC" "-ATAC-A-GTGAT"
-[29] "GGTGATGTAGACC" "TAGA-CATGCGGT" "GGTGATG-AGACC" "TATACCACGCGAT" "TAGACTACGCGAT" "TAGACCACGCGAT" "TAGACCACGCGAT"
-[36] "TAGACCACGCGGT" "TAGACTACGCGAT" "GGTGATGTAGACC" "GGTGATGTAGACC" "TAGACCACGCGAT" "TGGACCACGCGAT" "TAGA-CACGCGAT"
-[43] "GGTGATGTAGACC" "GGTGATGTAGACC" "-ATACCACGCGA-" "-GTGATGTAGACC" "--TGATGTAGACC" "--TGATGTAGATC" "----CCACGCGAT"
-[50] "-------TGCGCT" "-------TAGACC" "-------TAGACC" "--------AGACC" "----------GAT" "----------ACC" "-------------"
+<pre><code> [1] "TATACTGCGCGAT" "TAGACCAAGCCA-" "TAT-CAAGGCGAT" "TATAC--------"
+ [5] "GGAGATGTAGACC" "TAGACCA-GCGAT" "GGTGATGTAGACC" "TAGACCACGCGAT"
+ [9] "GGTGA-GTAGACC" "TGCACACCGCAAT" "CATACTACGGG-T" "GGTGATGTAGACC"
+[13] "GGTGACGTAGACC" "TAGACCA-GCGAT" "TAGACTACGCGAT" "-A-ACTGTGCA-C"
+[17] "TAGACCACGCGAC" "GGTGATGTAGACC" "TAGACCACGCGAT" "GGTGATGTAGAT-"
+[21] "TAGACCACGCGAT" "TAGACCACGCGAT" "TAGACCACGCGAT" "GATGATGTAGGCC"
+[25] "GGTGATGTAGACC" "GGTGATGTAGATA" "GGTGATGTAGACC" "-ATAC-A-GTGAT"
+[29] "GGTGATGTAGACC" "TAGA-CATGCGGT" "GGTGATG-AGACC" "TATACCACGCGAT"
+[33] "TAGACTACGCGAT" "TAGACCACGCGAT" "TAGACCACGCGAT" "TAGACCACGCGGT"
+[37] "TAGACTACGCGAT" "GGTGATGTAGACC" "GGTGATGTAGACC" "TAGACCACGCGAT"
+[41] "TGGACCACGCGAT" "TAGA-CACGCGAT" "GGTGATGTAGACC" "GGTGATGTAGACC"
+[45] "-ATACCACGCGA-" "-GTGATGTAGACC" "--TGATGTAGACC" "--TGATGTAGATC"
+[49] "----CCACGCGAT" "-------TGCGCT" "-------TAGACC" "-------TAGACC"
+[53] "--------AGACC" "----------GAT" "----------ACC" "-------------"
 [57] "-------------"</code></pre>
 </div>
 </div>
 <p>Next, we filter the data by sequence context, to only retain positions annotated as <code>CG</code> in both the REF and ALT genomes generated above. We achieve this by sequentially adding the sequence context from each of the genomes, and filtering by this sequence context.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># REF genome</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">addSeqContext</span>(<span class="at">x =</span> seC, <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sequenceReference =</span> gnmREF)</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seC, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">sequenceContext =</span> <span class="st">"NCG"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">addSeqContext</span>(<span class="at">x =</span> seC, <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sequenceReference =</span> gnmALT)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seC, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">sequenceContext =</span> <span class="st">"NCG"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ALT genome</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">addSeqContext</span>(<span class="at">x =</span> seC, <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sequenceReference =</span> gnmALT)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seC, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">sequenceContext =</span> <span class="st">"NCG"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>With the clean data, we next cluster the reads into two groups, based on which of the two expected sequences (<code>seqREF</code> or <code>seqALT</code> above) the respective sequence labels are most similar to. We request a Hamming distance of at most 0.34 based on the positions covered by the read - otherwise, the read is assigned to an <code>NA</code> category</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>(varlabels <span class="ot">&lt;-</span> <span class="fu">structure</span>(</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unlist</span>(<span class="fu">lapply</span>(seC<span class="sc">$</span>readInfo, <span class="st">"[["</span>, <span class="st">"variant_label"</span>), <span class="at">use.names =</span> <span class="cn">FALSE</span>),</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(seC<span class="sc">$</span>readInfo, rownames), <span class="at">use.names =</span> <span class="cn">FALSE</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>s1-6e3b7da7-1cbb-467a-9824-e12f949740b9 s1-74ec6632-693e-4e13-a8a4-4946fa63f477 s1-f6296e8a-c87d-4ae0-8e5c-ed928ada2544 
-                        "TATACTGCGCGAT"                         "TAGACCAAGCCA-"                         "TAT-CAAGGCGAT" 
-s1-cd98081d-7042-4ce7-8a6e-67c835c5242d s1-ca720391-dd3b-4448-8388-ec7bafe86221 s1-07c46b8a-69cf-4a1d-87cd-d787193c56d8 
-                        "TATAC--------"                         "GGAGATGTAGACC"                         "TAGACCA-GCGAT" 
-s1-8a78dd6b-5ec1-4caf-959c-bb13647fec0d s1-c6860136-5766-487e-b264-34e0820e81ad s1-2b6c19d4-553c-4986-b8cd-27f71205a23a 
-                        "GGTGATGTAGACC"                         "TAGACCACGCGAT"                         "GGTGA-GTAGACC" 
-s1-889002b9-1f49-4b54-a6ae-becfc63973ba s1-8086a333-caa3-4fe0-a24e-eb0477ab70da s1-c3eda2bf-3db4-4c01-8535-b70a764dcce8 
-                        "TGCACACCGCAAT"                         "CATACTACGGG-T"                         "GGTGATGTAGACC" 
-s1-ec9c9f06-9f37-47da-a9de-9f872a28622d s1-5dc9d447-fd02-4493-8c12-2de2b705f0a7 s1-c23f32ba-6e41-4238-8f2f-5d7dc567094c 
-                        "GGTGACGTAGACC"                         "TAGACCA-GCGAT"                         "TAGACTACGCGAT" 
-s1-6b217655-278b-4a52-b76a-60e0b919e1bc s1-b8ec4fdc-2339-4a7a-acea-8d36a8c6191e s1-f7b1f575-bfad-46ee-bf0a-c252f41998e5 
-                        "-A-ACTGTGCA-C"                         "TAGACCACGCGAC"                         "GGTGATGTAGACC" 
-s1-d09a3082-8290-4a64-a1b0-16b955e9d377 s1-47422c66-d8d9-4cd5-bc63-253f8c664ce4 s1-e21ea203-8b2b-4db3-82e7-3872c3aedbdb 
-                        "TAGACCACGCGAT"                         "GGTGATGTAGAT-"                         "TAGACCACGCGAT" 
-s1-6fe85a60-5c2b-4ab9-8eb8-c31c9823c52c s1-16ed4c6b-d7c4-45cf-a0ee-b5417715bd05 s1-4db7595b-53a5-43a0-8f26-4bf7c4eb8e2c 
-                        "TAGACCACGCGAT"                         "TAGACCACGCGAT"                         "GATGATGTAGGCC" 
-s1-b292d6ed-c3f1-4996-8c09-758ee688d157 s1-8147266c-9bdf-48c1-95a2-3a8fe543072f s1-144ab6dd-2c83-4116-b742-f0767a0d78bd 
-                        "GGTGATGTAGACC"                         "GGTGATGTAGATA"                         "GGTGATGTAGACC" 
-s1-bd1e55f8-aa2d-4746-9018-769f3c2cf7cc s1-0298ccd2-51a4-4567-bd62-9f7c08ebe222 s1-4e1b345e-d1a2-470c-b123-096f1b89ffc9 
-                        "-ATAC-A-GTGAT"                         "GGTGATGTAGACC"                         "TAGA-CATGCGGT" 
-s1-ab4e005c-d6bd-46c0-bf70-880811d9a4cb s1-f47dafdf-2e54-473c-8c91-de47074168c8 s1-f972a57a-22e0-4dda-9cbd-c9a9546ef7d4 
-                        "GGTGATG-AGACC"                         "TATACCACGCGAT"                         "TAGACTACGCGAT" 
-s1-bc571ef1-141b-499f-a0ec-f8ed4d304b36 s1-f93df80d-7a5b-40fe-a704-611e87857ef7 s1-bedd36a7-b697-4ade-8d9d-84c21a7a1bce 
-                        "TAGACCACGCGAT"                         "TAGACCACGCGAT"                         "TAGACCACGCGGT" 
-s1-197fa983-613c-40cf-bfc6-195d57250b61 s1-09ca0166-cded-466c-90d7-074b76f6c462 s1-39a0b0f7-ed43-44a4-931f-649b94858fd5 
-                        "TAGACTACGCGAT"                         "GGTGATGTAGACC"                         "GGTGATGTAGACC" 
-s1-1575671f-db5c-4840-8903-e049f5d1c191 s1-13cf1365-9558-4731-b905-9375968236ce s1-cf62e24a-3b16-4984-9dce-722d83114a04 
-                        "TAGACCACGCGAT"                         "TGGACCACGCGAT"                         "TAGA-CACGCGAT" 
-s1-635eac53-bf72-4595-8f0a-ed25889ade7c s1-6bce848a-e1e3-4c58-ae13-782de5ad8353 s1-f8708894-fcdc-4bb4-b4f0-85962022c458 
-                        "GGTGATGTAGACC"                         "GGTGATGTAGACC"                         "-ATACCACGCGA-" 
-s1-21af2d84-95cc-4038-92de-ca10dc907c1b s1-18b3d1ae-13bc-4167-a62d-985df0226d5d s1-84372ce1-9eb4-49a1-bfdf-0fcfe550a1e3 
-                        "-GTGATGTAGACC"                         "--TGATGTAGACC"                         "--TGATGTAGATC" 
-s1-2e5ac26d-fb0d-4960-a990-717820ea5489 s1-a11ee0c2-efe1-49db-a777-fd693d49f644 s1-77d34112-3371-4dc4-90e2-c5fce537de28 
-                        "----CCACGCGAT"                         "-------TGCGCT"                         "-------TAGACC" 
-s1-1193f97a-20eb-43b0-856f-6ce487960d71 s1-ceaddd34-9916-435c-8d7d-624ee5aa2f7c s1-be1188b2-5e8e-4c3b-b1c9-f745fb787f02 
-                        "-------TAGACC"                         "--------AGACC"                         "----------GAT" 
+<pre><code>s1-6e3b7da7-1cbb-467a-9824-e12f949740b9 s1-74ec6632-693e-4e13-a8a4-4946fa63f477 
+                        "TATACTGCGCGAT"                         "TAGACCAAGCCA-" 
+s1-f6296e8a-c87d-4ae0-8e5c-ed928ada2544 s1-cd98081d-7042-4ce7-8a6e-67c835c5242d 
+                        "TAT-CAAGGCGAT"                         "TATAC--------" 
+s1-ca720391-dd3b-4448-8388-ec7bafe86221 s1-07c46b8a-69cf-4a1d-87cd-d787193c56d8 
+                        "GGAGATGTAGACC"                         "TAGACCA-GCGAT" 
+s1-8a78dd6b-5ec1-4caf-959c-bb13647fec0d s1-c6860136-5766-487e-b264-34e0820e81ad 
+                        "GGTGATGTAGACC"                         "TAGACCACGCGAT" 
+s1-2b6c19d4-553c-4986-b8cd-27f71205a23a s1-889002b9-1f49-4b54-a6ae-becfc63973ba 
+                        "GGTGA-GTAGACC"                         "TGCACACCGCAAT" 
+s1-8086a333-caa3-4fe0-a24e-eb0477ab70da s1-c3eda2bf-3db4-4c01-8535-b70a764dcce8 
+                        "CATACTACGGG-T"                         "GGTGATGTAGACC" 
+s1-ec9c9f06-9f37-47da-a9de-9f872a28622d s1-5dc9d447-fd02-4493-8c12-2de2b705f0a7 
+                        "GGTGACGTAGACC"                         "TAGACCA-GCGAT" 
+s1-c23f32ba-6e41-4238-8f2f-5d7dc567094c s1-6b217655-278b-4a52-b76a-60e0b919e1bc 
+                        "TAGACTACGCGAT"                         "-A-ACTGTGCA-C" 
+s1-b8ec4fdc-2339-4a7a-acea-8d36a8c6191e s1-f7b1f575-bfad-46ee-bf0a-c252f41998e5 
+                        "TAGACCACGCGAC"                         "GGTGATGTAGACC" 
+s1-d09a3082-8290-4a64-a1b0-16b955e9d377 s1-47422c66-d8d9-4cd5-bc63-253f8c664ce4 
+                        "TAGACCACGCGAT"                         "GGTGATGTAGAT-" 
+s1-e21ea203-8b2b-4db3-82e7-3872c3aedbdb s1-6fe85a60-5c2b-4ab9-8eb8-c31c9823c52c 
+                        "TAGACCACGCGAT"                         "TAGACCACGCGAT" 
+s1-16ed4c6b-d7c4-45cf-a0ee-b5417715bd05 s1-4db7595b-53a5-43a0-8f26-4bf7c4eb8e2c 
+                        "TAGACCACGCGAT"                         "GATGATGTAGGCC" 
+s1-b292d6ed-c3f1-4996-8c09-758ee688d157 s1-8147266c-9bdf-48c1-95a2-3a8fe543072f 
+                        "GGTGATGTAGACC"                         "GGTGATGTAGATA" 
+s1-144ab6dd-2c83-4116-b742-f0767a0d78bd s1-bd1e55f8-aa2d-4746-9018-769f3c2cf7cc 
+                        "GGTGATGTAGACC"                         "-ATAC-A-GTGAT" 
+s1-0298ccd2-51a4-4567-bd62-9f7c08ebe222 s1-4e1b345e-d1a2-470c-b123-096f1b89ffc9 
+                        "GGTGATGTAGACC"                         "TAGA-CATGCGGT" 
+s1-ab4e005c-d6bd-46c0-bf70-880811d9a4cb s1-f47dafdf-2e54-473c-8c91-de47074168c8 
+                        "GGTGATG-AGACC"                         "TATACCACGCGAT" 
+s1-f972a57a-22e0-4dda-9cbd-c9a9546ef7d4 s1-bc571ef1-141b-499f-a0ec-f8ed4d304b36 
+                        "TAGACTACGCGAT"                         "TAGACCACGCGAT" 
+s1-f93df80d-7a5b-40fe-a704-611e87857ef7 s1-bedd36a7-b697-4ade-8d9d-84c21a7a1bce 
+                        "TAGACCACGCGAT"                         "TAGACCACGCGGT" 
+s1-197fa983-613c-40cf-bfc6-195d57250b61 s1-09ca0166-cded-466c-90d7-074b76f6c462 
+                        "TAGACTACGCGAT"                         "GGTGATGTAGACC" 
+s1-39a0b0f7-ed43-44a4-931f-649b94858fd5 s1-1575671f-db5c-4840-8903-e049f5d1c191 
+                        "GGTGATGTAGACC"                         "TAGACCACGCGAT" 
+s1-13cf1365-9558-4731-b905-9375968236ce s1-cf62e24a-3b16-4984-9dce-722d83114a04 
+                        "TGGACCACGCGAT"                         "TAGA-CACGCGAT" 
+s1-635eac53-bf72-4595-8f0a-ed25889ade7c s1-6bce848a-e1e3-4c58-ae13-782de5ad8353 
+                        "GGTGATGTAGACC"                         "GGTGATGTAGACC" 
+s1-f8708894-fcdc-4bb4-b4f0-85962022c458 s1-21af2d84-95cc-4038-92de-ca10dc907c1b 
+                        "-ATACCACGCGA-"                         "-GTGATGTAGACC" 
+s1-18b3d1ae-13bc-4167-a62d-985df0226d5d s1-84372ce1-9eb4-49a1-bfdf-0fcfe550a1e3 
+                        "--TGATGTAGACC"                         "--TGATGTAGATC" 
+s1-2e5ac26d-fb0d-4960-a990-717820ea5489 s1-a11ee0c2-efe1-49db-a777-fd693d49f644 
+                        "----CCACGCGAT"                         "-------TGCGCT" 
+s1-77d34112-3371-4dc4-90e2-c5fce537de28 s1-1193f97a-20eb-43b0-856f-6ce487960d71 
+                        "-------TAGACC"                         "-------TAGACC" 
+s1-ceaddd34-9916-435c-8d7d-624ee5aa2f7c s1-be1188b2-5e8e-4c3b-b1c9-f745fb787f02 
+                        "--------AGACC"                         "----------GAT" 
 s1-30b6af10-7d70-4ace-b40a-4fdb7d97d600 s1-4c257eb0-b51a-4e0d-bb99-fc072f15f8fd 
                         "----------ACC"                         "-------------" </code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dists <span class="ot">&lt;-</span> <span class="fu">stringdistmatrix</span>(<span class="at">a =</span> <span class="fu">c</span>(seqREF, seqALT),</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">b =</span> varlabels, <span class="at">method =</span> <span class="st">"hamming"</span>,</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nthread =</span> <span class="dv">2</span>) <span class="sc">/</span> <span class="fu">nchar</span>(varlabels[<span class="dv">1</span>])</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>methGroup <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">colMins</span>(dists) <span class="sc">&lt;</span> <span class="fl">0.34</span>,</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"REF"</span>, <span class="st">"ALT"</span>), <span class="st">": "</span>, <span class="fu">c</span>(seqREF, seqALT))[<span class="fu">apply</span>(dists, <span class="dv">2</span>, which.min)], <span class="cn">NA</span>)</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(methGroup, <span class="at">useNA =</span> <span class="st">"ifany"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>methGroup
 ALT: TAGACCACGCGAT REF: GGTGATGTAGACC               &lt;NA&gt; 
@@ -419,6 +486,8 @@ ALT: TAGACCACGCGAT REF: GGTGATGTAGACC               &lt;NA&gt;
 </div>
 <p>Based on this read grouping, we can now regroup the reads in such a way that the columns of the <code>SummarizedExperiment</code> object corresponds to allele (REF or ALT) rather than the sample. This is achieved with the <a href="https://fmicompbio.github.io/footprintR/reference/regroupReads.html"><code>regroupReads</code></a> function.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate named list of read groups</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>methGroupList <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">names</span>(varlabels), methGroup)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -436,10 +505,16 @@ ALT: TAGACCACGCGAT REF: GGTGATGTAGACC               &lt;NA&gt;
 <span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>               <span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Point"</span>,</span>
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>                    <span class="at">arglistPoint =</span> <span class="fu">list</span>(<span class="at">size =</span> <span class="dv">3</span>)))) <span class="sc">+</span></span>
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="fl">7.5</span>, <span class="fl">1.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="grouping-reads_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="960"></p>
+<div id="fig-regroup-reads-snvs" class="quarto-float quarto-figure quarto-figure-center anchored" width="960">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-regroup-reads-snvs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="grouping-reads_files/figure-html/fig-regroup-reads-snvs-1.png" id="fig-regroup-reads-snvs" class="img-fluid figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-regroup-reads-snvs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.1
+</figcaption>
 </figure>
 </div>
 </div>
@@ -451,6 +526,8 @@ ALT: TAGACCACGCGAT REF: GGTGATGTAGACC               &lt;NA&gt;
 <p>As an alternative to the genetic grouping used above, we could also group the reads based on the observed data. To exemplify this, we will look at a known imprinted locus in the Peg10 gene, split the reads based on the average CpG methylation in the locus, and compare the levels of 6mA modifications between the groups.</p>
 <p>First, we read the CpG methylation data and filter positions to only retain those in a CpG context.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>peg10 <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="st">"chr6:4746792-4748791"</span>, <span class="st">"GRanges"</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
@@ -469,9 +546,12 @@ ALT: TAGACCACGCGAT REF: GGTGATGTAGACC               &lt;NA&gt;
 <span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
 <span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContext =</span> <span class="st">"NCG"</span></span>
 <span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Next, we calculate the average modification fraction per read. We note a clear bimodality of the distribution, and define two groups of reads based on this.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate average modification fraction per read</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>avgmod <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(<span class="fu">as.matrix</span>(<span class="fu">assay</span>(seC, <span class="st">"mod_prob"</span>)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -479,21 +559,32 @@ ALT: TAGACCACGCGAT REF: GGTGATGTAGACC               &lt;NA&gt;
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Average modification probability per read (CpG)"</span>) <span class="sc">+</span> </span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stderr">
 <pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>read_groups <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">colnames</span>(<span class="fu">as.matrix</span>(<span class="fu">assay</span>(seC, <span class="st">"mod_prob"</span>))), </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">c</span>(<span class="st">"paternal"</span>, <span class="st">"maternal"</span>)[(avgmod <span class="sc">&gt;</span> <span class="fl">0.5</span>) <span class="sc">+</span> <span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="grouping-reads_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<div id="fig-classify-reads-5mcpg" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-classify-reads-5mcpg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="grouping-reads_files/figure-html/fig-classify-reads-5mcpg-1.png" id="fig-classify-reads-5mcpg" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-classify-reads-5mcpg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.2
+</figcaption>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>read_groups <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">colnames</span>(<span class="fu">as.matrix</span>(<span class="fu">assay</span>(seC, <span class="st">"mod_prob"</span>))), </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">c</span>(<span class="st">"paternal"</span>, <span class="st">"maternal"</span>)[(avgmod <span class="sc">&gt;</span> <span class="fl">0.5</span>) <span class="sc">+</span> <span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Next, we read the 6mA data for the same sample, filter by sequence context and regroup the reads based on the split defined above.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>seA <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>, </span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> peg10,</span>
@@ -513,12 +604,15 @@ ALT: TAGACCACGCGAT REF: GGTGATGTAGACC               &lt;NA&gt;
 <span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>seA <span class="ot">&lt;-</span> <span class="fu">regroupReads</span>(seA, <span class="at">readGroups =</span> read_groups)</span>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co"># check that the columns of seA now correspond to read groups</span></span>
 <span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(seA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "maternal" "paternal"</code></pre>
 </div>
 </div>
 <p>With the new read grouping, we next calculate summary statistics and visualize the 6mA data.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>seA <span class="ot">&lt;-</span> <span class="fu">flattenReadLevelAssay</span>(seA)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRegion</span>(seA, <span class="at">region =</span> peg10, <span class="at">sequenceContext =</span> <span class="st">"A"</span>, </span>
@@ -527,10 +621,16 @@ ALT: TAGACCACGCGAT REF: GGTGATGTAGACC               &lt;NA&gt;
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">orderReads =</span> <span class="st">"squish"</span>),</span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">list</span>(<span class="at">trackType =</span> <span class="st">"Smooth"</span>, <span class="at">trackData =</span> <span class="st">"FracMod"</span>))) <span class="sc">+</span> </span>
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="grouping-reads_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+<div id="fig-regrouped-reads-5mcpg" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-regrouped-reads-5mcpg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="grouping-reads_files/figure-html/fig-regrouped-reads-5mcpg-1.png" id="fig-regrouped-reads-5mcpg" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-regrouped-reads-5mcpg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.3
+</figcaption>
 </figure>
 </div>
 </div>
@@ -538,8 +638,227 @@ ALT: TAGACCACGCGAT REF: GGTGATGTAGACC               &lt;NA&gt;
 </section>
 <section id="across-different-regions" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="across-different-regions"><span class="header-section-number">7.4</span> Across different regions</h2>
-<p>example of meta plot <a href="https://fmicompbio.github.io/footprintR/reference/getAnchorRegions.html"><code>getAnchorRegions</code></a>.</p>
+<p>Next, we will illustrate how to use <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a> to create metaplots. In these plots, each row represents an (equally sized) genomic region. Here, we will exemplify this by generating a metaplot of a collection of 1,000 strong CTCF sites:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>(ctcf_sites <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/ctcf_sites_1000.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 1000 ranges and 1 metadata column:
+         seqnames              ranges strand |     score
+            &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt;
+     [1]     chr4 106387210-106387228      - |    21.751
+     [2]     chr2   29509735-29509753      + |    16.924
+     [3]    chr13 110505258-110505276      - |    19.577
+     [4]     chr3 121678692-121678710      + |    18.323
+     [5]     chr2   29509695-29509713      + |    17.356
+     ...      ...                 ...    ... .       ...
+   [996]     chr5   35519412-35519430      + |    19.651
+   [997]     chr8   23727858-23727876      + |    11.875
+   [998]     chr6 112468049-112468067      + |    16.978
+   [999]     chr4   44564745-44564763      + |    22.866
+  [1000]     chr8 106101422-106101440      + |    10.054
+  -------
+  seqinfo: 61 sequences (1 circular) from mm39 genome</code></pre>
+</div>
+</div>
+<p>We first load summary-level data from all reads overlapping 1.5kb regions centered on these sites, and filter positions based on the sequence context.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(<span class="at">bamfiles =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>,</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">regions =</span> <span class="fu">resize</span>(ctcf_sites, <span class="at">width =</span> <span class="dv">1500</span>, <span class="at">fix =</span> <span class="st">"center"</span>),</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">modbase =</span> <span class="st">"a"</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">level =</span> <span class="st">"summary"</span>,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm),</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>,</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">sequenceReference =</span> gnm,</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(se, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sequenceContext =</span> <span class="st">"A"</span>,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>                      <span class="at">assayNameNA =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Next, we use the <a href="https://fmicompbio.github.io/footprintR/reference/getAnchorRegions.html"><code>getAnchorRegions</code></a> function to extract the FracMod values for each of the regions. Note that all regions must have the same size. Hence, we specify the midpoints of the regions as well as the desired size.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>agg <span class="ot">&lt;-</span> <span class="fu">getAnchorRegions</span>(se, <span class="at">assayName =</span> <span class="st">"FracMod"</span>,</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">regionMidpoints =</span> <span class="fu">as</span>(<span class="fu">resize</span>(ctcf_sites, <span class="at">width =</span> <span class="dv">1</span>, <span class="at">fix =</span> <span class="st">"center"</span>), <span class="st">"GPos"</span>),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">regionWidth =</span> <span class="dv">1501</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">reverseMinusStrandRegions =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">verbose =</span> <span class="fu">interactive</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>In the resulting object, the positions are represented on the ‘anchor’ reference sequence, with positions ranging from -750 to +750.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>agg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>class: RangedSummarizedExperiment 
+dim: 1501 1 
+metadata(1): readLevelData
+assays(1): FracMod
+rownames: NULL
+rowData names(0):
+colnames(1): s1
+colData names(2): sample region_FracMod</code></pre>
+</div>
+</div>
+<p>We can think of the <code>FracMod</code> assay in <code>agg</code> as similar to a read-level assay - each column corresponds to a sample, and is represented as an <code>NaMatrix</code> with each column corresponding to a region. Consequently, we can calculate additional summary assays, aggregating information across all regions, using <a href="https://fmicompbio.github.io/footprintR/reference/flattenReadLevelAssay.html"><code>flattenReadLevelAssay</code></a>.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>agg <span class="ot">&lt;-</span> <span class="fu">flattenReadLevelAssay</span>(agg, <span class="at">assayName =</span> <span class="st">"FracMod"</span>, <span class="at">statistics =</span> <span class="st">"Pmod"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Finally, we use <a href="https://fmicompbio.github.io/footprintR/reference/plotRegion.html"><code>plotRegion</code></a> to create the metaplot. We include both a heatmap where each row corresponds to a region, and a summary plot aggregating across regions.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRegion</span>(agg, <span class="at">region =</span> <span class="fu">as</span>(<span class="st">"anchor:-750-750"</span>, <span class="st">"GRanges"</span>), </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Heatmap"</span>,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">interpolate =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"Pmod"</span>, <span class="at">trackType =</span> <span class="st">"Smooth"</span>))) <span class="sc">+</span> </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    patchwork<span class="sc">::</span><span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-anchored-ctcf" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-anchored-ctcf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="grouping-reads_files/figure-html/fig-anchored-ctcf-1.png" id="fig-anchored-ctcf" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-anchored-ctcf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.4
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="session-info" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="session-info"><span class="header-section-number">7.5</span> Session info</h2>
+<details>
+<summary>
+<b> Click to view session info </b>
+</summary>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>═ Session info ═══════════════════════════════════════════════════════════════
+─ Packages ───────────────────────────────────────────────────────────────────
+ package                                      * version   date (UTC) lib source
+ abind                                          1.4-8     2024-09-12 [1] CRAN (R 4.5.0)
+ AnnotationDbi                                  1.70.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ Biobase                                      * 2.68.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BiocGenerics                                 * 0.54.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BiocIO                                       * 1.18.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BiocParallel                                 * 1.42.1    2025-06-01 [1] Bioconductor 3.21 (R 4.5.0)
+ Biostrings                                   * 2.76.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ bit                                            4.6.0     2025-03-06 [1] CRAN (R 4.5.0)
+ bit64                                          4.6.0-1   2025-01-16 [1] CRAN (R 4.5.0)
+ bitops                                         1.0-9     2024-10-03 [1] CRAN (R 4.5.0)
+ blob                                           1.2.4     2023-03-17 [1] CRAN (R 4.5.0)
+ BSgenome                                     * 1.76.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34 * 0.1.0     2025-04-17 [1] Bioconductor
+ cachem                                         1.1.0     2024-05-16 [1] CRAN (R 4.5.0)
+ cli                                            3.6.5     2025-04-23 [1] CRAN (R 4.5.0)
+ codetools                                      0.2-20    2024-03-31 [2] CRAN (R 4.5.0)
+ crayon                                         1.5.3     2024-06-20 [1] CRAN (R 4.5.0)
+ curl                                           6.3.0     2025-06-06 [1] CRAN (R 4.5.0)
+ data.table                                     1.17.4    2025-05-26 [1] CRAN (R 4.5.0)
+ DBI                                            1.2.3     2024-06-02 [1] CRAN (R 4.5.0)
+ DelayedArray                                   0.34.1    2025-04-17 [1] Bioconductor 3.21 (R 4.5.0)
+ dichromat                                      2.0-0.1   2022-05-02 [1] CRAN (R 4.5.0)
+ digest                                         0.6.37    2024-08-19 [1] CRAN (R 4.5.0)
+ dplyr                                          1.1.4     2023-11-17 [1] CRAN (R 4.5.0)
+ evaluate                                       1.0.3     2025-01-10 [1] CRAN (R 4.5.0)
+ farver                                         2.1.2     2024-05-13 [1] CRAN (R 4.5.0)
+ fastmap                                        1.2.0     2024-05-15 [1] CRAN (R 4.5.0)
+ footprintR                                   * 0.3.5     2025-06-04 [1] Github (fmicompbio/footprintR@612f713)
+ generics                                     * 0.1.4     2025-05-09 [1] CRAN (R 4.5.0)
+ GenomeInfoDb                                 * 1.44.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ GenomeInfoDbData                               1.2.14    2025-04-17 [1] Bioconductor
+ GenomicAlignments                              1.44.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ GenomicFeatures                                1.60.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ GenomicRanges                                * 1.60.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ ggforce                                        0.4.2     2024-02-19 [1] CRAN (R 4.5.0)
+ ggplot2                                      * 3.5.2     2025-04-09 [1] CRAN (R 4.5.0)
+ glue                                           1.8.0     2024-09-30 [1] CRAN (R 4.5.0)
+ gtable                                         0.3.6     2024-10-25 [1] CRAN (R 4.5.0)
+ htmltools                                      0.5.8.1   2024-04-04 [1] CRAN (R 4.5.0)
+ htmlwidgets                                    1.6.4     2023-12-06 [1] CRAN (R 4.5.0)
+ httr                                           1.4.7     2023-08-15 [1] CRAN (R 4.5.0)
+ IRanges                                      * 2.42.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ jsonlite                                       2.0.0     2025-03-27 [1] CRAN (R 4.5.0)
+ KEGGREST                                       1.48.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ knitr                                          1.50      2025-03-16 [1] CRAN (R 4.5.0)
+ labeling                                       0.4.3     2023-08-29 [1] CRAN (R 4.5.0)
+ lattice                                        0.22-7    2025-04-02 [1] CRAN (R 4.5.0)
+ lifecycle                                      1.0.4     2023-11-07 [1] CRAN (R 4.5.0)
+ magrittr                                       2.0.3     2022-03-30 [1] CRAN (R 4.5.0)
+ MASS                                           7.3-65    2025-02-28 [2] CRAN (R 4.5.0)
+ Matrix                                         1.7-3     2025-03-11 [2] CRAN (R 4.5.0)
+ MatrixGenerics                               * 1.20.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ matrixStats                                  * 1.5.0     2025-01-07 [1] CRAN (R 4.5.0)
+ memoise                                        2.0.1     2021-11-26 [1] CRAN (R 4.5.0)
+ patchwork                                    * 1.3.0     2024-09-16 [1] CRAN (R 4.5.0)
+ pillar                                         1.10.2    2025-04-05 [1] CRAN (R 4.5.0)
+ pkgconfig                                      2.0.3     2019-09-22 [1] CRAN (R 4.5.0)
+ png                                            0.1-8     2022-11-29 [1] CRAN (R 4.5.0)
+ polyclip                                       1.10-7    2024-07-23 [1] CRAN (R 4.5.0)
+ purrr                                          1.0.4     2025-02-05 [1] CRAN (R 4.5.0)
+ R6                                             2.6.1     2025-02-15 [1] CRAN (R 4.5.0)
+ RColorBrewer                                   1.1-3     2022-04-03 [1] CRAN (R 4.5.0)
+ Rcpp                                           1.0.14    2025-01-12 [1] CRAN (R 4.5.0)
+ RCurl                                          1.98-1.17 2025-03-22 [1] CRAN (R 4.5.0)
+ restfulr                                       0.0.15    2022-06-16 [1] CRAN (R 4.5.0)
+ rjson                                          0.2.23    2024-09-16 [1] CRAN (R 4.5.0)
+ rlang                                          1.1.6     2025-04-11 [1] CRAN (R 4.5.0)
+ rmarkdown                                      2.29      2024-11-04 [1] CRAN (R 4.5.0)
+ Rsamtools                                    * 2.24.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ RSQLite                                        2.4.1     2025-06-08 [1] CRAN (R 4.5.0)
+ rtracklayer                                  * 1.68.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ S4Arrays                                       1.8.1     2025-06-01 [1] Bioconductor 3.21 (R 4.5.0)
+ S4Vectors                                    * 0.46.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ scales                                         1.4.0     2025-04-24 [1] CRAN (R 4.5.0)
+ sessioninfo                                    1.2.3     2025-02-05 [1] CRAN (R 4.5.0)
+ SparseArray                                    1.8.0     2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ stringdist                                   * 0.9.15    2025-01-10 [1] CRAN (R 4.5.0)
+ SummarizedExperiment                         * 1.38.1    2025-04-30 [1] Bioconductor 3.21 (R 4.5.0)
+ tibble                                         3.3.0     2025-06-08 [1] CRAN (R 4.5.0)
+ tidyr                                          1.3.1     2024-01-24 [1] CRAN (R 4.5.0)
+ tidyselect                                     1.2.1     2024-03-11 [1] CRAN (R 4.5.0)
+ tweenr                                         2.0.3     2024-02-26 [1] CRAN (R 4.5.0)
+ UCSC.utils                                     1.4.0     2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ VariantAnnotation                            * 1.54.1    2025-05-11 [1] Bioconductor 3.21 (R 4.5.0)
+ vctrs                                          0.6.5     2023-12-01 [1] CRAN (R 4.5.0)
+ viridisLite                                    0.4.2     2023-05-02 [1] CRAN (R 4.5.0)
+ withr                                          3.0.2     2024-10-28 [1] CRAN (R 4.5.0)
+ xfun                                           0.52      2025-04-02 [1] CRAN (R 4.5.0)
+ XML                                            3.99-0.18 2025-01-01 [1] CRAN (R 4.5.0)
+ XVector                                      * 0.48.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ yaml                                           2.3.10    2024-07-26 [1] CRAN (R 4.5.0)
+ zoo                                            1.8-14    2025-04-10 [1] CRAN (R 4.5.0)
 
+ [1] /tungstenfs/groups/gbioinfo/Appz/R/BioC/R-4.5-release-foss-2024.05_BioC-3.21-release-foss-2024.05
+ [2] /tachyon/groups/gbioinfo/Appz/easybuild/software/R/4.5.0-foss-2024.05/lib64/R/library
+ * ── Packages attached to the search path.
+
+──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+</details>
+
+
+<!-- -->
 
 </section>
 
@@ -626,13 +945,62 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
     });
     clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
@@ -738,7 +1106,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
@@ -975,7 +1342,361 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Combining and comparing multiple data modalities</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
-</nav>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb34" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Grouping reads {#sec-grouping-reads}</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>When reading data with <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg}, the reads will automatically be grouped by _sample_ (i.e., the name assigned to each input files).</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>As we have seen in earlier chapters, this is reflected by the columns of the <span class="in">`SummarizedExperiment`</span> object generated by the reading functions corresponding to samples, with individual reads stored in a nested fashion within the samples. </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>In practice, this means that any summary statistics, e.g. calculated by <span class="co">[</span><span class="ot">flattenReadLevelAssay</span><span class="co">]</span>{.fn}, will be calculated by sample, and <span class="co">[</span><span class="ot">plotRegion</span><span class="co">]</span>{.fn} will facet the reads by sample.</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>In some situations, we may wish to group the reads by something other than the sample that they stem from. </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>How to achieve this will be the focus of the current chapter. </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Preparation</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>We first load the packages and the genome needed for these tasks.</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load-packages</span></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(VariantAnnotation)</span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringdist)</span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BiocParallel)</span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gnm) <span class="ot">&lt;-</span> <span class="st">"mm39"</span></span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Using sequence variation {#sec-group-by-sequence}</span></span>
+<span id="cb34-37"><a href="#cb34-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-38"><a href="#cb34-38" aria-hidden="true" tabindex="-1"></a>One reason for regrouping reads could be to sort them using genetic variation (e.g., single nucleotide variants), e.g. with the purpose of studying allele-specific signals. </span>
+<span id="cb34-39"><a href="#cb34-39" aria-hidden="true" tabindex="-1"></a>Typically, the heterozygous loci on which we would like to base such read grouping are known in advance (alternatively, we can use all positions within a given genomic region).</span>
+<span id="cb34-40"><a href="#cb34-40" aria-hidden="true" tabindex="-1"></a>In such cases, <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn} can automatically add "sequence labels" (consisting of the observed nucleotide in the indicated positions) to reads when reading the data, and these labels can later be used to regroup the reads. </span>
+<span id="cb34-41"><a href="#cb34-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-42"><a href="#cb34-42" aria-hidden="true" tabindex="-1"></a>Let's consider an example. </span>
+<span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a>We start by defining a region of interest, and reading a file with known heterozygous SNVs (for the purposes of this report, we have subset the complete VCF file to only SNVs overlapping the region of interest, but this is not necessary in general). </span>
+<span id="cb34-44"><a href="#cb34-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-47"><a href="#cb34-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-48"><a href="#cb34-48" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load-snvs</span></span>
+<span id="cb34-49"><a href="#cb34-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-50"><a href="#cb34-50" aria-hidden="true" tabindex="-1"></a>reg <span class="ot">&lt;-</span> <span class="fu">resize</span>(<span class="fu">as</span>(<span class="st">"chr7:23987184-23987363"</span>, <span class="st">"GRanges"</span>), <span class="at">width =</span> <span class="dv">1300</span>, <span class="at">fix =</span> <span class="st">"center"</span>)</span>
+<span id="cb34-51"><a href="#cb34-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-52"><a href="#cb34-52" aria-hidden="true" tabindex="-1"></a>hetsnv <span class="ot">&lt;-</span> <span class="fu">readVcf</span>(<span class="st">"data/het_snp_chr7_23987184-23987363.vcf.gz"</span>)</span>
+<span id="cb34-53"><a href="#cb34-53" aria-hidden="true" tabindex="-1"></a>hetpos <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="fu">rowRanges</span>(hetsnv), <span class="st">"GPos"</span>)</span>
+<span id="cb34-54"><a href="#cb34-54" aria-hidden="true" tabindex="-1"></a>hetpos<span class="sc">$</span>ALT <span class="ot">&lt;-</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT)</span>
+<span id="cb34-55"><a href="#cb34-55" aria-hidden="true" tabindex="-1"></a>hetpos</span>
+<span id="cb34-56"><a href="#cb34-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-57"><a href="#cb34-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-58"><a href="#cb34-58" aria-hidden="true" tabindex="-1"></a>We next generate "expected" REF and ALT sequences by concatenating the sequences of the heterozygous SNVs overlapping the region of interest.</span>
+<span id="cb34-59"><a href="#cb34-59" aria-hidden="true" tabindex="-1"></a>These sequences will later be used to group reads into one of two categories (REF or ALT), based on the agreement with the expected sequences.</span>
+<span id="cb34-60"><a href="#cb34-60" aria-hidden="true" tabindex="-1"></a>Note that with this approach, we're making the implicit assumption that the SNVs are phased (and thus that a read will not typically harbor a mix of the REF and ALT nucleotides) - for most reads in our example this turns out to be a valid assumption, but in other cases other grouping schemes may be preferable.</span>
+<span id="cb34-61"><a href="#cb34-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-64"><a href="#cb34-64" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-65"><a href="#cb34-65" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: subset-snvs</span></span>
+<span id="cb34-66"><a href="#cb34-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-67"><a href="#cb34-67" aria-hidden="true" tabindex="-1"></a><span class="co"># subset to SNVs in region of interest</span></span>
+<span id="cb34-68"><a href="#cb34-68" aria-hidden="true" tabindex="-1"></a>hetpos1 <span class="ot">&lt;-</span> <span class="fu">subsetByOverlaps</span>(hetpos, reg, <span class="at">ignore.strand =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb34-69"><a href="#cb34-69" aria-hidden="true" tabindex="-1"></a>(seqREF <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">as.character</span>(hetpos1<span class="sc">$</span>REF), <span class="at">collapse =</span> <span class="st">""</span>))</span>
+<span id="cb34-70"><a href="#cb34-70" aria-hidden="true" tabindex="-1"></a>(seqALT <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">as.character</span>(hetpos1<span class="sc">$</span>ALT), <span class="at">collapse =</span> <span class="st">""</span>))</span>
+<span id="cb34-71"><a href="#cb34-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-72"><a href="#cb34-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-73"><a href="#cb34-73" aria-hidden="true" tabindex="-1"></a>Next, we generate two versions of the genome sequence, obtained by injecting, respectively, the REF and ALT nucleotide above into the corresponding positions. </span>
+<span id="cb34-74"><a href="#cb34-74" aria-hidden="true" tabindex="-1"></a>These genomes will later be used to generate sequence contexts for the positions seen in the data, and filter out positions that are not annotated as (in the case below) CpGs. </span>
+<span id="cb34-75"><a href="#cb34-75" aria-hidden="true" tabindex="-1"></a>For more information about filtering, and how it can reduce the effect of sequencing errors, see @sec-qc-filtering and @sec-visualize-regions.</span>
+<span id="cb34-76"><a href="#cb34-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-79"><a href="#cb34-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-80"><a href="#cb34-80" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: inject-snps</span></span>
+<span id="cb34-81"><a href="#cb34-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-82"><a href="#cb34-82" aria-hidden="true" tabindex="-1"></a>gnmREF <span class="ot">&lt;-</span> gnmALT <span class="ot">&lt;-</span> <span class="fu">getSeq</span>(gnm)</span>
+<span id="cb34-83"><a href="#cb34-83" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (chr <span class="cf">in</span> <span class="fu">names</span>(gnmREF)) {</span>
+<span id="cb34-84"><a href="#cb34-84" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">seqnames</span>(hetpos) <span class="sc">==</span> chr)</span>
+<span id="cb34-85"><a href="#cb34-85" aria-hidden="true" tabindex="-1"></a>    gnmREF[[chr]] <span class="ot">&lt;-</span> <span class="fu">replaceLetterAt</span>(<span class="at">x =</span> gnmREF[[chr]],</span>
+<span id="cb34-86"><a href="#cb34-86" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">at =</span> <span class="fu">start</span>(hetpos)[i],</span>
+<span id="cb34-87"><a href="#cb34-87" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">letter =</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>REF[i]),</span>
+<span id="cb34-88"><a href="#cb34-88" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb34-89"><a href="#cb34-89" aria-hidden="true" tabindex="-1"></a>    gnmALT[[chr]] <span class="ot">&lt;-</span> <span class="fu">replaceLetterAt</span>(<span class="at">x =</span> gnmALT[[chr]],</span>
+<span id="cb34-90"><a href="#cb34-90" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">at =</span> <span class="fu">start</span>(hetpos)[i],</span>
+<span id="cb34-91"><a href="#cb34-91" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">letter =</span> <span class="fu">unlist</span>(hetpos<span class="sc">$</span>ALT[i]),</span>
+<span id="cb34-92"><a href="#cb34-92" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb34-93"><a href="#cb34-93" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb34-94"><a href="#cb34-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-95"><a href="#cb34-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-96"><a href="#cb34-96" aria-hidden="true" tabindex="-1"></a>After this preparation, we read the data. In this case, we will work with a <span class="in">`modBam`</span> file from a wild-type sample, for which 5mCpG modification calling has been performed.</span>
+<span id="cb34-97"><a href="#cb34-97" aria-hidden="true" tabindex="-1"></a>We specify the positions of the heterozygous SNVs to the <span class="in">`variantPositions`</span> argument, which will generate a sequence label for each read.</span>
+<span id="cb34-98"><a href="#cb34-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-101"><a href="#cb34-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-102"><a href="#cb34-102" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-data</span></span>
+<span id="cb34-103"><a href="#cb34-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-104"><a href="#cb34-104" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb34-105"><a href="#cb34-105" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="st">"data/mESC_wt_5mCG_5hmCG_rep2.bam"</span>, </span>
+<span id="cb34-106"><a href="#cb34-106" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> reg,</span>
+<span id="cb34-107"><a href="#cb34-107" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"m"</span>, </span>
+<span id="cb34-108"><a href="#cb34-108" aria-hidden="true" tabindex="-1"></a>    <span class="at">level =</span> <span class="st">"read"</span>,</span>
+<span id="cb34-109"><a href="#cb34-109" aria-hidden="true" tabindex="-1"></a>    <span class="at">variantPositions =</span> hetpos1, </span>
+<span id="cb34-110"><a href="#cb34-110" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb34-111"><a href="#cb34-111" aria-hidden="true" tabindex="-1"></a>    <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(),</span>
+<span id="cb34-112"><a href="#cb34-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="fu">interactive</span>()</span>
+<span id="cb34-113"><a href="#cb34-113" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-114"><a href="#cb34-114" aria-hidden="true" tabindex="-1"></a><span class="co"># derived sequence labels</span></span>
+<span id="cb34-115"><a href="#cb34-115" aria-hidden="true" tabindex="-1"></a>seC<span class="sc">$</span>readInfo<span class="sc">$</span>s1<span class="sc">$</span>variant_label</span>
+<span id="cb34-116"><a href="#cb34-116" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-117"><a href="#cb34-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-118"><a href="#cb34-118" aria-hidden="true" tabindex="-1"></a>Next, we filter the data by sequence context, to only retain positions annotated as <span class="in">`CG`</span> in both the REF and ALT genomes generated above. </span>
+<span id="cb34-119"><a href="#cb34-119" aria-hidden="true" tabindex="-1"></a>We achieve this by sequentially adding the sequence context from each of the genomes, and filtering by this sequence context.</span>
+<span id="cb34-120"><a href="#cb34-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-123"><a href="#cb34-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-124"><a href="#cb34-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: add-seq-context-filter</span></span>
+<span id="cb34-125"><a href="#cb34-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-126"><a href="#cb34-126" aria-hidden="true" tabindex="-1"></a><span class="co"># REF genome</span></span>
+<span id="cb34-127"><a href="#cb34-127" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">addSeqContext</span>(<span class="at">x =</span> seC, <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>,</span>
+<span id="cb34-128"><a href="#cb34-128" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sequenceReference =</span> gnmREF)</span>
+<span id="cb34-129"><a href="#cb34-129" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seC, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb34-130"><a href="#cb34-130" aria-hidden="true" tabindex="-1"></a>                       <span class="at">sequenceContext =</span> <span class="st">"NCG"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
+<span id="cb34-131"><a href="#cb34-131" aria-hidden="true" tabindex="-1"></a><span class="co"># ALT genome</span></span>
+<span id="cb34-132"><a href="#cb34-132" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">addSeqContext</span>(<span class="at">x =</span> seC, <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>,</span>
+<span id="cb34-133"><a href="#cb34-133" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sequenceReference =</span> gnmALT)</span>
+<span id="cb34-134"><a href="#cb34-134" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(seC, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb34-135"><a href="#cb34-135" aria-hidden="true" tabindex="-1"></a>                       <span class="at">sequenceContext =</span> <span class="st">"NCG"</span>, <span class="at">assayNameNA =</span> <span class="st">"mod_prob"</span>)</span>
+<span id="cb34-136"><a href="#cb34-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-137"><a href="#cb34-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-138"><a href="#cb34-138" aria-hidden="true" tabindex="-1"></a>With the clean data, we next cluster the reads into two groups, based on which of the two expected sequences (<span class="in">`seqREF`</span> or <span class="in">`seqALT`</span> above) the respective sequence labels are most similar to. </span>
+<span id="cb34-139"><a href="#cb34-139" aria-hidden="true" tabindex="-1"></a>We request a Hamming distance of at most 0.34 based on the positions covered by the read - otherwise, the read is assigned to an <span class="in">`NA`</span> category</span>
+<span id="cb34-140"><a href="#cb34-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-143"><a href="#cb34-143" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-144"><a href="#cb34-144" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: classify-reads</span></span>
+<span id="cb34-145"><a href="#cb34-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-146"><a href="#cb34-146" aria-hidden="true" tabindex="-1"></a>(varlabels <span class="ot">&lt;-</span> <span class="fu">structure</span>(</span>
+<span id="cb34-147"><a href="#cb34-147" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unlist</span>(<span class="fu">lapply</span>(seC<span class="sc">$</span>readInfo, <span class="st">"[["</span>, <span class="st">"variant_label"</span>), <span class="at">use.names =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb34-148"><a href="#cb34-148" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(seC<span class="sc">$</span>readInfo, rownames), <span class="at">use.names =</span> <span class="cn">FALSE</span>)))</span>
+<span id="cb34-149"><a href="#cb34-149" aria-hidden="true" tabindex="-1"></a>dists <span class="ot">&lt;-</span> <span class="fu">stringdistmatrix</span>(<span class="at">a =</span> <span class="fu">c</span>(seqREF, seqALT),</span>
+<span id="cb34-150"><a href="#cb34-150" aria-hidden="true" tabindex="-1"></a>                          <span class="at">b =</span> varlabels, <span class="at">method =</span> <span class="st">"hamming"</span>,</span>
+<span id="cb34-151"><a href="#cb34-151" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nthread =</span> <span class="dv">2</span>) <span class="sc">/</span> <span class="fu">nchar</span>(varlabels[<span class="dv">1</span>])</span>
+<span id="cb34-152"><a href="#cb34-152" aria-hidden="true" tabindex="-1"></a>methGroup <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">colMins</span>(dists) <span class="sc">&lt;</span> <span class="fl">0.34</span>,</span>
+<span id="cb34-153"><a href="#cb34-153" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"REF"</span>, <span class="st">"ALT"</span>), <span class="st">": "</span>, <span class="fu">c</span>(seqREF, seqALT))[<span class="fu">apply</span>(dists, <span class="dv">2</span>, which.min)], <span class="cn">NA</span>)</span>
+<span id="cb34-154"><a href="#cb34-154" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(methGroup, <span class="at">useNA =</span> <span class="st">"ifany"</span>)</span>
+<span id="cb34-155"><a href="#cb34-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-156"><a href="#cb34-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-157"><a href="#cb34-157" aria-hidden="true" tabindex="-1"></a>Based on this read grouping, we can now regroup the reads in such a way that the columns of the <span class="in">`SummarizedExperiment`</span> object corresponds to allele (REF or ALT) rather than the sample.</span>
+<span id="cb34-158"><a href="#cb34-158" aria-hidden="true" tabindex="-1"></a>This is achieved with the <span class="co">[</span><span class="ot">regroupReads</span><span class="co">]</span>{.fn} function.</span>
+<span id="cb34-159"><a href="#cb34-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-162"><a href="#cb34-162" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-163"><a href="#cb34-163" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 10</span></span>
+<span id="cb34-164"><a href="#cb34-164" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 8</span></span>
+<span id="cb34-165"><a href="#cb34-165" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-regroup-reads-snvs</span></span>
+<span id="cb34-166"><a href="#cb34-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-167"><a href="#cb34-167" aria-hidden="true" tabindex="-1"></a><span class="co"># generate named list of read groups</span></span>
+<span id="cb34-168"><a href="#cb34-168" aria-hidden="true" tabindex="-1"></a>methGroupList <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">names</span>(varlabels), methGroup)</span>
+<span id="cb34-169"><a href="#cb34-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-170"><a href="#cb34-170" aria-hidden="true" tabindex="-1"></a><span class="co"># regroup reads</span></span>
+<span id="cb34-171"><a href="#cb34-171" aria-hidden="true" tabindex="-1"></a>seCgrouped <span class="ot">&lt;-</span> <span class="fu">regroupReads</span>(seC, methGroupList)</span>
+<span id="cb34-172"><a href="#cb34-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-173"><a href="#cb34-173" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate average modification fraction by allele</span></span>
+<span id="cb34-174"><a href="#cb34-174" aria-hidden="true" tabindex="-1"></a>seCgrouped <span class="ot">&lt;-</span> <span class="fu">flattenReadLevelAssay</span>(seCgrouped, <span class="at">keepReads =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb34-175"><a href="#cb34-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-176"><a href="#cb34-176" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb34-177"><a href="#cb34-177" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRegion</span>(seCgrouped, <span class="at">region =</span> reg,</span>
+<span id="cb34-178"><a href="#cb34-178" aria-hidden="true" tabindex="-1"></a>           <span class="at">tracks =</span> <span class="fu">list</span>(</span>
+<span id="cb34-179"><a href="#cb34-179" aria-hidden="true" tabindex="-1"></a>               <span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"mod_prob"</span>, <span class="at">trackType =</span> <span class="st">"Lollipop"</span>,</span>
+<span id="cb34-180"><a href="#cb34-180" aria-hidden="true" tabindex="-1"></a>                    <span class="at">legendTitle =</span> <span class="st">"5mCpG"</span>),</span>
+<span id="cb34-181"><a href="#cb34-181" aria-hidden="true" tabindex="-1"></a>               <span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Point"</span>,</span>
+<span id="cb34-182"><a href="#cb34-182" aria-hidden="true" tabindex="-1"></a>                    <span class="at">arglistPoint =</span> <span class="fu">list</span>(<span class="at">size =</span> <span class="dv">3</span>)))) <span class="sc">+</span></span>
+<span id="cb34-183"><a href="#cb34-183" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="fl">7.5</span>, <span class="fl">1.5</span>))</span>
+<span id="cb34-184"><a href="#cb34-184" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-185"><a href="#cb34-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-186"><a href="#cb34-186" aria-hidden="true" tabindex="-1"></a>In this example, we notice a clear difference in methylation between the two alleles.</span>
+<span id="cb34-187"><a href="#cb34-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-188"><a href="#cb34-188" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modification based</span></span>
+<span id="cb34-189"><a href="#cb34-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-190"><a href="#cb34-190" aria-hidden="true" tabindex="-1"></a>As an alternative to the genetic grouping used above, we could also group the reads based on the observed data. </span>
+<span id="cb34-191"><a href="#cb34-191" aria-hidden="true" tabindex="-1"></a>To exemplify this, we will look at a known imprinted locus in the Peg10 gene, split the reads based on the average CpG methylation in the locus, and compare the levels of 6mA modifications between the groups. </span>
+<span id="cb34-192"><a href="#cb34-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-193"><a href="#cb34-193" aria-hidden="true" tabindex="-1"></a>First, we read the CpG methylation data and filter positions to only retain those in a CpG context.</span>
+<span id="cb34-194"><a href="#cb34-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-197"><a href="#cb34-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-198"><a href="#cb34-198" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-data-5mcpg</span></span>
+<span id="cb34-199"><a href="#cb34-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-200"><a href="#cb34-200" aria-hidden="true" tabindex="-1"></a>peg10 <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="st">"chr6:4746792-4748791"</span>, <span class="st">"GRanges"</span>)</span>
+<span id="cb34-201"><a href="#cb34-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-202"><a href="#cb34-202" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb34-203"><a href="#cb34-203" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="st">"data/mESC_wt_5mCG_5hmCG_rep2.bam"</span>, </span>
+<span id="cb34-204"><a href="#cb34-204" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> peg10,</span>
+<span id="cb34-205"><a href="#cb34-205" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"m"</span>, </span>
+<span id="cb34-206"><a href="#cb34-206" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm,</span>
+<span id="cb34-207"><a href="#cb34-207" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>,</span>
+<span id="cb34-208"><a href="#cb34-208" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm),</span>
+<span id="cb34-209"><a href="#cb34-209" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb34-210"><a href="#cb34-210" aria-hidden="true" tabindex="-1"></a>    <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(),</span>
+<span id="cb34-211"><a href="#cb34-211" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="fu">interactive</span>()</span>
+<span id="cb34-212"><a href="#cb34-212" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-213"><a href="#cb34-213" aria-hidden="true" tabindex="-1"></a>seC <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(</span>
+<span id="cb34-214"><a href="#cb34-214" aria-hidden="true" tabindex="-1"></a>    seC, </span>
+<span id="cb34-215"><a href="#cb34-215" aria-hidden="true" tabindex="-1"></a>    <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb34-216"><a href="#cb34-216" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContext =</span> <span class="st">"NCG"</span></span>
+<span id="cb34-217"><a href="#cb34-217" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-218"><a href="#cb34-218" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-219"><a href="#cb34-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-220"><a href="#cb34-220" aria-hidden="true" tabindex="-1"></a>Next, we calculate the average modification fraction per read. </span>
+<span id="cb34-221"><a href="#cb34-221" aria-hidden="true" tabindex="-1"></a>We note a clear bimodality of the distribution, and define two groups of reads based on this.</span>
+<span id="cb34-222"><a href="#cb34-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-225"><a href="#cb34-225" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-226"><a href="#cb34-226" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-classify-reads-5mcpg</span></span>
+<span id="cb34-227"><a href="#cb34-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-228"><a href="#cb34-228" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate average modification fraction per read</span></span>
+<span id="cb34-229"><a href="#cb34-229" aria-hidden="true" tabindex="-1"></a>avgmod <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(<span class="fu">as.matrix</span>(<span class="fu">assay</span>(seC, <span class="st">"mod_prob"</span>)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb34-230"><a href="#cb34-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-231"><a href="#cb34-231" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">avgmod =</span> avgmod), <span class="fu">aes</span>(<span class="at">x =</span> avgmod)) <span class="sc">+</span></span>
+<span id="cb34-232"><a href="#cb34-232" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
+<span id="cb34-233"><a href="#cb34-233" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Average modification probability per read (CpG)"</span>) <span class="sc">+</span> </span>
+<span id="cb34-234"><a href="#cb34-234" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">16</span>)</span>
+<span id="cb34-235"><a href="#cb34-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-236"><a href="#cb34-236" aria-hidden="true" tabindex="-1"></a>read_groups <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">colnames</span>(<span class="fu">as.matrix</span>(<span class="fu">assay</span>(seC, <span class="st">"mod_prob"</span>))), </span>
+<span id="cb34-237"><a href="#cb34-237" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">c</span>(<span class="st">"paternal"</span>, <span class="st">"maternal"</span>)[(avgmod <span class="sc">&gt;</span> <span class="fl">0.5</span>) <span class="sc">+</span> <span class="dv">1</span>])</span>
+<span id="cb34-238"><a href="#cb34-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-239"><a href="#cb34-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-240"><a href="#cb34-240" aria-hidden="true" tabindex="-1"></a>Next, we read the 6mA data for the same sample, filter by sequence context and regroup the reads based on the split defined above.</span>
+<span id="cb34-241"><a href="#cb34-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-244"><a href="#cb34-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-245"><a href="#cb34-245" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-data-6ma</span></span>
+<span id="cb34-246"><a href="#cb34-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-247"><a href="#cb34-247" aria-hidden="true" tabindex="-1"></a>seA <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb34-248"><a href="#cb34-248" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>, </span>
+<span id="cb34-249"><a href="#cb34-249" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> peg10,</span>
+<span id="cb34-250"><a href="#cb34-250" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
+<span id="cb34-251"><a href="#cb34-251" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm,</span>
+<span id="cb34-252"><a href="#cb34-252" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>,</span>
+<span id="cb34-253"><a href="#cb34-253" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm),</span>
+<span id="cb34-254"><a href="#cb34-254" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb34-255"><a href="#cb34-255" aria-hidden="true" tabindex="-1"></a>    <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(),</span>
+<span id="cb34-256"><a href="#cb34-256" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="fu">interactive</span>()</span>
+<span id="cb34-257"><a href="#cb34-257" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-258"><a href="#cb34-258" aria-hidden="true" tabindex="-1"></a>seA <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(</span>
+<span id="cb34-259"><a href="#cb34-259" aria-hidden="true" tabindex="-1"></a>    seA, </span>
+<span id="cb34-260"><a href="#cb34-260" aria-hidden="true" tabindex="-1"></a>    <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb34-261"><a href="#cb34-261" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContext =</span> <span class="st">"A"</span></span>
+<span id="cb34-262"><a href="#cb34-262" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-263"><a href="#cb34-263" aria-hidden="true" tabindex="-1"></a>seA <span class="ot">&lt;-</span> <span class="fu">regroupReads</span>(seA, <span class="at">readGroups =</span> read_groups)</span>
+<span id="cb34-264"><a href="#cb34-264" aria-hidden="true" tabindex="-1"></a><span class="co"># check that the columns of seA now correspond to read groups</span></span>
+<span id="cb34-265"><a href="#cb34-265" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(seA)</span>
+<span id="cb34-266"><a href="#cb34-266" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-267"><a href="#cb34-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-268"><a href="#cb34-268" aria-hidden="true" tabindex="-1"></a>With the new read grouping, we next calculate summary statistics and visualize the 6mA data.</span>
+<span id="cb34-269"><a href="#cb34-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-272"><a href="#cb34-272" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-273"><a href="#cb34-273" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 7</span></span>
+<span id="cb34-274"><a href="#cb34-274" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 7</span></span>
+<span id="cb34-275"><a href="#cb34-275" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-regrouped-reads-5mcpg</span></span>
+<span id="cb34-276"><a href="#cb34-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-277"><a href="#cb34-277" aria-hidden="true" tabindex="-1"></a>seA <span class="ot">&lt;-</span> <span class="fu">flattenReadLevelAssay</span>(seA)</span>
+<span id="cb34-278"><a href="#cb34-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-279"><a href="#cb34-279" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRegion</span>(seA, <span class="at">region =</span> peg10, <span class="at">sequenceContext =</span> <span class="st">"A"</span>, </span>
+<span id="cb34-280"><a href="#cb34-280" aria-hidden="true" tabindex="-1"></a>           <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackType =</span> <span class="st">"Heatmap"</span>, <span class="at">trackData =</span> <span class="st">"mod_prob"</span>, </span>
+<span id="cb34-281"><a href="#cb34-281" aria-hidden="true" tabindex="-1"></a>                              <span class="at">interpolate =</span> <span class="cn">TRUE</span>, <span class="at">legendTitle =</span> <span class="st">"6mA"</span>, </span>
+<span id="cb34-282"><a href="#cb34-282" aria-hidden="true" tabindex="-1"></a>                              <span class="at">orderReads =</span> <span class="st">"squish"</span>),</span>
+<span id="cb34-283"><a href="#cb34-283" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">list</span>(<span class="at">trackType =</span> <span class="st">"Smooth"</span>, <span class="at">trackData =</span> <span class="st">"FracMod"</span>))) <span class="sc">+</span> </span>
+<span id="cb34-284"><a href="#cb34-284" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb34-285"><a href="#cb34-285" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-286"><a href="#cb34-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-287"><a href="#cb34-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-288"><a href="#cb34-288" aria-hidden="true" tabindex="-1"></a><span class="fu">## Across different regions</span></span>
+<span id="cb34-289"><a href="#cb34-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-290"><a href="#cb34-290" aria-hidden="true" tabindex="-1"></a>Next, we will illustrate how to use <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} to create metaplots. </span>
+<span id="cb34-291"><a href="#cb34-291" aria-hidden="true" tabindex="-1"></a>In these plots, each row represents an (equally sized) genomic region. </span>
+<span id="cb34-292"><a href="#cb34-292" aria-hidden="true" tabindex="-1"></a>Here, we will exemplify this by generating a metaplot of a collection of 1,000 strong CTCF sites:</span>
+<span id="cb34-293"><a href="#cb34-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-296"><a href="#cb34-296" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-297"><a href="#cb34-297" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load-ctcf-sites</span></span>
+<span id="cb34-298"><a href="#cb34-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-299"><a href="#cb34-299" aria-hidden="true" tabindex="-1"></a>(ctcf_sites <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/ctcf_sites_1000.rds"</span>))</span>
+<span id="cb34-300"><a href="#cb34-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-301"><a href="#cb34-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-302"><a href="#cb34-302" aria-hidden="true" tabindex="-1"></a>We first load summary-level data from all reads overlapping 1.5kb regions centered on these sites, and filter positions based on the sequence context. </span>
+<span id="cb34-303"><a href="#cb34-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-306"><a href="#cb34-306" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-307"><a href="#cb34-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-data-ctcf</span></span>
+<span id="cb34-308"><a href="#cb34-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-309"><a href="#cb34-309" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(<span class="at">bamfiles =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>,</span>
+<span id="cb34-310"><a href="#cb34-310" aria-hidden="true" tabindex="-1"></a>                 <span class="at">regions =</span> <span class="fu">resize</span>(ctcf_sites, <span class="at">width =</span> <span class="dv">1500</span>, <span class="at">fix =</span> <span class="st">"center"</span>),</span>
+<span id="cb34-311"><a href="#cb34-311" aria-hidden="true" tabindex="-1"></a>                 <span class="at">modbase =</span> <span class="st">"a"</span>,</span>
+<span id="cb34-312"><a href="#cb34-312" aria-hidden="true" tabindex="-1"></a>                 <span class="at">level =</span> <span class="st">"summary"</span>,</span>
+<span id="cb34-313"><a href="#cb34-313" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb34-314"><a href="#cb34-314" aria-hidden="true" tabindex="-1"></a>                 <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm),</span>
+<span id="cb34-315"><a href="#cb34-315" aria-hidden="true" tabindex="-1"></a>                 <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>,</span>
+<span id="cb34-316"><a href="#cb34-316" aria-hidden="true" tabindex="-1"></a>                 <span class="at">sequenceReference =</span> gnm,</span>
+<span id="cb34-317"><a href="#cb34-317" aria-hidden="true" tabindex="-1"></a>                 <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb34-318"><a href="#cb34-318" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">filterPositions</span>(se, <span class="at">filters =</span> <span class="st">"sequenceContext"</span>,</span>
+<span id="cb34-319"><a href="#cb34-319" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sequenceContext =</span> <span class="st">"A"</span>,</span>
+<span id="cb34-320"><a href="#cb34-320" aria-hidden="true" tabindex="-1"></a>                      <span class="at">assayNameNA =</span> <span class="cn">NULL</span>)</span>
+<span id="cb34-321"><a href="#cb34-321" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-322"><a href="#cb34-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-323"><a href="#cb34-323" aria-hidden="true" tabindex="-1"></a>Next, we use the <span class="co">[</span><span class="ot">getAnchorRegions</span><span class="co">]</span>{.fn} function to extract the FracMod values for each of the regions.</span>
+<span id="cb34-324"><a href="#cb34-324" aria-hidden="true" tabindex="-1"></a>Note that all regions must have the same size.</span>
+<span id="cb34-325"><a href="#cb34-325" aria-hidden="true" tabindex="-1"></a>Hence, we specify the midpoints of the regions as well as the desired size. </span>
+<span id="cb34-326"><a href="#cb34-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-329"><a href="#cb34-329" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-330"><a href="#cb34-330" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: get-anchor-regions-ctcf</span></span>
+<span id="cb34-331"><a href="#cb34-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-332"><a href="#cb34-332" aria-hidden="true" tabindex="-1"></a>agg <span class="ot">&lt;-</span> <span class="fu">getAnchorRegions</span>(se, <span class="at">assayName =</span> <span class="st">"FracMod"</span>,</span>
+<span id="cb34-333"><a href="#cb34-333" aria-hidden="true" tabindex="-1"></a>                        <span class="at">regionMidpoints =</span> <span class="fu">as</span>(<span class="fu">resize</span>(ctcf_sites, <span class="at">width =</span> <span class="dv">1</span>, <span class="at">fix =</span> <span class="st">"center"</span>), <span class="st">"GPos"</span>),</span>
+<span id="cb34-334"><a href="#cb34-334" aria-hidden="true" tabindex="-1"></a>                        <span class="at">regionWidth =</span> <span class="dv">1501</span>,</span>
+<span id="cb34-335"><a href="#cb34-335" aria-hidden="true" tabindex="-1"></a>                        <span class="at">reverseMinusStrandRegions =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb34-336"><a href="#cb34-336" aria-hidden="true" tabindex="-1"></a>                        <span class="at">verbose =</span> <span class="fu">interactive</span>())</span>
+<span id="cb34-337"><a href="#cb34-337" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-338"><a href="#cb34-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-339"><a href="#cb34-339" aria-hidden="true" tabindex="-1"></a>In the resulting object, the positions are represented on the 'anchor' reference sequence, with positions ranging from -750 to +750. </span>
+<span id="cb34-340"><a href="#cb34-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-343"><a href="#cb34-343" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-344"><a href="#cb34-344" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-anchor-se</span></span>
+<span id="cb34-345"><a href="#cb34-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-346"><a href="#cb34-346" aria-hidden="true" tabindex="-1"></a>agg</span>
+<span id="cb34-347"><a href="#cb34-347" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-348"><a href="#cb34-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-349"><a href="#cb34-349" aria-hidden="true" tabindex="-1"></a>We can think of the <span class="in">`FracMod`</span> assay in <span class="in">`agg`</span> as similar to a read-level assay - each column corresponds to a sample, and is represented as an <span class="in">`NaMatrix`</span> with each column corresponding to a region. </span>
+<span id="cb34-350"><a href="#cb34-350" aria-hidden="true" tabindex="-1"></a>Consequently, we can calculate additional summary assays, aggregating information across all regions, using <span class="co">[</span><span class="ot">flattenReadLevelAssay</span><span class="co">]</span>{.fn}.</span>
+<span id="cb34-351"><a href="#cb34-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-354"><a href="#cb34-354" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-355"><a href="#cb34-355" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: flatten-anchor-se</span></span>
+<span id="cb34-356"><a href="#cb34-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-357"><a href="#cb34-357" aria-hidden="true" tabindex="-1"></a>agg <span class="ot">&lt;-</span> <span class="fu">flattenReadLevelAssay</span>(agg, <span class="at">assayName =</span> <span class="st">"FracMod"</span>, <span class="at">statistics =</span> <span class="st">"Pmod"</span>)</span>
+<span id="cb34-358"><a href="#cb34-358" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-359"><a href="#cb34-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-360"><a href="#cb34-360" aria-hidden="true" tabindex="-1"></a>Finally, we use <span class="co">[</span><span class="ot">plotRegion</span><span class="co">]</span>{.fn} to create the metaplot. </span>
+<span id="cb34-361"><a href="#cb34-361" aria-hidden="true" tabindex="-1"></a>We include both a heatmap where each row corresponds to a region, and a summary plot aggregating across regions.</span>
+<span id="cb34-362"><a href="#cb34-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-365"><a href="#cb34-365" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-366"><a href="#cb34-366" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 8</span></span>
+<span id="cb34-367"><a href="#cb34-367" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-anchored-ctcf</span></span>
+<span id="cb34-368"><a href="#cb34-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-369"><a href="#cb34-369" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRegion</span>(agg, <span class="at">region =</span> <span class="fu">as</span>(<span class="st">"anchor:-750-750"</span>, <span class="st">"GRanges"</span>), </span>
+<span id="cb34-370"><a href="#cb34-370" aria-hidden="true" tabindex="-1"></a>           <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Heatmap"</span>,</span>
+<span id="cb34-371"><a href="#cb34-371" aria-hidden="true" tabindex="-1"></a>                              <span class="at">interpolate =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb34-372"><a href="#cb34-372" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"Pmod"</span>, <span class="at">trackType =</span> <span class="st">"Smooth"</span>))) <span class="sc">+</span> </span>
+<span id="cb34-373"><a href="#cb34-373" aria-hidden="true" tabindex="-1"></a>    patchwork<span class="sc">::</span><span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb34-374"><a href="#cb34-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-375"><a href="#cb34-375" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-376"><a href="#cb34-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-377"><a href="#cb34-377" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session info</span></span>
+<span id="cb34-378"><a href="#cb34-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-379"><a href="#cb34-379" aria-hidden="true" tabindex="-1"></a>&lt;details&gt;</span>
+<span id="cb34-380"><a href="#cb34-380" aria-hidden="true" tabindex="-1"></a>&lt;summary&gt;&lt;b&gt;</span>
+<span id="cb34-381"><a href="#cb34-381" aria-hidden="true" tabindex="-1"></a>Click to view session info</span>
+<span id="cb34-382"><a href="#cb34-382" aria-hidden="true" tabindex="-1"></a>&lt;/b&gt;&lt;/summary&gt;</span>
+<span id="cb34-385"><a href="#cb34-385" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb34-386"><a href="#cb34-386" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: session-info</span></span>
+<span id="cb34-387"><a href="#cb34-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-388"><a href="#cb34-388" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span>
+<span id="cb34-389"><a href="#cb34-389" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-390"><a href="#cb34-390" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 
 
