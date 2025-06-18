@@ -10,6 +10,7 @@ We first load the packages and the genome needed for these tasks.
 
 ```{r}
 #| message: false
+#| label: load-packages
 
 BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
 
@@ -31,6 +32,8 @@ Our data is obtained from `modBam` file from a wild-type sample, for which 6mA m
 For more information about reading data with [fmicompbio/footprintR]{.githubpkg}, see @sec-reading-data. 
 
 ```{r}
+#| label: read-data-nrl
+
 # Read data
 ctcfsite <- as("chr8:6622465-6622483", "GRanges")
 reg <- resize(ctcfsite, width = 2000, fix = "center")
@@ -57,6 +60,7 @@ In order to find nucleosomes, we construct a weight vector called `wgt` of a tot
 ```{r}
 #| fig.height: 4
 #| fig.width: 6
+#| label: fig-nucl-kernel
 
 # nucleosome footprint
 wgt <- rep(c(0.5, -0.5, 0.5) * c(140/170, 30/170, 140/170), c(15, 140, 15))
@@ -72,12 +76,16 @@ ggplot(data.frame(Position = seq_along(wgt), Weight = wgt),
 Now we can scan the reads for high-scoring footprints and add them to the `colData` of our `SummarizedExperiment` object, under a column name given by the `name` argument:
 
 ```{r}
+#| label: add-footprints
+
 se <- addFootprints(se = se, wgt = wgt, thresh = 0.03, name = "nucl")
 ```
 
 The footprints are stored as a list with one element for each sample, containing an `IRangesList`. Its elements are the reads of that sample, and the ranges correspond to individual footprints:
 
 ```{r}
+#| label: show-footprints
+
 se$nucl
 ```
 
@@ -86,12 +94,13 @@ The nucleosome footprints can be visualized using [plotRegion]{.fn}:
 ```{r}
 #| fig.height: 8
 #| fig.width: 7
+#| label: fig-plot-footprints
 
 plotRegion(se, region = reg,
            tracks = list(list(trackData="mod_prob", trackType="Heatmap",
                               interpolate = TRUE,
                               footprintColumns = "nucl",
-                              footprintColors = c(nucl = "green3"),
+                              arglistFootprints = list(nucl = list(color = alpha("firebrick", 0.5))),
                               orderReads = "squish"),
                          list(trackData = "FracMod", trackType = "Smooth",
                               smoothMethod="rollingMean", windowSize=41,
@@ -107,6 +116,8 @@ Placing of individual nucleosomes in principle allows also measuring their avera
 In [fmicompbio/footprintR]{.githubpkg}, this analysis can be performed by first calculating the distribution of distances between modified bases using [calcModbaseSpacing]{.fn}:
 
 ```{r}
+#| label: calc-modbase-spacing
+
 moddist <- calcModbaseSpacing(se)
 str(moddist)
 ```
@@ -114,6 +125,8 @@ str(moddist)
 From this distribution, which was obtained from just `r ncol(assay(se, "mod_prob")$wt2)` reads, we can accurately estimate the NRL using [estimateNRL]{.fn}:
 
 ```{r}
+#| label: estimate-nrl
+
 res <- estimateNRL(x = moddist$wt2)
 res[1:2]
 ```
@@ -123,6 +136,7 @@ Alternatively, the distance distribution can also be visualized together with an
 ```{r}
 #| fig.height: 5
 #| fig.width: 5
+#| label: fig-modbase-spacing-summary
 
 plotModbaseSpacing(x = moddist$wt2)
 ```
@@ -132,6 +146,7 @@ plotModbaseSpacing(x = moddist$wt2)
 ```{r}
 #| fig.height: 4.5
 #| fig.width: 13.5
+#| label: fig-modbase-spacing-detailed
 
 plotModbaseSpacing(x = moddist$wt2, detailedPlots = TRUE)
 ```
@@ -143,6 +158,8 @@ Nucleosomes that occupy similar positions across reads are called phased and can
 We start such an analysis by first reading summary-level data for a larger genomic region, in which we want to calculate phasing scores:
 
 ```{r}
+#| label: read-data-phasing
+
 reg <- GRanges("chr8", IRanges(6637500, 6642500))
 se <- readModBam(
     bamfiles = c(wt2 = "data/mESC_wt_6mA_rep2.bam"),
@@ -159,6 +176,8 @@ se <- readModBam(
 Next, we construct `windowgr`, a `GRanges` objects defining the windows in `reg` for which we want to calculate a nucleosome phasing score:
 
 ```{r}
+#| label: define-windows
+
 windowStep <- 190
 windowSize <- 4 * windowStep
 s <- seq(start(reg), end(reg) - (windowSize - windowStep) + 1, by = windowStep)
@@ -169,6 +188,8 @@ windowgr <- GRanges(seqnames = seqnames(reg),
 Finally, we calculate phasing socres for the windows in `windowgr`. The `windowSize` and the value of the `numCoef` argument define the period of interest $poi = windowSize / (numCoef - 1)$ (here: `r windowSize / (5 - 1)` bp, see [phasingScoreFourier]{.fn} for details):
 
 ```{r}
+#| label: calc-phasing-scores
+
 seFourier <- phasingScoreFourier(se = se, gr = windowgr, numCoef = 5)
 ```
 
@@ -177,6 +198,7 @@ We can plot the window scores together with the fraction of modification. Note t
 ```{r}
 #| fig.height: 4
 #| fig.width: 6
+#| label: fig-phasingscore
 
 # get plotting data using plotRegion
 p <- plotRegion(se, region = reg,
@@ -208,3 +230,17 @@ ggplot(mapping = aes(x = position)) +
     theme_bw() +
     theme(legend.position = "bottom")
 ```
+
+## Session info
+
+<details>
+<summary><b>
+Click to view session info
+</b></summary>
+```{r}
+#| label: session-info
+
+sessioninfo::session_info(info = "packages")
+```
+</details>
+
