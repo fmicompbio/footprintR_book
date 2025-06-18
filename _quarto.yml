@@ -38,9 +38,11 @@ execute:
 format:
   html:
     theme: lumen
-    # fig-cap-location: bottom
-  # pdf:
-  #   documentclass: scrreprt
+    code-fold: show
+    code-summary: "Show/hide code"
+    code-tools: true
 
+params:
+  recompute: false # re-compute long-running chunks
 
 
