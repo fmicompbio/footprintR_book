@@ -13,9 +13,11 @@ the mouse genome sequence.
 
 ```{r}
 #| message: false
+#| label: load-packages
 
 BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
 
+library(BiocParallel)
 library(footprintR)
 library(BSgenomeName, character.only = TRUE)
 library(SummarizedExperiment)
@@ -35,7 +37,19 @@ modifications encoded in the `ML` and `MM` tags (see section 1.7 of
 [SAMtags.pdf](https://samtools.github.io/hts-specs/SAMtags.pdf) for details).
 
 [readModBam]{.fn} reads `modBam` files and can either keep the data at the level
-of individual reads or summarize them per genomic position and sample.
+of individual reads or summarize them per genomic position and sample. 
+This is controlled via the `level` argument to [readModBam]{.fn}. 
+By default, read-level data is imported. 
+In fact, [fmicompbio/footprintR]{.githubpkg} provides two modes for importing 
+read-level data: `level = "quickread"` is often the fastest, but does not 
+return the full set of read-level annotations, and is not compatible with read
+sampling. `level = "read"` on the other hand provides a more complete output, 
+but is a bit slower. 
+If `level` is not specified, [fmicompbio/footprintR]{.githubpkg} will select 
+the best mode based on the other arguments provided to [readModBam]{.fn} 
+(specifically, whether variant names or read sampling are requested).
+As illustrated in @sec-summary-data below, summary data (aggregated across 
+reads) can also be imported by setting `level = "summary"`.
 
 ## Data representation {#sec-data-representation}
 
@@ -43,6 +57,8 @@ Let's start by reading individual reads from a `modBam` file for a small
 region of the genome:
 
 ```{r}
+#| label: read-modbam-readlevel
+
 se <- readModBam(
     bamfiles = c(wt1 = "data/mESC_wt_6mA_rep1.bam",
                  wt2 = "data/mESC_wt_6mA_rep2.bam"),
@@ -58,21 +74,28 @@ se
 
 Here is a scheme that illustrates the internals of `se` containing read-level
 data:
-![](images/se-read-level.png){.lightbox fig-alt="SummarizedExperiment with read-level data in assays." height=300}
+
+![](images/se-read-level.png){#fig-schematic-readlevel .lightbox fig-alt="SummarizedExperiment with read-level data in assays." height=300}
 
 Let's go through the individual parts.
 You can see that the data is contained in a `RangedSummarizedExperiment` object.
 This is a container that contains one or more assays (here only one assay
 called `mod_prob`). Each assay is a matrix-like object and contains the
 loaded data (here: base modification probabilities of individual reads).
+
 ```{r}
+#| label: show-assaynames
+
 assayNames(se)
 ```
 
 The rows represent genomic positions and the columns represent samples. In our
 example, we have loaded data from two `modBam` files corresponding to the two
 samples `"wt1"` and `"wt2"`, thus the object has two columns:
+
 ```{r}
+#| label: show-colnames
+
 ncol(se)
 colnames(se)
 ```
@@ -80,26 +103,38 @@ colnames(se)
 The `r nrow(se)` rows correspond to individual base positions, for which at
 least one modification has been loaded. You can get the genomic coordinates of
 these positions using `rowRanges`:
+
 ```{r}
+#| label: show-rowranges
+
 nrow(se)
 rowRanges(se)
 ```
 
 These positions are stranded, as base modifications can be observed on either
 of the two strands:
+
 ```{r}
+#| label: show-strand
+
 table(strand(se))
 ```
 
 Finally, the individual reads of a sample are stored in the assay, inside the
 "column" of that sample:
+
 ```{r}
+#| label: show-modprob
+
 assayNames(se)
 assay(se, "mod_prob")
 ```
 
 You can see that each column is itself an object of type `NaMatrix`.
+
 ```{r}
+#| label: show-namatrix
+
 # get the NaMatrix with reads of sample wt1
 mp1 <- assay(se, "mod_prob")$wt1
 mp1
@@ -119,16 +154,24 @@ in the `NaMatrix`, which is a special type of sparse matrix from the
 
 We can use [flattenReadLevelAssay]{.fn} to go from this read-level to
 summary-level data:
+
 ```{r}
+#| label: flatten-se
+
 se_summary <- flattenReadLevelAssay(se)
 ```
 
 Here is an illustration of the summary-level data container:
-![](images/se-summary-level.png){.lightbox fig-alt="SummarizedExperiment with summary-level data in assays." height=300}
+
+![](images/se-summary-level.png){#fig-schematic-summarylevel .lightbox fig-alt="SummarizedExperiment with summary-level data in assays." height=300}
+
 Its dimensions are identical to the original `se` (positions by samples),
 however it contains additional assays that do not have the nested
 structure with individual reads, but are simple matrices:
+
 ```{r}
+#| label: show-summary-assays
+
 dim(se_summary)
 assayNames(se_summary)
 head(assay(se_summary, "Nmod"))
@@ -139,13 +182,16 @@ By default, [flattenReadLevelAssay]{.fn} keeps the read-level assay
 numbers of modified and total bases (`"Nmod" and "Nvalid"), and the
 fraction of modified bases per position and sample (`"FracMod"`).
 
-## Directly reading summary-level data
+## Directly reading summary-level data {#sec-summary-data}
 
 If the individual reads are not required, you can directly summarize
 them while reading, which is faster and eliminates the call to
 [flattenReadLevelAssay]{.fn}. This is achieved by adding the
 argument `level = "summary"` to the [readModBam]{.fn} call:
+
 ```{r}
+#| label: read-modbam-summarylevel
+
 se_summary_direct <- readModBam(
     bamfiles = c(wt1 = "data/mESC_wt_6mA_rep1.bam",
                  wt2 = "data/mESC_wt_6mA_rep2.bam"),
@@ -170,7 +216,10 @@ In such cases, reading data by genomic position is not optimal.
 
 [readModBam]{.fn} provides a special reading mode for this, controlled by the
 arguments `nAlnsToSample` and `seqnamesToSampleFrom`:
+
 ```{r}
+#| label: read-modbam-sample
+
 se_sampled <- readModBam(
     bamfiles = c(wt1 = "data/mESC_wt_6mA_rep1.bam",
                  wt2 = "data/mESC_wt_6mA_rep2.bam"),
@@ -189,6 +238,29 @@ For details of how to make the sampling reproducible even when using multiple
 parallel threads, and why you might get a lower number of sampled reads than
 requested, please look at the documenation of [readModBam]{.fn}.
 
+## Improving reading performance
+
+Even though [readModBam]{.fn} is implemented using C/C++ for speed and
+efficiency, reading the data may become slow. Here are a few points that
+may help to reduce the time to read modification data from `modBam` files:
+
+- *Read summary-level data*: Reading of summary-level data (argument 
+  `level = "summary"`) is much faster than reading of read-level data,
+  so use it whenever you do not need to represent indidvual reads. 
+- *Parallelization*: [readModBam]{.fn} supports parallel processing,
+  controlled by the `BPPARAM` argument. If multiple workers are available
+  in the `BPPARAM` object (see [BiocParallel]{.biocpkg}),
+  they will be used to read data from from multiple
+  `modBam` files in parallel. If the number of workers is larger than the
+  number of `bamfiles`, the workers will further be used to speed-up
+  decompression of bam records.
+- *Region size*: If you are reading read-level data from large or many
+  `regions`, certain operations like sub-setting of positions may become
+  slow. It may overall be faster to call [readModBam]{.fn} multiple times
+  on fewer or smaller `regions`, and keeping track of the partial results,
+  than calling [readModBam]{.fn} a single time on all `regions`.
+  
+
 ## Reading from other file types
 
 In addition to reading from `modBam` files, you can also read (summary-level)
@@ -198,6 +270,8 @@ these reader functions are largely similar to the ones used for reading
 `modBam` files.
 
 ```{r}
+#| label: read-other-formats
+
 # read from bedMethyl
 bmfile <- system.file("extdata", "modkit_pileup_1.bed.gz",
                       package = "footprintR")
@@ -223,3 +297,17 @@ se_modkit <- readModkitExtract(
 )
 se_modkit
 ```
+
+## Session info
+
+<details>
+<summary><b>
+Click to view session info
+</b></summary>
+```{r}
+#| label: session-info
+
+sessioninfo::session_info(info = "packages")
+```
+</details>
+

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -92,10 +92,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-6082b3b653f69b4bc1378a5897c1dc6c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -240,9 +240,11 @@ div.csl-indent {
   <li><a href="#read-level-versus-summary-level" id="toc-read-level-versus-summary-level" class="nav-link active" data-scroll-target="#read-level-versus-summary-level"><span class="header-section-number">2.1</span> Read-level versus summary-level</a></li>
   <li><a href="#sec-data-representation" id="toc-sec-data-representation" class="nav-link" data-scroll-target="#sec-data-representation"><span class="header-section-number">2.2</span> Data representation</a></li>
   <li><a href="#flattening-read-level-to-summary-level-data" id="toc-flattening-read-level-to-summary-level-data" class="nav-link" data-scroll-target="#flattening-read-level-to-summary-level-data"><span class="header-section-number">2.3</span> Flattening read-level to summary-level data</a></li>
-  <li><a href="#directly-reading-summary-level-data" id="toc-directly-reading-summary-level-data" class="nav-link" data-scroll-target="#directly-reading-summary-level-data"><span class="header-section-number">2.4</span> Directly reading summary-level data</a></li>
+  <li><a href="#sec-summary-data" id="toc-sec-summary-data" class="nav-link" data-scroll-target="#sec-summary-data"><span class="header-section-number">2.4</span> Directly reading summary-level data</a></li>
   <li><a href="#sec-read-sampling" id="toc-sec-read-sampling" class="nav-link" data-scroll-target="#sec-read-sampling"><span class="header-section-number">2.5</span> Read sampling</a></li>
-  <li><a href="#reading-from-other-file-types" id="toc-reading-from-other-file-types" class="nav-link" data-scroll-target="#reading-from-other-file-types"><span class="header-section-number">2.6</span> Reading from other file types</a></li>
+  <li><a href="#improving-reading-performance" id="toc-improving-reading-performance" class="nav-link" data-scroll-target="#improving-reading-performance"><span class="header-section-number">2.6</span> Improving reading performance</a></li>
+  <li><a href="#reading-from-other-file-types" id="toc-reading-from-other-file-types" class="nav-link" data-scroll-target="#reading-from-other-file-types"><span class="header-section-number">2.7</span> Reading from other file types</a></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info"><span class="header-section-number">2.8</span> Session info</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/fmicompbio/footprintR_book/edit/main/reading-data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/fmicompbio/footprintR_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -251,7 +253,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-reading-data" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Reading data from files</span></span></h1>
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-reading-data" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Reading data from files</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -271,26 +273,32 @@ div.csl-indent {
 <p>This chapter describes how to read footprinting data from <code>modBam</code> files and other formats into R. It also introduces how the data is represented in memory. <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a> provides three functions for reading data into R from specific file types: <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a>, <a href="https://fmicompbio.github.io/footprintR/reference/readBedMethyl.html"><code>readBedMethyl</code></a> and <a href="https://fmicompbio.github.io/footprintR/reference/readModkitExtract.html"><code>readModkitExtract</code></a>. If you want to jump right in, have a look at the documentation of the reader function corresponding to the type of your data.</p>
 <p>We start by loading the required packages and a <code>BSgenome</code> object providing the mouse genome sequence.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SparseArray)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gnm) <span class="ot">&lt;-</span> <span class="st">"mm39"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BiocParallel)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SparseArray)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gnm) <span class="ot">&lt;-</span> <span class="st">"mm39"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <section id="read-level-versus-summary-level" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="read-level-versus-summary-level"><span class="header-section-number">2.1</span> Read-level versus summary-level</h2>
 <p>Typically, single molecule footprinting data at the single read level is stored in <code>modBam</code> files, which are standard <code>bam</code> files (<span class="citation" data-cites="Li2009-kl">Li et al. (<a href="references.html#ref-Li2009-kl" role="doc-biblioref">2009</a>)</span>) that in addition to the usual information on alignments also contain base modifications encoded in the <code>ML</code> and <code>MM</code> tags (see section 1.7 of <a href="https://samtools.github.io/hts-specs/SAMtags.pdf">SAMtags.pdf</a> for details).</p>
-<p><a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> reads <code>modBam</code> files and can either keep the data at the level of individual reads or summarize them per genomic position and sample.</p>
+<p><a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> reads <code>modBam</code> files and can either keep the data at the level of individual reads or summarize them per genomic position and sample. This is controlled via the <code>level</code> argument to <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a>. By default, read-level data is imported. In fact, <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a> provides two modes for importing read-level data: <code>level = "quickread"</code> is often the fastest, but does not return the full set of read-level annotations, and is not compatible with read sampling. <code>level = "read"</code> on the other hand provides a more complete output, but is a bit slower. If <code>level</code> is not specified, <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a> will select the best mode based on the other arguments provided to <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> (specifically, whether variant names or read sampling are requested). As illustrated in <a href="#sec-summary-data" class="quarto-xref"><span>Section 2.4</span></a> below, summary data (aggregated across reads) can also be imported by setting <code>level = "summary"</code>.</p>
 </section>
 <section id="sec-data-representation" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="sec-data-representation"><span class="header-section-number">2.2</span> Data representation</h2>
 <p>Let’s start by reading individual reads from a <code>modBam</code> file for a small region of the genome:</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">wt2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>),</span>
@@ -302,43 +310,70 @@ div.csl-indent {
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: RangedSummarizedExperiment 
 dim: 201 2 
 metadata(3): readLevelData variantPositions filteredOutReads
 assays(1): mod_prob
-rownames(201): chr8:39286000:- chr8:39286001:- ... chr8:39286198:+ chr8:39286199:+
+rownames(201): chr8:39286000:- chr8:39286001:- ... chr8:39286198:+
+  chr8:39286199:+
 rowData names(1): sequenceContext
 colnames(2): wt1 wt2
 colData names(4): sample modbase n_reads readInfo</code></pre>
 </div>
 </div>
-<p>Here is a scheme that illustrates the internals of <code>se</code> containing read-level data: <a href="images/se-read-level.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/se-read-level.png" alt="SummarizedExperiment with read-level data in assays." height="300"></a></p>
+<p>Here is a scheme that illustrates the internals of <code>se</code> containing read-level data:</p>
+<div id="fig-schematic-readlevel" class="quarto-float quarto-figure quarto-figure-center anchored" height="300" alt="SummarizedExperiment with read-level data in assays.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-schematic-readlevel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="images/se-read-level.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;2.1: "><img src="images/se-read-level.png" id="fig-schematic-readlevel" alt="SummarizedExperiment with read-level data in assays." height="300" class="figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-schematic-readlevel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.1
+</figcaption>
+</figure>
+</div>
 <p>Let’s go through the individual parts. You can see that the data is contained in a <code>RangedSummarizedExperiment</code> object. This is a container that contains one or more assays (here only one assay called <code>mod_prob</code>). Each assay is a matrix-like object and contains the loaded data (here: base modification probabilities of individual reads).</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assayNames</span>(se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "mod_prob"</code></pre>
 </div>
 </div>
 <p>The rows represent genomic positions and the columns represent samples. In our example, we have loaded data from two <code>modBam</code> files corresponding to the two samples <code>"wt1"</code> and <code>"wt2"</code>, thus the object has two columns:</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2</code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "wt1" "wt2"</code></pre>
 </div>
 </div>
 <p>The 201 rows correspond to individual base positions, for which at least one modification has been loaded. You can get the genomic coordinates of these positions using <code>rowRanges</code>:</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 201</code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowRanges</span>(se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>UnstitchedGPos object with 201 positions and 1 metadata column:
                   seqnames       pos strand | sequenceContext
@@ -360,7 +395,10 @@ colData names(4): sample modbase n_reads readInfo</code></pre>
 </div>
 <p>These positions are stranded, as base modifications can be observed on either of the two strands:</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">strand</span>(se))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
   +   -   * 
@@ -369,11 +407,17 @@ colData names(4): sample modbase n_reads readInfo</code></pre>
 </div>
 <p>Finally, the individual reads of a sample are stored in the assay, inside the “column” of that sample:</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assayNames</span>(se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "mod_prob"</code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(se, <span class="st">"mod_prob"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 201 rows and 2 columns
                          wt1          wt2
@@ -393,23 +437,38 @@ chr8:39286199:+  NA:0:NA:... NA:NA:NA:...</code></pre>
 </div>
 <p>You can see that each column is itself an object of type <code>NaMatrix</code>.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the NaMatrix with reads of sample wt1</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>mp1 <span class="ot">&lt;-</span> <span class="fu">assay</span>(se, <span class="st">"mod_prob"</span>)<span class="sc">$</span>wt1</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>mp1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;201 x 35 NaMatrix&gt; of type "double" [nnacount=2368 (34%)]:
-       wt1-d914fb79-7d7a-4a67-bb98-5d1168b057b6 ... wt1-70e9a128-ea64-4c1d-b9e9-44f76a51a780
-  [1,]                                       NA   .                                       NA
-  [2,]                                        0   .                                       NA
-  [3,]                                       NA   .                                       NA
-  [4,]                                        0   .                                       NA
-  [5,]                                       NA   .                                       NA
-   ...                                        .   .                                        .
-[197,]                                       NA   .                                        0
-[198,]                                       NA   .                                        0
-[199,]                                        0   .                                       NA
-[200,]                                       NA   .                                        0
-[201,]                                       NA   .                                        0</code></pre>
+       wt1-d914fb79-7d7a-4a67-bb98-5d1168b057b6 ...
+  [1,]                                       NA   .
+  [2,]                                        0   .
+  [3,]                                       NA   .
+  [4,]                                        0   .
+  [5,]                                       NA   .
+   ...                                        .   .
+[197,]                                       NA   .
+[198,]                                       NA   .
+[199,]                                        0   .
+[200,]                                       NA   .
+[201,]                                       NA   .
+       wt1-70e9a128-ea64-4c1d-b9e9-44f76a51a780
+  [1,]                                       NA
+  [2,]                                       NA
+  [3,]                                       NA
+  [4,]                                       NA
+  [5,]                                       NA
+   ...                                        .
+[197,]                                        0
+[198,]                                        0
+[199,]                                       NA
+[200,]                                        0
+[201,]                                        0</code></pre>
 </div>
 </div>
 <p>The rows in the <code>NaMatrix</code> corresponding to the same genomic positions we have seen above, but the columns correspond to the 35 individual reads. The numeric values correspond to modification probabilities. A value greater than 0.5 or 0.7 is typically considered modified. Many values are <code>NA</code> (missing), either because a read did not overlap a given position, or there was no information about modifications at that position in that read. Storing all these <code>NA</code> values would be a waste of memory, which is avoided in the <code>NaMatrix</code>, which is a special type of sparse matrix from the <a href="https://bioconductor.org/packages/SparseArray"><em>SparseArray</em></a> package that only stores non-<code>NA</code> values.</p>
@@ -418,19 +477,42 @@ chr8:39286199:+  NA:0:NA:... NA:NA:NA:...</code></pre>
 <h2 data-number="2.3" class="anchored" data-anchor-id="flattening-read-level-to-summary-level-data"><span class="header-section-number">2.3</span> Flattening read-level to summary-level data</h2>
 <p>We can use <a href="https://fmicompbio.github.io/footprintR/reference/flattenReadLevelAssay.html"><code>flattenReadLevelAssay</code></a> to go from this read-level to summary-level data:</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>se_summary <span class="ot">&lt;-</span> <span class="fu">flattenReadLevelAssay</span>(se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
-<p>Here is an illustration of the summary-level data container: <a href="images/se-summary-level.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/se-summary-level.png" alt="SummarizedExperiment with summary-level data in assays." height="300"></a> Its dimensions are identical to the original <code>se</code> (positions by samples), however it contains additional assays that do not have the nested structure with individual reads, but are simple matrices:</p>
+<p>Here is an illustration of the summary-level data container:</p>
+<div id="fig-schematic-summarylevel" class="quarto-float quarto-figure quarto-figure-center anchored" height="300" alt="SummarizedExperiment with summary-level data in assays.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-schematic-summarylevel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="images/se-summary-level.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2.2: "><img src="images/se-summary-level.png" id="fig-schematic-summarylevel" alt="SummarizedExperiment with summary-level data in assays." height="300" class="figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-schematic-summarylevel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.2
+</figcaption>
+</figure>
+</div>
+<p>Its dimensions are identical to the original <code>se</code> (positions by samples), however it contains additional assays that do not have the nested structure with individual reads, but are simple matrices:</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(se_summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 201   2</code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assayNames</span>(se_summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "mod_prob" "Nmod"     "Nvalid"   "FracMod" </code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">assay</span>(se_summary, <span class="st">"Nmod"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                wt1 wt2
 chr8:39286000:-   0   0
@@ -443,10 +525,12 @@ chr8:39286005:-   0   2</code></pre>
 </div>
 <p>By default, <a href="https://fmicompbio.github.io/footprintR/reference/flattenReadLevelAssay.html"><code>flattenReadLevelAssay</code></a> keeps the read-level assay (<code>"mod_prob"</code>) and generates summarized assays with the numbers of modified and total bases (<code>"Nmod" and "Nvalid"), and the fraction of modified bases per position and sample (</code>“FracMod”`).</p>
 </section>
-<section id="directly-reading-summary-level-data" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="directly-reading-summary-level-data"><span class="header-section-number">2.4</span> Directly reading summary-level data</h2>
+<section id="sec-summary-data" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="sec-summary-data"><span class="header-section-number">2.4</span> Directly reading summary-level data</h2>
 <p>If the individual reads are not required, you can directly summarize them while reading, which is faster and eliminates the call to <a href="https://fmicompbio.github.io/footprintR/reference/flattenReadLevelAssay.html"><code>flattenReadLevelAssay</code></a>. This is achieved by adding the argument <code>level = "summary"</code> to the <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> call:</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>se_summary_direct <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>,</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">wt2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>),</span>
@@ -459,18 +543,23 @@ chr8:39286005:-   0   2</code></pre>
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">level =</span> <span class="st">"summary"</span></span>
 <span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>se_summary_direct</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: RangedSummarizedExperiment 
 dim: 201 2 
 metadata(1): readLevelData
 assays(3): Nmod Nvalid FracMod
-rownames(201): chr8:39286000:- chr8:39286001:- ... chr8:39286198:+ chr8:39286199:+
+rownames(201): chr8:39286000:- chr8:39286001:- ... chr8:39286198:+
+  chr8:39286199:+
 rowData names(1): sequenceContext
 colnames(2): wt1 wt2
 colData names(2): sample modbase</code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(<span class="fu">assay</span>(se_summary, <span class="st">"FracMod"</span>),</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>          <span class="fu">assay</span>(se_summary_direct, <span class="st">"FracMod"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] TRUE</code></pre>
 </div>
@@ -481,6 +570,8 @@ colData names(2): sample modbase</code></pre>
 <p>In some cases, we may want to read a random set of reads from a <code>modBam</code> file, for example to calculate average modification rates or quality statistics. In such cases, reading data by genomic position is not optimal.</p>
 <p><a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> provides a special reading mode for this, controlled by the arguments <code>nAlnsToSample</code> and <code>seqnamesToSampleFrom</code>:</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>se_sampled <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>,</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">wt2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>),</span>
@@ -492,27 +583,43 @@ colData names(2): sample modbase</code></pre>
 <span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqnamesToSampleFrom =</span> <span class="st">"chr19"</span></span>
 <span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>se_sampled</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: RangedSummarizedExperiment 
 dim: 61348 2 
 metadata(3): readLevelData variantPositions filteredOutReads
 assays(1): mod_prob
-rownames(61348): chr19:6119863:- chr19:6119864:- ... chr19:60772501:+ chr19:60772504:+
+rownames(61348): chr19:6119863:- chr19:6119864:- ... chr19:60772501:+
+  chr19:60772504:+
 rowData names(1): sequenceContext
 colnames(2): wt1 wt2
 colData names(4): sample modbase n_reads readInfo</code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>se_sampled<span class="sc">$</span>n_reads</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 19 18</code></pre>
 </div>
 </div>
 <p>For details of how to make the sampling reproducible even when using multiple parallel threads, and why you might get a lower number of sampled reads than requested, please look at the documenation of <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a>.</p>
 </section>
-<section id="reading-from-other-file-types" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="reading-from-other-file-types"><span class="header-section-number">2.6</span> Reading from other file types</h2>
+<section id="improving-reading-performance" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="improving-reading-performance"><span class="header-section-number">2.6</span> Improving reading performance</h2>
+<p>Even though <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> is implemented using C/C++ for speed and efficiency, reading the data may become slow. Here are a few points that may help to reduce the time to read modification data from <code>modBam</code> files:</p>
+<ul>
+<li><em>Read summary-level data</em>: Reading of summary-level data (argument <code>level = "summary"</code>) is much faster than reading of read-level data, so use it whenever you do not need to represent indidvual reads.</li>
+<li><em>Parallelization</em>: <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> supports parallel processing, controlled by the <code>BPPARAM</code> argument. If multiple workers are available in the <code>BPPARAM</code> object (see <a href="https://bioconductor.org/packages/BiocParallel"><em>BiocParallel</em></a>), they will be used to read data from from multiple <code>modBam</code> files in parallel. If the number of workers is larger than the number of <code>bamfiles</code>, the workers will further be used to speed-up decompression of bam records.</li>
+<li><em>Region size</em>: If you are reading read-level data from large or many <code>regions</code>, certain operations like sub-setting of positions may become slow. It may overall be faster to call <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> multiple times on fewer or smaller <code>regions</code>, and keeping track of the partial results, than calling <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> a single time on all <code>regions</code>.</li>
+</ul>
+</section>
+<section id="reading-from-other-file-types" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="reading-from-other-file-types"><span class="header-section-number">2.7</span> Reading from other file types</h2>
 <p>In addition to reading from <code>modBam</code> files, you can also read (summary-level) data from <code>bedMethyl</code> files using <a href="https://fmicompbio.github.io/footprintR/reference/readBedMethyl.html"><code>readBedMethyl</code></a>, or from tabular files created by <code>modkit</code> using <a href="https://fmicompbio.github.io/footprintR/reference/readModkitExtract.html"><code>readModkitExtract</code></a>. The arguments of these reader functions are largely similar to the ones used for reading <code>modBam</code> files.</p>
 <div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read from bedMethyl</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>bmfile <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"modkit_pileup_1.bed.gz"</span>,</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">package =</span> <span class="st">"footprintR"</span>)</span>
@@ -524,6 +631,7 @@ colData names(4): sample modbase n_reads readInfo</code></pre>
 <span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm</span>
 <span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>se_bedmethyl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: RangedSummarizedExperiment 
 dim: 10000 1 
@@ -534,6 +642,8 @@ rowData names(1): sequenceContext
 colnames(1): s1
 colData names(2): sample modbase</code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read from a tabular file created by modkit</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>extrfile <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"modkit_extract_rc_5mC_1.tsv.gz"</span>,</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">package =</span> <span class="st">"footprintR"</span>)</span>
@@ -546,18 +656,127 @@ colData names(2): sample modbase</code></pre>
 <span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm</span>
 <span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>se_modkit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: RangedSummarizedExperiment 
 dim: 6432 1 
 metadata(3): modkit_threshold filter_threshold readLevelData
 assays(1): mod_prob
-rownames(6432): chr1:6928983:- chr1:6928995:- ... chr1:6949455:+ chr1:6949461:+
+rownames(6432): chr1:6928983:- chr1:6928995:- ... chr1:6949455:+
+  chr1:6949461:+
 rowData names(1): sequenceContext
 colnames(1): s1
 colData names(2): sample modbase</code></pre>
 </div>
 </div>
+</section>
+<section id="session-info" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="session-info"><span class="header-section-number">2.8</span> Session info</h2>
+<details>
+<summary>
+<b> Click to view session info </b>
+</summary>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>═ Session info ═══════════════════════════════════════════════════════════════
+─ Packages ───────────────────────────────────────────────────────────────────
+ package                                      * version   date (UTC) lib source
+ abind                                        * 1.4-8     2024-09-12 [1] CRAN (R 4.5.0)
+ Biobase                                      * 2.68.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BiocGenerics                                 * 0.54.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BiocIO                                       * 1.18.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BiocParallel                                 * 1.42.1    2025-06-01 [1] Bioconductor 3.21 (R 4.5.0)
+ Biostrings                                   * 2.76.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ bitops                                         1.0-9     2024-10-03 [1] CRAN (R 4.5.0)
+ BSgenome                                     * 1.76.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34 * 0.1.0     2025-04-17 [1] Bioconductor
+ cli                                            3.6.5     2025-04-23 [1] CRAN (R 4.5.0)
+ codetools                                      0.2-20    2024-03-31 [2] CRAN (R 4.5.0)
+ crayon                                         1.5.3     2024-06-20 [1] CRAN (R 4.5.0)
+ curl                                           6.3.0     2025-06-06 [1] CRAN (R 4.5.0)
+ data.table                                     1.17.4    2025-05-26 [1] CRAN (R 4.5.0)
+ DelayedArray                                   0.34.1    2025-04-17 [1] Bioconductor 3.21 (R 4.5.0)
+ dichromat                                      2.0-0.1   2022-05-02 [1] CRAN (R 4.5.0)
+ digest                                         0.6.37    2024-08-19 [1] CRAN (R 4.5.0)
+ dplyr                                          1.1.4     2023-11-17 [1] CRAN (R 4.5.0)
+ evaluate                                       1.0.3     2025-01-10 [1] CRAN (R 4.5.0)
+ farver                                         2.1.2     2024-05-13 [1] CRAN (R 4.5.0)
+ fastmap                                        1.2.0     2024-05-15 [1] CRAN (R 4.5.0)
+ footprintR                                   * 0.3.5     2025-06-04 [1] Github (fmicompbio/footprintR@612f713)
+ generics                                     * 0.1.4     2025-05-09 [1] CRAN (R 4.5.0)
+ GenomeInfoDb                                 * 1.44.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ GenomeInfoDbData                               1.2.14    2025-04-17 [1] Bioconductor
+ GenomicAlignments                              1.44.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ GenomicRanges                                * 1.60.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ ggforce                                        0.4.2     2024-02-19 [1] CRAN (R 4.5.0)
+ ggplot2                                        3.5.2     2025-04-09 [1] CRAN (R 4.5.0)
+ glue                                           1.8.0     2024-09-30 [1] CRAN (R 4.5.0)
+ gtable                                         0.3.6     2024-10-25 [1] CRAN (R 4.5.0)
+ htmltools                                      0.5.8.1   2024-04-04 [1] CRAN (R 4.5.0)
+ htmlwidgets                                    1.6.4     2023-12-06 [1] CRAN (R 4.5.0)
+ httr                                           1.4.7     2023-08-15 [1] CRAN (R 4.5.0)
+ IRanges                                      * 2.42.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ jsonlite                                       2.0.0     2025-03-27 [1] CRAN (R 4.5.0)
+ knitr                                          1.50      2025-03-16 [1] CRAN (R 4.5.0)
+ lattice                                        0.22-7    2025-04-02 [1] CRAN (R 4.5.0)
+ lifecycle                                      1.0.4     2023-11-07 [1] CRAN (R 4.5.0)
+ magrittr                                       2.0.3     2022-03-30 [1] CRAN (R 4.5.0)
+ MASS                                           7.3-65    2025-02-28 [2] CRAN (R 4.5.0)
+ Matrix                                       * 1.7-3     2025-03-11 [2] CRAN (R 4.5.0)
+ MatrixGenerics                               * 1.20.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ matrixStats                                  * 1.5.0     2025-01-07 [1] CRAN (R 4.5.0)
+ patchwork                                      1.3.0     2024-09-16 [1] CRAN (R 4.5.0)
+ pillar                                         1.10.2    2025-04-05 [1] CRAN (R 4.5.0)
+ pkgconfig                                      2.0.3     2019-09-22 [1] CRAN (R 4.5.0)
+ polyclip                                       1.10-7    2024-07-23 [1] CRAN (R 4.5.0)
+ purrr                                          1.0.4     2025-02-05 [1] CRAN (R 4.5.0)
+ R.methodsS3                                    1.8.2     2022-06-13 [1] CRAN (R 4.5.0)
+ R.oo                                           1.27.1    2025-05-02 [1] CRAN (R 4.5.0)
+ R.utils                                        2.13.0    2025-02-24 [1] CRAN (R 4.5.0)
+ R6                                             2.6.1     2025-02-15 [1] CRAN (R 4.5.0)
+ RColorBrewer                                   1.1-3     2022-04-03 [1] CRAN (R 4.5.0)
+ Rcpp                                           1.0.14    2025-01-12 [1] CRAN (R 4.5.0)
+ RCurl                                          1.98-1.17 2025-03-22 [1] CRAN (R 4.5.0)
+ restfulr                                       0.0.15    2022-06-16 [1] CRAN (R 4.5.0)
+ rjson                                          0.2.23    2024-09-16 [1] CRAN (R 4.5.0)
+ rlang                                          1.1.6     2025-04-11 [1] CRAN (R 4.5.0)
+ rmarkdown                                      2.29      2024-11-04 [1] CRAN (R 4.5.0)
+ Rsamtools                                      2.24.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ rtracklayer                                  * 1.68.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ S4Arrays                                     * 1.8.1     2025-06-01 [1] Bioconductor 3.21 (R 4.5.0)
+ S4Vectors                                    * 0.46.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ scales                                         1.4.0     2025-04-24 [1] CRAN (R 4.5.0)
+ sessioninfo                                    1.2.3     2025-02-05 [1] CRAN (R 4.5.0)
+ SparseArray                                  * 1.8.0     2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ SummarizedExperiment                         * 1.38.1    2025-04-30 [1] Bioconductor 3.21 (R 4.5.0)
+ tibble                                         3.3.0     2025-06-08 [1] CRAN (R 4.5.0)
+ tidyr                                          1.3.1     2024-01-24 [1] CRAN (R 4.5.0)
+ tidyselect                                     1.2.1     2024-03-11 [1] CRAN (R 4.5.0)
+ tweenr                                         2.0.3     2024-02-26 [1] CRAN (R 4.5.0)
+ UCSC.utils                                     1.4.0     2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ vctrs                                          0.6.5     2023-12-01 [1] CRAN (R 4.5.0)
+ withr                                          3.0.2     2024-10-28 [1] CRAN (R 4.5.0)
+ xfun                                           0.52      2025-04-02 [1] CRAN (R 4.5.0)
+ XML                                            3.99-0.18 2025-01-01 [1] CRAN (R 4.5.0)
+ XVector                                      * 0.48.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
+ yaml                                           2.3.10    2024-07-26 [1] CRAN (R 4.5.0)
+ zoo                                            1.8-14    2025-04-10 [1] CRAN (R 4.5.0)
 
+ [1] /tungstenfs/groups/gbioinfo/Appz/R/BioC/R-4.5-release-foss-2024.05_BioC-3.21-release-foss-2024.05
+ [2] /tachyon/groups/gbioinfo/Appz/easybuild/software/R/4.5.0-foss-2024.05/lib64/R/library
+ * ── Packages attached to the search path.
+
+──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+</details>
+
+
+<!-- -->
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-Li2009-kl" class="csl-entry" role="listitem">
@@ -649,13 +868,62 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
     });
     clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
@@ -761,7 +1029,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
@@ -998,9 +1265,323 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Quality control and filtering</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
-</nav>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb43" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Reading data from files {#sec-reading-data}</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>This chapter describes how to read footprinting data from <span class="in">`modBam`</span> files</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>and other formats into R. It also introduces how the data is represented in</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>memory. <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} provides three functions for</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>reading data into R from specific file types: <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn},</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">readBedMethyl</span><span class="co">]</span>{.fn} and <span class="co">[</span><span class="ot">readModkitExtract</span><span class="co">]</span>{.fn}. If you want to jump right</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>in, have a look at the documentation of the reader function corresponding to</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>the type of your data.</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>We start by loading the required packages and a <span class="in">`BSgenome`</span> object providing</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>the mouse genome sequence.</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load-packages</span></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BiocParallel)</span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SparseArray)</span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
+<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
+<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gnm) <span class="ot">&lt;-</span> <span class="st">"mm39"</span></span>
+<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Read-level versus summary-level</span></span>
+<span id="cb43-34"><a href="#cb43-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-35"><a href="#cb43-35" aria-hidden="true" tabindex="-1"></a>Typically, single molecule footprinting data at the single read level is stored</span>
+<span id="cb43-36"><a href="#cb43-36" aria-hidden="true" tabindex="-1"></a>in <span class="in">`modBam`</span> files, which are standard <span class="in">`bam`</span> files (@Li2009-kl) that in</span>
+<span id="cb43-37"><a href="#cb43-37" aria-hidden="true" tabindex="-1"></a>addition to the usual information on alignments also contain base</span>
+<span id="cb43-38"><a href="#cb43-38" aria-hidden="true" tabindex="-1"></a>modifications encoded in the <span class="in">`ML`</span> and <span class="in">`MM`</span> tags (see section 1.7 of</span>
+<span id="cb43-39"><a href="#cb43-39" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">SAMtags.pdf</span><span class="co">](https://samtools.github.io/hts-specs/SAMtags.pdf)</span> for details).</span>
+<span id="cb43-40"><a href="#cb43-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-41"><a href="#cb43-41" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn} reads <span class="in">`modBam`</span> files and can either keep the data at the level</span>
+<span id="cb43-42"><a href="#cb43-42" aria-hidden="true" tabindex="-1"></a>of individual reads or summarize them per genomic position and sample. </span>
+<span id="cb43-43"><a href="#cb43-43" aria-hidden="true" tabindex="-1"></a>This is controlled via the <span class="in">`level`</span> argument to <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn}. </span>
+<span id="cb43-44"><a href="#cb43-44" aria-hidden="true" tabindex="-1"></a>By default, read-level data is imported. </span>
+<span id="cb43-45"><a href="#cb43-45" aria-hidden="true" tabindex="-1"></a>In fact, <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} provides two modes for importing </span>
+<span id="cb43-46"><a href="#cb43-46" aria-hidden="true" tabindex="-1"></a>read-level data: <span class="in">`level = "quickread"`</span> is often the fastest, but does not </span>
+<span id="cb43-47"><a href="#cb43-47" aria-hidden="true" tabindex="-1"></a>return the full set of read-level annotations, and is not compatible with read</span>
+<span id="cb43-48"><a href="#cb43-48" aria-hidden="true" tabindex="-1"></a>sampling. <span class="in">`level = "read"`</span> on the other hand provides a more complete output, </span>
+<span id="cb43-49"><a href="#cb43-49" aria-hidden="true" tabindex="-1"></a>but is a bit slower. </span>
+<span id="cb43-50"><a href="#cb43-50" aria-hidden="true" tabindex="-1"></a>If <span class="in">`level`</span> is not specified, <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} will select </span>
+<span id="cb43-51"><a href="#cb43-51" aria-hidden="true" tabindex="-1"></a>the best mode based on the other arguments provided to <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn} </span>
+<span id="cb43-52"><a href="#cb43-52" aria-hidden="true" tabindex="-1"></a>(specifically, whether variant names or read sampling are requested).</span>
+<span id="cb43-53"><a href="#cb43-53" aria-hidden="true" tabindex="-1"></a>As illustrated in @sec-summary-data below, summary data (aggregated across </span>
+<span id="cb43-54"><a href="#cb43-54" aria-hidden="true" tabindex="-1"></a>reads) can also be imported by setting <span class="in">`level = "summary"`</span>.</span>
+<span id="cb43-55"><a href="#cb43-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-56"><a href="#cb43-56" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data representation {#sec-data-representation}</span></span>
+<span id="cb43-57"><a href="#cb43-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-58"><a href="#cb43-58" aria-hidden="true" tabindex="-1"></a>Let's start by reading individual reads from a <span class="in">`modBam`</span> file for a small</span>
+<span id="cb43-59"><a href="#cb43-59" aria-hidden="true" tabindex="-1"></a>region of the genome:</span>
+<span id="cb43-60"><a href="#cb43-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-63"><a href="#cb43-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-64"><a href="#cb43-64" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-modbam-readlevel</span></span>
+<span id="cb43-65"><a href="#cb43-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-66"><a href="#cb43-66" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb43-67"><a href="#cb43-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>,</span>
+<span id="cb43-68"><a href="#cb43-68" aria-hidden="true" tabindex="-1"></a>                 <span class="at">wt2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>),</span>
+<span id="cb43-69"><a href="#cb43-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
+<span id="cb43-70"><a href="#cb43-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> <span class="st">"chr8:39286000-39286200"</span>, </span>
+<span id="cb43-71"><a href="#cb43-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
+<span id="cb43-72"><a href="#cb43-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>, </span>
+<span id="cb43-73"><a href="#cb43-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm,</span>
+<span id="cb43-74"><a href="#cb43-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span></span>
+<span id="cb43-75"><a href="#cb43-75" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-76"><a href="#cb43-76" aria-hidden="true" tabindex="-1"></a>se</span>
+<span id="cb43-77"><a href="#cb43-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-78"><a href="#cb43-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-79"><a href="#cb43-79" aria-hidden="true" tabindex="-1"></a>Here is a scheme that illustrates the internals of <span class="in">`se`</span> containing read-level</span>
+<span id="cb43-80"><a href="#cb43-80" aria-hidden="true" tabindex="-1"></a>data:</span>
+<span id="cb43-81"><a href="#cb43-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-82"><a href="#cb43-82" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/se-read-level.png)</span>{#fig-schematic-readlevel .lightbox fig-alt="SummarizedExperiment with read-level data in assays." height=300}</span>
+<span id="cb43-83"><a href="#cb43-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-84"><a href="#cb43-84" aria-hidden="true" tabindex="-1"></a>Let's go through the individual parts.</span>
+<span id="cb43-85"><a href="#cb43-85" aria-hidden="true" tabindex="-1"></a>You can see that the data is contained in a <span class="in">`RangedSummarizedExperiment`</span> object.</span>
+<span id="cb43-86"><a href="#cb43-86" aria-hidden="true" tabindex="-1"></a>This is a container that contains one or more assays (here only one assay</span>
+<span id="cb43-87"><a href="#cb43-87" aria-hidden="true" tabindex="-1"></a>called <span class="in">`mod_prob`</span>). Each assay is a matrix-like object and contains the</span>
+<span id="cb43-88"><a href="#cb43-88" aria-hidden="true" tabindex="-1"></a>loaded data (here: base modification probabilities of individual reads).</span>
+<span id="cb43-89"><a href="#cb43-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-92"><a href="#cb43-92" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-93"><a href="#cb43-93" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-assaynames</span></span>
+<span id="cb43-94"><a href="#cb43-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-95"><a href="#cb43-95" aria-hidden="true" tabindex="-1"></a><span class="fu">assayNames</span>(se)</span>
+<span id="cb43-96"><a href="#cb43-96" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-97"><a href="#cb43-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-98"><a href="#cb43-98" aria-hidden="true" tabindex="-1"></a>The rows represent genomic positions and the columns represent samples. In our</span>
+<span id="cb43-99"><a href="#cb43-99" aria-hidden="true" tabindex="-1"></a>example, we have loaded data from two <span class="in">`modBam`</span> files corresponding to the two</span>
+<span id="cb43-100"><a href="#cb43-100" aria-hidden="true" tabindex="-1"></a>samples <span class="in">`"wt1"`</span> and <span class="in">`"wt2"`</span>, thus the object has two columns:</span>
+<span id="cb43-101"><a href="#cb43-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-104"><a href="#cb43-104" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-105"><a href="#cb43-105" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-colnames</span></span>
+<span id="cb43-106"><a href="#cb43-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-107"><a href="#cb43-107" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(se)</span>
+<span id="cb43-108"><a href="#cb43-108" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(se)</span>
+<span id="cb43-109"><a href="#cb43-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-110"><a href="#cb43-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-111"><a href="#cb43-111" aria-hidden="true" tabindex="-1"></a>The <span class="in">`r nrow(se)`</span> rows correspond to individual base positions, for which at</span>
+<span id="cb43-112"><a href="#cb43-112" aria-hidden="true" tabindex="-1"></a>least one modification has been loaded. You can get the genomic coordinates of</span>
+<span id="cb43-113"><a href="#cb43-113" aria-hidden="true" tabindex="-1"></a>these positions using <span class="in">`rowRanges`</span>:</span>
+<span id="cb43-114"><a href="#cb43-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-117"><a href="#cb43-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-118"><a href="#cb43-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-rowranges</span></span>
+<span id="cb43-119"><a href="#cb43-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-120"><a href="#cb43-120" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(se)</span>
+<span id="cb43-121"><a href="#cb43-121" aria-hidden="true" tabindex="-1"></a><span class="fu">rowRanges</span>(se)</span>
+<span id="cb43-122"><a href="#cb43-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-123"><a href="#cb43-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-124"><a href="#cb43-124" aria-hidden="true" tabindex="-1"></a>These positions are stranded, as base modifications can be observed on either</span>
+<span id="cb43-125"><a href="#cb43-125" aria-hidden="true" tabindex="-1"></a>of the two strands:</span>
+<span id="cb43-126"><a href="#cb43-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-129"><a href="#cb43-129" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-130"><a href="#cb43-130" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-strand</span></span>
+<span id="cb43-131"><a href="#cb43-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-132"><a href="#cb43-132" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">strand</span>(se))</span>
+<span id="cb43-133"><a href="#cb43-133" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-134"><a href="#cb43-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-135"><a href="#cb43-135" aria-hidden="true" tabindex="-1"></a>Finally, the individual reads of a sample are stored in the assay, inside the</span>
+<span id="cb43-136"><a href="#cb43-136" aria-hidden="true" tabindex="-1"></a>"column" of that sample:</span>
+<span id="cb43-137"><a href="#cb43-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-140"><a href="#cb43-140" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-141"><a href="#cb43-141" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-modprob</span></span>
+<span id="cb43-142"><a href="#cb43-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-143"><a href="#cb43-143" aria-hidden="true" tabindex="-1"></a><span class="fu">assayNames</span>(se)</span>
+<span id="cb43-144"><a href="#cb43-144" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(se, <span class="st">"mod_prob"</span>)</span>
+<span id="cb43-145"><a href="#cb43-145" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-146"><a href="#cb43-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-147"><a href="#cb43-147" aria-hidden="true" tabindex="-1"></a>You can see that each column is itself an object of type <span class="in">`NaMatrix`</span>.</span>
+<span id="cb43-148"><a href="#cb43-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-151"><a href="#cb43-151" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-152"><a href="#cb43-152" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-namatrix</span></span>
+<span id="cb43-153"><a href="#cb43-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-154"><a href="#cb43-154" aria-hidden="true" tabindex="-1"></a><span class="co"># get the NaMatrix with reads of sample wt1</span></span>
+<span id="cb43-155"><a href="#cb43-155" aria-hidden="true" tabindex="-1"></a>mp1 <span class="ot">&lt;-</span> <span class="fu">assay</span>(se, <span class="st">"mod_prob"</span>)<span class="sc">$</span>wt1</span>
+<span id="cb43-156"><a href="#cb43-156" aria-hidden="true" tabindex="-1"></a>mp1</span>
+<span id="cb43-157"><a href="#cb43-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-158"><a href="#cb43-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-159"><a href="#cb43-159" aria-hidden="true" tabindex="-1"></a>The rows in the <span class="in">`NaMatrix`</span> corresponding to the same genomic positions we</span>
+<span id="cb43-160"><a href="#cb43-160" aria-hidden="true" tabindex="-1"></a>have seen above, but the columns correspond to the <span class="in">`r ncol(mp1)`</span> individual</span>
+<span id="cb43-161"><a href="#cb43-161" aria-hidden="true" tabindex="-1"></a>reads. The numeric values correspond to modification probabilities. A value</span>
+<span id="cb43-162"><a href="#cb43-162" aria-hidden="true" tabindex="-1"></a>greater than 0.5 or 0.7 is typically considered modified. Many values</span>
+<span id="cb43-163"><a href="#cb43-163" aria-hidden="true" tabindex="-1"></a>are <span class="in">`NA`</span> (missing), either because a read did not overlap a given position, or</span>
+<span id="cb43-164"><a href="#cb43-164" aria-hidden="true" tabindex="-1"></a>there was no information about modifications at that position in that read.</span>
+<span id="cb43-165"><a href="#cb43-165" aria-hidden="true" tabindex="-1"></a>Storing all these <span class="in">`NA`</span> values would be a waste of memory, which is avoided</span>
+<span id="cb43-166"><a href="#cb43-166" aria-hidden="true" tabindex="-1"></a>in the <span class="in">`NaMatrix`</span>, which is a special type of sparse matrix from the</span>
+<span id="cb43-167"><a href="#cb43-167" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">SparseArray</span><span class="co">]</span>{.biocpkg} package that only stores non-<span class="in">`NA`</span> values.</span>
+<span id="cb43-168"><a href="#cb43-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-169"><a href="#cb43-169" aria-hidden="true" tabindex="-1"></a><span class="fu">## Flattening read-level to summary-level data</span></span>
+<span id="cb43-170"><a href="#cb43-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-171"><a href="#cb43-171" aria-hidden="true" tabindex="-1"></a>We can use <span class="co">[</span><span class="ot">flattenReadLevelAssay</span><span class="co">]</span>{.fn} to go from this read-level to</span>
+<span id="cb43-172"><a href="#cb43-172" aria-hidden="true" tabindex="-1"></a>summary-level data:</span>
+<span id="cb43-173"><a href="#cb43-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-176"><a href="#cb43-176" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-177"><a href="#cb43-177" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: flatten-se</span></span>
+<span id="cb43-178"><a href="#cb43-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-179"><a href="#cb43-179" aria-hidden="true" tabindex="-1"></a>se_summary <span class="ot">&lt;-</span> <span class="fu">flattenReadLevelAssay</span>(se)</span>
+<span id="cb43-180"><a href="#cb43-180" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-181"><a href="#cb43-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-182"><a href="#cb43-182" aria-hidden="true" tabindex="-1"></a>Here is an illustration of the summary-level data container:</span>
+<span id="cb43-183"><a href="#cb43-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-184"><a href="#cb43-184" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/se-summary-level.png)</span>{#fig-schematic-summarylevel .lightbox fig-alt="SummarizedExperiment with summary-level data in assays." height=300}</span>
+<span id="cb43-185"><a href="#cb43-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-186"><a href="#cb43-186" aria-hidden="true" tabindex="-1"></a>Its dimensions are identical to the original <span class="in">`se`</span> (positions by samples),</span>
+<span id="cb43-187"><a href="#cb43-187" aria-hidden="true" tabindex="-1"></a>however it contains additional assays that do not have the nested</span>
+<span id="cb43-188"><a href="#cb43-188" aria-hidden="true" tabindex="-1"></a>structure with individual reads, but are simple matrices:</span>
+<span id="cb43-189"><a href="#cb43-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-192"><a href="#cb43-192" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-193"><a href="#cb43-193" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-summary-assays</span></span>
+<span id="cb43-194"><a href="#cb43-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-195"><a href="#cb43-195" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(se_summary)</span>
+<span id="cb43-196"><a href="#cb43-196" aria-hidden="true" tabindex="-1"></a><span class="fu">assayNames</span>(se_summary)</span>
+<span id="cb43-197"><a href="#cb43-197" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">assay</span>(se_summary, <span class="st">"Nmod"</span>))</span>
+<span id="cb43-198"><a href="#cb43-198" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-199"><a href="#cb43-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-200"><a href="#cb43-200" aria-hidden="true" tabindex="-1"></a>By default, <span class="co">[</span><span class="ot">flattenReadLevelAssay</span><span class="co">]</span>{.fn} keeps the read-level assay</span>
+<span id="cb43-201"><a href="#cb43-201" aria-hidden="true" tabindex="-1"></a>(<span class="in">`"mod_prob"`</span>) and generates summarized assays with the</span>
+<span id="cb43-202"><a href="#cb43-202" aria-hidden="true" tabindex="-1"></a>numbers of modified and total bases (`"Nmod" and "Nvalid"), and the</span>
+<span id="cb43-203"><a href="#cb43-203" aria-hidden="true" tabindex="-1"></a>fraction of modified bases per position and sample (<span class="in">`"FracMod"`</span>).</span>
+<span id="cb43-204"><a href="#cb43-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-205"><a href="#cb43-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## Directly reading summary-level data {#sec-summary-data}</span></span>
+<span id="cb43-206"><a href="#cb43-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-207"><a href="#cb43-207" aria-hidden="true" tabindex="-1"></a>If the individual reads are not required, you can directly summarize</span>
+<span id="cb43-208"><a href="#cb43-208" aria-hidden="true" tabindex="-1"></a>them while reading, which is faster and eliminates the call to</span>
+<span id="cb43-209"><a href="#cb43-209" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">flattenReadLevelAssay</span><span class="co">]</span>{.fn}. This is achieved by adding the</span>
+<span id="cb43-210"><a href="#cb43-210" aria-hidden="true" tabindex="-1"></a>argument <span class="in">`level = "summary"`</span> to the <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn} call:</span>
+<span id="cb43-211"><a href="#cb43-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-214"><a href="#cb43-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-215"><a href="#cb43-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-modbam-summarylevel</span></span>
+<span id="cb43-216"><a href="#cb43-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-217"><a href="#cb43-217" aria-hidden="true" tabindex="-1"></a>se_summary_direct <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb43-218"><a href="#cb43-218" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>,</span>
+<span id="cb43-219"><a href="#cb43-219" aria-hidden="true" tabindex="-1"></a>                 <span class="at">wt2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>),</span>
+<span id="cb43-220"><a href="#cb43-220" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
+<span id="cb43-221"><a href="#cb43-221" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> <span class="st">"chr8:39286000-39286200"</span>, </span>
+<span id="cb43-222"><a href="#cb43-222" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
+<span id="cb43-223"><a href="#cb43-223" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>, </span>
+<span id="cb43-224"><a href="#cb43-224" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm,</span>
+<span id="cb43-225"><a href="#cb43-225" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb43-226"><a href="#cb43-226" aria-hidden="true" tabindex="-1"></a>    <span class="at">level =</span> <span class="st">"summary"</span></span>
+<span id="cb43-227"><a href="#cb43-227" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-228"><a href="#cb43-228" aria-hidden="true" tabindex="-1"></a>se_summary_direct</span>
+<span id="cb43-229"><a href="#cb43-229" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(<span class="fu">assay</span>(se_summary, <span class="st">"FracMod"</span>),</span>
+<span id="cb43-230"><a href="#cb43-230" aria-hidden="true" tabindex="-1"></a>          <span class="fu">assay</span>(se_summary_direct, <span class="st">"FracMod"</span>))</span>
+<span id="cb43-231"><a href="#cb43-231" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-232"><a href="#cb43-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-233"><a href="#cb43-233" aria-hidden="true" tabindex="-1"></a><span class="fu">## Read sampling {#sec-read-sampling}</span></span>
+<span id="cb43-234"><a href="#cb43-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-235"><a href="#cb43-235" aria-hidden="true" tabindex="-1"></a>In some cases, we may want to read a random set of reads from a <span class="in">`modBam`</span> file,</span>
+<span id="cb43-236"><a href="#cb43-236" aria-hidden="true" tabindex="-1"></a>for example to calculate average modification rates or quality statistics.</span>
+<span id="cb43-237"><a href="#cb43-237" aria-hidden="true" tabindex="-1"></a>In such cases, reading data by genomic position is not optimal.</span>
+<span id="cb43-238"><a href="#cb43-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-239"><a href="#cb43-239" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn} provides a special reading mode for this, controlled by the</span>
+<span id="cb43-240"><a href="#cb43-240" aria-hidden="true" tabindex="-1"></a>arguments <span class="in">`nAlnsToSample`</span> and <span class="in">`seqnamesToSampleFrom`</span>:</span>
+<span id="cb43-241"><a href="#cb43-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-244"><a href="#cb43-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-245"><a href="#cb43-245" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-modbam-sample</span></span>
+<span id="cb43-246"><a href="#cb43-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-247"><a href="#cb43-247" aria-hidden="true" tabindex="-1"></a>se_sampled <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb43-248"><a href="#cb43-248" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>,</span>
+<span id="cb43-249"><a href="#cb43-249" aria-hidden="true" tabindex="-1"></a>                 <span class="at">wt2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>),</span>
+<span id="cb43-250"><a href="#cb43-250" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
+<span id="cb43-251"><a href="#cb43-251" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
+<span id="cb43-252"><a href="#cb43-252" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>, </span>
+<span id="cb43-253"><a href="#cb43-253" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm,</span>
+<span id="cb43-254"><a href="#cb43-254" aria-hidden="true" tabindex="-1"></a>    <span class="at">nAlnsToSample =</span> <span class="dv">20</span>,</span>
+<span id="cb43-255"><a href="#cb43-255" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqnamesToSampleFrom =</span> <span class="st">"chr19"</span></span>
+<span id="cb43-256"><a href="#cb43-256" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-257"><a href="#cb43-257" aria-hidden="true" tabindex="-1"></a>se_sampled</span>
+<span id="cb43-258"><a href="#cb43-258" aria-hidden="true" tabindex="-1"></a>se_sampled<span class="sc">$</span>n_reads</span>
+<span id="cb43-259"><a href="#cb43-259" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-260"><a href="#cb43-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-261"><a href="#cb43-261" aria-hidden="true" tabindex="-1"></a>For details of how to make the sampling reproducible even when using multiple</span>
+<span id="cb43-262"><a href="#cb43-262" aria-hidden="true" tabindex="-1"></a>parallel threads, and why you might get a lower number of sampled reads than</span>
+<span id="cb43-263"><a href="#cb43-263" aria-hidden="true" tabindex="-1"></a>requested, please look at the documenation of <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn}.</span>
+<span id="cb43-264"><a href="#cb43-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-265"><a href="#cb43-265" aria-hidden="true" tabindex="-1"></a><span class="fu">## Improving reading performance</span></span>
+<span id="cb43-266"><a href="#cb43-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-267"><a href="#cb43-267" aria-hidden="true" tabindex="-1"></a>Even though <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn} is implemented using C/C++ for speed and</span>
+<span id="cb43-268"><a href="#cb43-268" aria-hidden="true" tabindex="-1"></a>efficiency, reading the data may become slow. Here are a few points that</span>
+<span id="cb43-269"><a href="#cb43-269" aria-hidden="true" tabindex="-1"></a>may help to reduce the time to read modification data from <span class="in">`modBam`</span> files:</span>
+<span id="cb43-270"><a href="#cb43-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-271"><a href="#cb43-271" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*Read summary-level data*: Reading of summary-level data (argument </span>
+<span id="cb43-272"><a href="#cb43-272" aria-hidden="true" tabindex="-1"></a>  <span class="in">`level = "summary"`</span>) is much faster than reading of read-level data,</span>
+<span id="cb43-273"><a href="#cb43-273" aria-hidden="true" tabindex="-1"></a>  so use it whenever you do not need to represent indidvual reads. </span>
+<span id="cb43-274"><a href="#cb43-274" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*Parallelization*: <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn} supports parallel processing,</span>
+<span id="cb43-275"><a href="#cb43-275" aria-hidden="true" tabindex="-1"></a>  controlled by the <span class="in">`BPPARAM`</span> argument. If multiple workers are available</span>
+<span id="cb43-276"><a href="#cb43-276" aria-hidden="true" tabindex="-1"></a>  in the <span class="in">`BPPARAM`</span> object (see <span class="co">[</span><span class="ot">BiocParallel</span><span class="co">]</span>{.biocpkg}),</span>
+<span id="cb43-277"><a href="#cb43-277" aria-hidden="true" tabindex="-1"></a>  they will be used to read data from from multiple</span>
+<span id="cb43-278"><a href="#cb43-278" aria-hidden="true" tabindex="-1"></a>  <span class="in">`modBam`</span> files in parallel. If the number of workers is larger than the</span>
+<span id="cb43-279"><a href="#cb43-279" aria-hidden="true" tabindex="-1"></a>  number of <span class="in">`bamfiles`</span>, the workers will further be used to speed-up</span>
+<span id="cb43-280"><a href="#cb43-280" aria-hidden="true" tabindex="-1"></a>  decompression of bam records.</span>
+<span id="cb43-281"><a href="#cb43-281" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*Region size*: If you are reading read-level data from large or many</span>
+<span id="cb43-282"><a href="#cb43-282" aria-hidden="true" tabindex="-1"></a>  <span class="in">`regions`</span>, certain operations like sub-setting of positions may become</span>
+<span id="cb43-283"><a href="#cb43-283" aria-hidden="true" tabindex="-1"></a>  slow. It may overall be faster to call <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn} multiple times</span>
+<span id="cb43-284"><a href="#cb43-284" aria-hidden="true" tabindex="-1"></a>  on fewer or smaller <span class="in">`regions`</span>, and keeping track of the partial results,</span>
+<span id="cb43-285"><a href="#cb43-285" aria-hidden="true" tabindex="-1"></a>  than calling <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn} a single time on all <span class="in">`regions`</span>.</span>
+<span id="cb43-286"><a href="#cb43-286" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb43-287"><a href="#cb43-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-288"><a href="#cb43-288" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reading from other file types</span></span>
+<span id="cb43-289"><a href="#cb43-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-290"><a href="#cb43-290" aria-hidden="true" tabindex="-1"></a>In addition to reading from <span class="in">`modBam`</span> files, you can also read (summary-level)</span>
+<span id="cb43-291"><a href="#cb43-291" aria-hidden="true" tabindex="-1"></a>data from <span class="in">`bedMethyl`</span> files using <span class="co">[</span><span class="ot">readBedMethyl</span><span class="co">]</span>{.fn}, or from tabular</span>
+<span id="cb43-292"><a href="#cb43-292" aria-hidden="true" tabindex="-1"></a>files created by <span class="in">`modkit`</span> using <span class="co">[</span><span class="ot">readModkitExtract</span><span class="co">]</span>{.fn}. The arguments of</span>
+<span id="cb43-293"><a href="#cb43-293" aria-hidden="true" tabindex="-1"></a>these reader functions are largely similar to the ones used for reading</span>
+<span id="cb43-294"><a href="#cb43-294" aria-hidden="true" tabindex="-1"></a><span class="in">`modBam`</span> files.</span>
+<span id="cb43-295"><a href="#cb43-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-298"><a href="#cb43-298" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-299"><a href="#cb43-299" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-other-formats</span></span>
+<span id="cb43-300"><a href="#cb43-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-301"><a href="#cb43-301" aria-hidden="true" tabindex="-1"></a><span class="co"># read from bedMethyl</span></span>
+<span id="cb43-302"><a href="#cb43-302" aria-hidden="true" tabindex="-1"></a>bmfile <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"modkit_pileup_1.bed.gz"</span>,</span>
+<span id="cb43-303"><a href="#cb43-303" aria-hidden="true" tabindex="-1"></a>                      <span class="at">package =</span> <span class="st">"footprintR"</span>)</span>
+<span id="cb43-304"><a href="#cb43-304" aria-hidden="true" tabindex="-1"></a>se_bedmethyl <span class="ot">&lt;-</span> <span class="fu">readBedMethyl</span>(</span>
+<span id="cb43-305"><a href="#cb43-305" aria-hidden="true" tabindex="-1"></a>    <span class="at">fnames =</span> bmfile,</span>
+<span id="cb43-306"><a href="#cb43-306" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"m"</span>,</span>
+<span id="cb43-307"><a href="#cb43-307" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
+<span id="cb43-308"><a href="#cb43-308" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>, </span>
+<span id="cb43-309"><a href="#cb43-309" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm</span>
+<span id="cb43-310"><a href="#cb43-310" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-311"><a href="#cb43-311" aria-hidden="true" tabindex="-1"></a>se_bedmethyl</span>
+<span id="cb43-312"><a href="#cb43-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-313"><a href="#cb43-313" aria-hidden="true" tabindex="-1"></a><span class="co"># read from a tabular file created by modkit</span></span>
+<span id="cb43-314"><a href="#cb43-314" aria-hidden="true" tabindex="-1"></a>extrfile <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"modkit_extract_rc_5mC_1.tsv.gz"</span>,</span>
+<span id="cb43-315"><a href="#cb43-315" aria-hidden="true" tabindex="-1"></a>                        <span class="at">package =</span> <span class="st">"footprintR"</span>)</span>
+<span id="cb43-316"><a href="#cb43-316" aria-hidden="true" tabindex="-1"></a>se_modkit <span class="ot">&lt;-</span> <span class="fu">readModkitExtract</span>(</span>
+<span id="cb43-317"><a href="#cb43-317" aria-hidden="true" tabindex="-1"></a>    <span class="at">fnames =</span> extrfile,</span>
+<span id="cb43-318"><a href="#cb43-318" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"m"</span>,</span>
+<span id="cb43-319"><a href="#cb43-319" aria-hidden="true" tabindex="-1"></a>    <span class="at">filter =</span> <span class="cn">NULL</span>,</span>
+<span id="cb43-320"><a href="#cb43-320" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
+<span id="cb43-321"><a href="#cb43-321" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">3</span>, </span>
+<span id="cb43-322"><a href="#cb43-322" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm</span>
+<span id="cb43-323"><a href="#cb43-323" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-324"><a href="#cb43-324" aria-hidden="true" tabindex="-1"></a>se_modkit</span>
+<span id="cb43-325"><a href="#cb43-325" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-326"><a href="#cb43-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-327"><a href="#cb43-327" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session info</span></span>
+<span id="cb43-328"><a href="#cb43-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-329"><a href="#cb43-329" aria-hidden="true" tabindex="-1"></a>&lt;details&gt;</span>
+<span id="cb43-330"><a href="#cb43-330" aria-hidden="true" tabindex="-1"></a>&lt;summary&gt;&lt;b&gt;</span>
+<span id="cb43-331"><a href="#cb43-331" aria-hidden="true" tabindex="-1"></a>Click to view session info</span>
+<span id="cb43-332"><a href="#cb43-332" aria-hidden="true" tabindex="-1"></a>&lt;/b&gt;&lt;/summary&gt;</span>
+<span id="cb43-335"><a href="#cb43-335" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-336"><a href="#cb43-336" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: session-info</span></span>
+<span id="cb43-337"><a href="#cb43-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-338"><a href="#cb43-338" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span>
+<span id="cb43-339"><a href="#cb43-339" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-340"><a href="#cb43-340" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/fmicompbio/footprintR_book/edit/main/reading-data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/fmicompbio/footprintR_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"loop":false,"closeEffect":"zoom","descPosition":"bottom","selector":".lightbox","openEffect":"zoom"});
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/fmicompbio/footprintR_book/edit/main/reading-data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/fmicompbio/footprintR_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
