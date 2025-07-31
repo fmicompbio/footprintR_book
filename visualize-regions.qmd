@@ -170,6 +170,36 @@ plotRegion(
 )
 ```
 
+In the plot above, the reads were ordered by the average signal across the entire plotted region. 
+It is also possible to order (or cluster) reads based on the signal in a smaller region, by specifying the `orderRegion` argument. 
+As an example, we order the reads by the average signal across only the last 20 nucleotides of the plotted region.
+
+```{r}
+#| fig.height: 8
+#| fig.width: 7
+#| label: fig-read-level-colors-orderregion
+
+plotRegion(
+    se, 
+    region = "chr8:39286600-39286800",
+    minCoveredFraction = 0.95,
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = "regionAvg", 
+             orderRegion = as("chr8:39286780-39286800", "GRanges"), 
+             trackTitle = "Heatmap",
+             legendTitle = "6mA", fillColors = "-inferno"),
+        list(trackType = "Lollipop", trackData = "mod_prob",
+             orderReads = "regionAvg", 
+             orderRegion = as("chr8:39286780-39286800", "GRanges"), 
+             trackTitle = "Lollipop",
+             legendTitle = "6mA", size = 2, stroke = 0.1, 
+             fillColors = c("white", "blue"))
+    ), 
+    sequenceContext = "A"
+)
+```
+
 
 By default, read-level tracks are facetted by sample (the columns of `se`).
 We can facet by an arbitrary column of `colData(se)` by changing the value of the `facetBy` argument for the track, or set the argument to `NULL` to disable the facetting and show reads from all samples together. 
