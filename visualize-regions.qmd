@@ -200,6 +200,73 @@ plotRegion(
 )
 ```
 
+For any ordering, we can also reverse the display order of the reads by setting `orderReverse = TRUE`. 
+
+```{r}
+#| fig.height: 8
+#| fig.width: 7
+#| label: fig-read-level-colors-orderregion-orderreverse
+
+plotRegion(
+    se, 
+    region = "chr8:39286600-39286800",
+    minCoveredFraction = 0.95,
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = "regionAvg", 
+             orderRegion = as("chr8:39286780-39286800", "GRanges"), 
+             orderReverse = TRUE, trackTitle = "Heatmap",
+             legendTitle = "6mA", fillColors = "-inferno"),
+        list(trackType = "Lollipop", trackData = "mod_prob",
+             orderReads = "regionAvg", 
+             orderRegion = as("chr8:39286780-39286800", "GRanges"), 
+             orderReverse = TRUE, trackTitle = "Lollipop",
+             legendTitle = "6mA", size = 2, stroke = 0.1, 
+             fillColors = c("white", "blue"))
+    ), 
+    sequenceContext = "A"
+)
+```
+
+The read-level plots will display all reads overlapping the displayed region. 
+In cases where there are too many reads to display, we recommend subsetting the `SummarizedExperiment` object before calling [plotRegion]{.fn}. 
+This can be done conveniently using [subsetReads]{.fn}, which allows you to subset the object keeping either a pre-specified set of reads or a random subset. 
+Here, we illustrate this workflow by subsetting the object to five randomly selected reads per sample before calling [plotRegion]{.fn}.
+
+```{r}
+#| fig.height: 8
+#| fig.width: 7
+#| label: fig-read-level-colors-orderregion-randomsubset
+
+# First subset the object to the plotted region and remove reads not 
+# overlapping that region, to restrict the random sampling to reads 
+# overlapping the plot region
+sesub <- filterPositions(se, regions = "chr8:39286600-39286800", filters = "regions")
+
+# Sample five random reads for each sample
+set.seed(42L)
+sesub <- subsetReads(sesub, randomSubset = 5)
+plotRegion(
+    sesub, 
+    region = "chr8:39286600-39286800",
+    minCoveredFraction = 0.95,
+    tracks = list(
+        list(trackType = "Heatmap", trackData = "mod_prob", 
+             interpolate = TRUE, orderReads = "regionAvg", 
+             orderRegion = as("chr8:39286780-39286800", "GRanges"), 
+             orderReverse = FALSE, trackTitle = "Heatmap",
+             legendTitle = "6mA", fillColors = "-inferno"),
+        list(trackType = "Lollipop", trackData = "mod_prob",
+             orderReads = "regionAvg", 
+             orderRegion = as("chr8:39286780-39286800", "GRanges"), 
+             orderReverse = FALSE, trackTitle = "Lollipop",
+             legendTitle = "6mA", size = 2, stroke = 0.1, 
+             fillColors = c("white", "blue"))
+    ), 
+    sequenceContext = "A"
+)
+```
+
 
 By default, read-level tracks are facetted by sample (the columns of `se`).
 We can facet by an arbitrary column of `colData(se)` by changing the value of the `facetBy` argument for the track, or set the argument to `NULL` to disable the facetting and show reads from all samples together. 
