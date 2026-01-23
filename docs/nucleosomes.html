@@ -267,8 +267,9 @@ window.Quarto = {
   <li><a href="#read-data" id="toc-read-data" class="nav-link" data-scroll-target="#read-data"><span class="header-section-number">5.2</span> Read data</a></li>
   <li><a href="#sec-place-nucleosomes" id="toc-sec-place-nucleosomes" class="nav-link" data-scroll-target="#sec-place-nucleosomes"><span class="header-section-number">5.3</span> Placing nucleosome footprints</a></li>
   <li><a href="#sec-estimate-nrl" id="toc-sec-estimate-nrl" class="nav-link" data-scroll-target="#sec-estimate-nrl"><span class="header-section-number">5.4</span> Estimating nucleosome repeat length</a></li>
-  <li><a href="#quantifying-nucleosome-phasing" id="toc-quantifying-nucleosome-phasing" class="nav-link" data-scroll-target="#quantifying-nucleosome-phasing"><span class="header-section-number">5.5</span> Quantifying nucleosome phasing</a></li>
-  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info"><span class="header-section-number">5.6</span> Session info</a></li>
+  <li><a href="#read-autocorrelation-also-shows-nucleosomal-signal" id="toc-read-autocorrelation-also-shows-nucleosomal-signal" class="nav-link" data-scroll-target="#read-autocorrelation-also-shows-nucleosomal-signal"><span class="header-section-number">5.5</span> Read autocorrelation also shows nucleosomal signal</a></li>
+  <li><a href="#quantifying-nucleosome-phasing" id="toc-quantifying-nucleosome-phasing" class="nav-link" data-scroll-target="#quantifying-nucleosome-phasing"><span class="header-section-number">5.6</span> Quantifying nucleosome phasing</a></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info"><span class="header-section-number">5.7</span> Session info</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/fmicompbio/footprintR_book/edit/main/nucleosomes.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/fmicompbio/footprintR_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -304,22 +305,23 @@ window.Quarto = {
 <summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gnm) <span class="ot">&lt;-</span> <span class="st">"mm39"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SingleMoleculeGenomicsIO)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gnm) <span class="ot">&lt;-</span> <span class="st">"mm39"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 <section id="read-data" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="read-data"><span class="header-section-number">5.2</span> Read data</h2>
-<p>Our data is obtained from <code>modBam</code> file from a wild-type sample, for which 6mA modification calling has been performed. We use the <a href="https://fmicompbio.github.io/footprintR/reference/readModBam.html"><code>readModBam</code></a> function to read data from an 2000-bp region around a CTCF binding site on chromosome 8 and store it in a <code>SummarizedExperiment</code> object. For more information about reading data with <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a>, see <a href="reading-data.html" class="quarto-xref"><span>Chapter 2</span></a>.</p>
+<p>Our data is obtained from <code>modBam</code> file from a wild-type sample, for which 6mA modification calling has been performed. We use the <a href="https://fmicompbio.github.io/SingleMoleculeGenomicsIO/reference/readModBam.html"><code>readModBam</code></a> function to read data from an 2000-bp region around a CTCF binding site on chromosome 8 and store it in a <code>SummarizedExperiment</code> object. For more information about reading data with <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a>, see <a href="reading-data.html" class="quarto-xref"><span>Chapter 2</span></a>.</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
@@ -328,7 +330,7 @@ window.Quarto = {
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>reg <span class="ot">&lt;-</span> <span class="fu">resize</span>(ctcfsite, <span class="at">width =</span> <span class="dv">2000</span>, <span class="at">fix =</span> <span class="st">"center"</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>),</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> reg,</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
@@ -344,16 +346,16 @@ window.Quarto = {
 <section id="sec-place-nucleosomes" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="sec-place-nucleosomes"><span class="header-section-number">5.3</span> Placing nucleosome footprints</h2>
 <p>The <a href="https://fmicompbio.github.io/footprintR/reference/calcFootprintScores.html"><code>calcFootprintScores</code></a> function uses a vector of weights to identify high-scoring regions on individual reads that show the modification pattern given in these weights. The score of a region on a read measures how well modification probabilities correlate with weights in the weight vector. High-scoring footprints that score above a provided threshold can be added to our <code>se</code> object using <a href="https://fmicompbio.github.io/footprintR/reference/addFootprints.html"><code>addFootprints</code></a>, which will call <a href="https://fmicompbio.github.io/footprintR/reference/calcFootprintScores.html"><code>calcFootprintScores</code></a> internally.</p>
-<p>In order to find nucleosomes, we construct a weight vector called <code>wgt</code> of a total length of 170 bp, consisting of a central 140 bp region in which we expect low modifications (the region protected by the nucleosome) flanked by two linker regions of 15 bp each in which we expect high modification. We adjust the weights in the flanks and central region such that the overall mean is close to zero:</p>
+<p>In order to find nucleosomes, we construct a weight vector called <code>wgt</code> of a total length of 160 bp, consisting of a central 120 bp region in which we expect low modifications (the region protected by the nucleosome) flanked by two linker regions of 20 bp each in which we expect high modification. We adjust the weights in the flanks and central region such that the overall mean is close to zero:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># nucleosome footprint</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>wgt <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fl">0.5</span>, <span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span>) <span class="sc">*</span> <span class="fu">c</span>(<span class="dv">140</span><span class="sc">/</span><span class="dv">170</span>, <span class="dv">30</span><span class="sc">/</span><span class="dv">170</span>, <span class="dv">140</span><span class="sc">/</span><span class="dv">170</span>), <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">140</span>, <span class="dv">15</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>wgt <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fl">0.5</span>, <span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span>) <span class="sc">*</span> <span class="fu">c</span>(<span class="dv">120</span><span class="sc">/</span><span class="dv">160</span>, <span class="dv">40</span><span class="sc">/</span><span class="dv">160</span>, <span class="dv">120</span><span class="sc">/</span><span class="dv">160</span>), <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">120</span>, <span class="dv">20</span>))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(wgt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -8.115253e-18</code></pre>
+<pre><code>[1] 0</code></pre>
 </div>
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
@@ -380,13 +382,13 @@ Figure&nbsp;5.1
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">addFootprints</span>(<span class="at">se =</span> se, <span class="at">wgt =</span> wgt, <span class="at">thresh =</span> <span class="fl">0.03</span>, <span class="at">name =</span> <span class="st">"nucl"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">addFootprints</span>(<span class="at">se =</span> se, <span class="at">wgt =</span> wgt, <span class="at">thresh =</span> <span class="fl">0.02</span>, <span class="at">name =</span> <span class="st">"nucl"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>ℹ calculating footprint scores</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>✔ calculating footprint scores [485ms]</code></pre>
+<pre><code>✔ calculating footprint scores [1.6s]</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code></code></pre>
@@ -408,43 +410,52 @@ Figure&nbsp;5.1
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>se<span class="sc">$</span>nucl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>$wt2
-IRangesList object of length 62:
-$`wt2-2b63fef6-6d5c-4aa4-b6a1-aebd5390cc83`
-IRanges object with 37 ranges and 0 metadata columns:
+<pre><code>$wt1
+IRangesList object of length 54:
+$`wt1-2b63fef6-6d5c-4aa4-b6a1-aebd5390cc83`
+IRanges object with 65 ranges and 0 metadata columns:
            start       end     width
        &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
-   [1]   6610367   6610506       140
-   [2]   6610900   6611039       140
-   [3]   6611097   6611236       140
-   [4]   6611677   6611816       140
-   [5]   6612665   6612804       140
+   [1]   6610366   6610505       140
+   [2]   6610543   6610682       140
+   [3]   6610707   6610846       140
+   [4]   6610901   6611040       140
+   [5]   6611097   6611236       140
    ...       ...       ...       ...
-  [33]   6622587   6622726       140
-  [34]   6622762   6622901       140
-  [35]   6623311   6623450       140
-  [36]   6623890   6624029       140
-  [37]   6624088   6624227       140
+  [61]   6623137   6623276       140
+  [62]   6623312   6623451       140
+  [63]   6623713   6623852       140
+  [64]   6623884   6624023       140
+  [65]   6624088   6624227       140
 
 ...
-&lt;61 more elements&gt;</code></pre>
+&lt;53 more elements&gt;</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># total number of nucleosomes</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">lengths</span>(se<span class="sc">$</span>nucl<span class="sc">$</span>wt1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1727</code></pre>
 </div>
 </div>
 <p>The nucleosome footprints can be visualized using <a href="https://fmicompbio.github.io/footprintR/reference/plotRegion.html"><code>plotRegion</code></a>:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRegion</span>(se, <span class="at">region =</span> reg,</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackData=</span><span class="st">"mod_prob"</span>, <span class="at">trackType=</span><span class="st">"Heatmap"</span>,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">interpolate =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">footprintColumns =</span> <span class="st">"nucl"</span>,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">arglistFootprints =</span> <span class="fu">list</span>(<span class="at">nucl =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="fu">alpha</span>(<span class="st">"firebrick"</span>, <span class="fl">0.5</span>))),</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">orderReads =</span> <span class="st">"squish"</span>),</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Smooth"</span>,</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>                              <span class="at">smoothMethod=</span><span class="st">"rollingMean"</span>, <span class="at">windowSize=</span><span class="dv">41</span>,</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>                              <span class="at">highlightRegions =</span> ctcfsite)),</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">sequenceContext =</span> <span class="st">"A"</span>) <span class="sc">+</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        patchwork<span class="sc">::</span><span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="fl">0.6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRegion</span>(se, <span class="at">region =</span> reg, <span class="at">minCoveredFraction =</span> <span class="fl">0.7</span>,</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackData=</span><span class="st">"mod_prob"</span>, <span class="at">trackType=</span><span class="st">"Heatmap"</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">interpolate =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">footprintColumns =</span> <span class="st">"nucl"</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">arglistFootprints =</span> <span class="fu">list</span>(</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">nucl =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="fu">alpha</span>(<span class="st">"firebrick"</span>, <span class="fl">0.5</span>))),</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                              <span class="at">orderReads =</span> <span class="st">"squish"</span>),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Smooth"</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>                              <span class="at">smoothMethod=</span><span class="st">"rollingMean"</span>, <span class="at">windowSize=</span><span class="dv">41</span>,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>                              <span class="at">highlightRegions =</span> ctcfsite)),</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">sequenceContext =</span> <span class="st">"A"</span>) <span class="sc">+</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        patchwork<span class="sc">::</span><span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="fl">0.6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-plot-footprints" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
@@ -467,36 +478,36 @@ Figure&nbsp;5.2
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>moddist <span class="ot">&lt;-</span> <span class="fu">calcModbaseSpacing</span>(se)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(moddist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>moddist <span class="ot">&lt;-</span> <span class="fu">calcModbaseSpacing</span>(se)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(moddist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 1
- $ wt2: Named num [1:1000] 3513 2262 1789 1296 1176 ...
+ $ wt1: Named num [1:1000] 3306 2143 1670 1218 1122 ...
   ..- attr(*, "names")= chr [1:1000] "1" "2" "3" "4" ...</code></pre>
 </div>
 </div>
-<p>From this distribution, which was obtained from just 62 reads, we can accurately estimate the NRL using <a href="https://fmicompbio.github.io/footprintR/reference/estimateNRL.html"><code>estimateNRL</code></a>:</p>
+<p>From this distribution, which was obtained from just 54 reads, we can accurately estimate the NRL using <a href="https://fmicompbio.github.io/footprintR/reference/estimateNRL.html"><code>estimateNRL</code></a>:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">estimateNRL</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt2)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>res[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">estimateNRL</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt1)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>res[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>$nrl
-[1] 190.3
+[1] 190.1
 
 $nrl.CI95
    2.5 %   97.5 % 
-187.6821 192.9179 </code></pre>
+187.3074 192.8926 </code></pre>
 </div>
 </div>
 <p>Alternatively, the distance distribution can also be visualized together with an estimate of the NRL using <a href="https://fmicompbio.github.io/footprintR/reference/plotModbaseSpacing.html"><code>plotModbaseSpacing</code></a>, either as a summary plot:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotModbaseSpacing</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotModbaseSpacing</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-modbase-spacing-summary" class="quarto-float quarto-figure quarto-figure-center anchored" width="480">
@@ -515,7 +526,7 @@ Figure&nbsp;5.3
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotModbaseSpacing</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt2, <span class="at">detailedPlots =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotModbaseSpacing</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt1, <span class="at">detailedPlots =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-modbase-spacing-detailed" class="quarto-float quarto-figure quarto-figure-center anchored" width="1296">
@@ -531,77 +542,102 @@ Figure&nbsp;5.4
 </div>
 </div>
 </section>
-<section id="quantifying-nucleosome-phasing" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="quantifying-nucleosome-phasing"><span class="header-section-number">5.5</span> Quantifying nucleosome phasing</h2>
+<section id="read-autocorrelation-also-shows-nucleosomal-signal" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="read-autocorrelation-also-shows-nucleosomal-signal"><span class="header-section-number">5.5</span> Read autocorrelation also shows nucleosomal signal</h2>
+<p>An alternative way to visualize or measure nucleosome repeat length is to plot the autocorrelation of reads. This is obtained by shifting the reads relative to themselves and calculating the pearson correlation of the modification vector in the overlapping range. As you can see in the plot below, this shows high correlation for the first ~50 nucleotides (corresponding to the average length of a nucleosome linker or footprint), then switches to negative correlations before rising again and peaking at about 190 nucleotides (the average nucleosome repeat length).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Show/hide code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotReadAutocorrelation</span>(se, <span class="at">refDists =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">147</span>, <span class="dv">190</span>)) <span class="sc">+</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"inside"</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.position.inside =</span> <span class="fu">c</span>(.<span class="dv">98</span>, .<span class="dv">98</span>),</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-read-autocorrelation" class="quarto-float quarto-figure quarto-figure-center anchored" width="480">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-read-autocorrelation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="nucleosomes_files/figure-html/fig-read-autocorrelation-1.png" id="fig-read-autocorrelation" class="img-fluid figure-img" width="480">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-read-autocorrelation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.5
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="quantifying-nucleosome-phasing" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="quantifying-nucleosome-phasing"><span class="header-section-number">5.6</span> Quantifying nucleosome phasing</h2>
 <p>Nucleosomes that occupy similar positions across reads are called phased and can result for example from a sequence-specific DNA binding protein that constrains their movement along the DNA. Genomic regions with phased nucleosomes can be identified on the summary-level data by <a href="https://fmicompbio.github.io/footprintR/reference/phasingScoreFourier.html"><code>phasingScoreFourier</code></a>, which calculates the strength of a periodic component in the summary-level data corresponding to the expected period of nucleosomes (see <a href="#sec-estimate-nrl" class="quarto-xref"><span>Section 5.4</span></a> for how that period can be estimated).</p>
 <p>We start such an analysis by first reading summary-level data for a larger genomic region, in which we want to calculate phasing scores:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>reg <span class="ot">&lt;-</span> <span class="fu">GRanges</span>(<span class="st">"chr8"</span>, <span class="fu">IRanges</span>(<span class="dv">6637500</span>, <span class="dv">6642500</span>))</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>),</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> reg,</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">level =</span> <span class="st">"summary"</span>,</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>, </span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>reg <span class="ot">&lt;-</span> <span class="fu">GRanges</span>(<span class="st">"chr8"</span>, <span class="fu">IRanges</span>(<span class="dv">6637500</span>, <span class="dv">6642500</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>),</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> reg,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">level =</span> <span class="st">"summary"</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>, </span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Next, we construct <code>windowgr</code>, a <code>GRanges</code> objects defining the windows in <code>reg</code> for which we want to calculate a nucleosome phasing score:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>windowStep <span class="ot">&lt;-</span> <span class="dv">190</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>windowSize <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">*</span> windowStep</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">start</span>(reg), <span class="fu">end</span>(reg) <span class="sc">-</span> (windowSize <span class="sc">-</span> windowStep) <span class="sc">+</span> <span class="dv">1</span>, <span class="at">by =</span> windowStep)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>windowgr <span class="ot">&lt;-</span> <span class="fu">GRanges</span>(<span class="at">seqnames =</span> <span class="fu">seqnames</span>(reg),</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ranges =</span> <span class="fu">IRanges</span>(<span class="at">start =</span> s, <span class="at">width =</span> windowSize))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>windowStep <span class="ot">&lt;-</span> <span class="dv">190</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>windowSize <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">*</span> windowStep</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">start</span>(reg), <span class="fu">end</span>(reg) <span class="sc">-</span> (windowSize <span class="sc">-</span> windowStep) <span class="sc">+</span> <span class="dv">1</span>, <span class="at">by =</span> windowStep)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>windowgr <span class="ot">&lt;-</span> <span class="fu">GRanges</span>(<span class="at">seqnames =</span> <span class="fu">seqnames</span>(reg),</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ranges =</span> <span class="fu">IRanges</span>(<span class="at">start =</span> s, <span class="at">width =</span> windowSize))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Finally, we calculate phasing socres for the windows in <code>windowgr</code>. The <code>windowSize</code> and the value of the <code>numCoef</code> argument define the period of interest <span class="math inline">\(poi = windowSize / (numCoef - 1)\)</span> (here: 190 bp, see <a href="https://fmicompbio.github.io/footprintR/reference/phasingScoreFourier.html"><code>phasingScoreFourier</code></a> for details):</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>seFourier <span class="ot">&lt;-</span> <span class="fu">phasingScoreFourier</span>(<span class="at">se =</span> se, <span class="at">gr =</span> windowgr, <span class="at">numCoef =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>seFourier <span class="ot">&lt;-</span> <span class="fu">phasingScoreFourier</span>(<span class="at">se =</span> se, <span class="at">gr =</span> windowgr, <span class="at">numCoef =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>We can plot the window scores together with the fraction of modification. Note that the sequential windows for which the phasing score was calculated are overlapping (the window with the maximal phasing score is indicated by the red line below):</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get plotting data using plotRegion</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plotRegion</span>(se, <span class="at">region =</span> reg,</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Smooth"</span>,</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">smoothMethod =</span> <span class="st">"rollingMean"</span>, <span class="at">windowSize =</span> <span class="dv">101</span>)))</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>pd <span class="ot">&lt;-</span> p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>data</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># get phasing scores</span></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>pd2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">rowRanges</span>(seFourier))</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>pd2<span class="sc">$</span>position <span class="ot">&lt;-</span> <span class="fu">mid</span>(<span class="fu">rowRanges</span>(seFourier))</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>pd2<span class="sc">$</span>phasingScoreAbs <span class="ot">&lt;-</span> <span class="fu">assay</span>(seFourier, <span class="st">"phasingScoreAbs"</span>)[, <span class="st">"wt2"</span>]</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize</span></span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> position)) <span class="sc">+</span></span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="at">data =</span> pd2,</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">mean</span>(pd<span class="sc">$</span>value_smooth), <span class="at">fill =</span> phasingScoreAbs),</span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>              <span class="at">width =</span> windowStep, <span class="at">height =</span> <span class="cn">Inf</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span></span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">data =</span> pd2[<span class="fu">which.max</span>(pd2<span class="sc">$</span>phasingScoreAbs), , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>                 <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>                 <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> start, <span class="at">xend =</span> end, <span class="at">y =</span> <span class="fu">min</span>(pd<span class="sc">$</span>value_smooth)),</span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">data =</span> pd,</span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>              <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">y =</span> value_smooth)) <span class="sc">+</span></span>
-<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylim</span>(<span class="fu">range</span>(pd<span class="sc">$</span>value_smooth)) <span class="sc">+</span></span>
-<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">"Position on "</span>, <span class="fu">seqnames</span>(reg), <span class="st">" (bp)"</span>),</span>
-<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Fraction of modified bases"</span>,</span>
-<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill =</span> <span class="fu">paste0</span>(<span class="st">"Phasing score</span><span class="sc">\n</span><span class="st">"</span>, windowStep, <span class="st">" bp period"</span>)) <span class="sc">+</span></span>
-<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get plotting data using plotRegion</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plotRegion</span>(se, <span class="at">region =</span> reg,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Smooth"</span>,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">smoothMethod =</span> <span class="st">"rollingMean"</span>, <span class="at">windowSize =</span> <span class="dv">101</span>)))</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>pd <span class="ot">&lt;-</span> p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>data</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># get phasing scores</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>pd2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">rowRanges</span>(seFourier))</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>pd2<span class="sc">$</span>position <span class="ot">&lt;-</span> <span class="fu">mid</span>(<span class="fu">rowRanges</span>(seFourier))</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>pd2<span class="sc">$</span>phasingScoreAbs <span class="ot">&lt;-</span> <span class="fu">assay</span>(seFourier, <span class="st">"phasingScoreAbs"</span>)[, <span class="st">"wt1"</span>]</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> position)) <span class="sc">+</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="at">data =</span> pd2,</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">mean</span>(pd<span class="sc">$</span>value_smooth), <span class="at">fill =</span> phasingScoreAbs),</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>              <span class="at">width =</span> windowStep, <span class="at">height =</span> <span class="cn">Inf</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">data =</span> pd2[<span class="fu">which.max</span>(pd2<span class="sc">$</span>phasingScoreAbs), , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>                 <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>                 <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> start, <span class="at">xend =</span> end, <span class="at">y =</span> <span class="fu">min</span>(pd<span class="sc">$</span>value_smooth)),</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">data =</span> pd,</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>              <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">y =</span> value_smooth)) <span class="sc">+</span></span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylim</span>(<span class="fu">range</span>(pd<span class="sc">$</span>value_smooth)) <span class="sc">+</span></span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">"Position on "</span>, <span class="fu">seqnames</span>(reg), <span class="st">" (bp)"</span>),</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Fraction of modified bases"</span>,</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill =</span> <span class="fu">paste0</span>(<span class="st">"Phasing score</span><span class="sc">\n</span><span class="st">"</span>, windowStep, <span class="st">" bp period"</span>)) <span class="sc">+</span></span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-phasingscore" class="quarto-float quarto-figure quarto-figure-center anchored" width="576">
@@ -610,15 +646,15 @@ Figure&nbsp;5.4
 <img src="nucleosomes_files/figure-html/fig-phasingscore-1.png" id="fig-phasingscore" class="img-fluid figure-img" width="576">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-phasingscore-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.5
+Figure&nbsp;5.6
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="session-info" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="session-info"><span class="header-section-number">5.6</span> Session info</h2>
+<section id="session-info" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="session-info"><span class="header-section-number">5.7</span> Session info</h2>
 <details>
 <summary>
 <b> Click to view session info </b>
@@ -626,101 +662,115 @@ Figure&nbsp;5.5
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>═ Session info ═══════════════════════════════════════════════════════════════
-─ Packages ───────────────────────────────────────────────────────────────────
+<pre><code>═ Session info ═══════════════════════════════════════════════════════════════════════════════════════════════════════
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
  package                                      * version   date (UTC) lib source
- abind                                          1.4-8     2024-09-12 [1] CRAN (R 4.5.0)
- Biobase                                      * 2.68.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- BiocGenerics                                 * 0.54.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- BiocIO                                       * 1.18.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- BiocParallel                                   1.42.1    2025-06-01 [1] Bioconductor 3.21 (R 4.5.0)
- Biostrings                                   * 2.76.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- bitops                                         1.0-9     2024-10-03 [1] CRAN (R 4.5.0)
- BSgenome                                     * 1.76.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34 * 0.1.0     2025-04-17 [1] Bioconductor
- class                                          7.3-23    2025-01-01 [2] CRAN (R 4.5.0)
- cli                                            3.6.5     2025-04-23 [1] CRAN (R 4.5.0)
- codetools                                      0.2-20    2024-03-31 [2] CRAN (R 4.5.0)
- crayon                                         1.5.3     2024-06-20 [1] CRAN (R 4.5.0)
- curl                                           6.3.0     2025-06-06 [1] CRAN (R 4.5.0)
- data.table                                     1.17.4    2025-05-26 [1] CRAN (R 4.5.0)
- DelayedArray                                   0.34.1    2025-04-17 [1] Bioconductor 3.21 (R 4.5.0)
- dichromat                                      2.0-0.1   2022-05-02 [1] CRAN (R 4.5.0)
- digest                                         0.6.37    2024-08-19 [1] CRAN (R 4.5.0)
- dplyr                                          1.1.4     2023-11-17 [1] CRAN (R 4.5.0)
- e1071                                          1.7-16    2024-09-16 [1] CRAN (R 4.5.0)
- evaluate                                       1.0.3     2025-01-10 [1] CRAN (R 4.5.0)
- farver                                         2.1.2     2024-05-13 [1] CRAN (R 4.5.0)
- fastmap                                        1.2.0     2024-05-15 [1] CRAN (R 4.5.0)
- footprintR                                   * 0.3.5     2025-06-04 [1] Github (fmicompbio/footprintR@612f713)
- generics                                     * 0.1.4     2025-05-09 [1] CRAN (R 4.5.0)
- GenomeInfoDb                                 * 1.44.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- GenomeInfoDbData                               1.2.14    2025-04-17 [1] Bioconductor
- GenomicAlignments                              1.44.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- GenomicRanges                                * 1.60.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- ggforce                                        0.4.2     2024-02-19 [1] CRAN (R 4.5.0)
- ggplot2                                      * 3.5.2     2025-04-09 [1] CRAN (R 4.5.0)
- glue                                           1.8.0     2024-09-30 [1] CRAN (R 4.5.0)
- gtable                                         0.3.6     2024-10-25 [1] CRAN (R 4.5.0)
- htmltools                                      0.5.8.1   2024-04-04 [1] CRAN (R 4.5.0)
- htmlwidgets                                    1.6.4     2023-12-06 [1] CRAN (R 4.5.0)
- httr                                           1.4.7     2023-08-15 [1] CRAN (R 4.5.0)
- IRanges                                      * 2.42.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- jsonlite                                       2.0.0     2025-03-27 [1] CRAN (R 4.5.0)
- knitr                                          1.50      2025-03-16 [1] CRAN (R 4.5.0)
- labeling                                       0.4.3     2023-08-29 [1] CRAN (R 4.5.0)
- lattice                                        0.22-7    2025-04-02 [1] CRAN (R 4.5.0)
- lifecycle                                      1.0.4     2023-11-07 [1] CRAN (R 4.5.0)
- magrittr                                       2.0.3     2022-03-30 [1] CRAN (R 4.5.0)
- MASS                                           7.3-65    2025-02-28 [2] CRAN (R 4.5.0)
- Matrix                                         1.7-3     2025-03-11 [2] CRAN (R 4.5.0)
- MatrixGenerics                               * 1.20.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- matrixStats                                  * 1.5.0     2025-01-07 [1] CRAN (R 4.5.0)
- patchwork                                    * 1.3.0     2024-09-16 [1] CRAN (R 4.5.0)
- pillar                                         1.10.2    2025-04-05 [1] CRAN (R 4.5.0)
- pkgconfig                                      2.0.3     2019-09-22 [1] CRAN (R 4.5.0)
- polyclip                                       1.10-7    2024-07-23 [1] CRAN (R 4.5.0)
- proxy                                          0.4-27    2022-06-09 [1] CRAN (R 4.5.0)
- purrr                                          1.0.4     2025-02-05 [1] CRAN (R 4.5.0)
- R6                                             2.6.1     2025-02-15 [1] CRAN (R 4.5.0)
- RColorBrewer                                   1.1-3     2022-04-03 [1] CRAN (R 4.5.0)
- Rcpp                                           1.0.14    2025-01-12 [1] CRAN (R 4.5.0)
- RCurl                                          1.98-1.17 2025-03-22 [1] CRAN (R 4.5.0)
- restfulr                                       0.0.15    2022-06-16 [1] CRAN (R 4.5.0)
- rjson                                          0.2.23    2024-09-16 [1] CRAN (R 4.5.0)
- rlang                                          1.1.6     2025-04-11 [1] CRAN (R 4.5.0)
- rmarkdown                                      2.29      2024-11-04 [1] CRAN (R 4.5.0)
- Rsamtools                                      2.24.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- rtracklayer                                  * 1.68.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- S4Arrays                                       1.8.1     2025-06-01 [1] Bioconductor 3.21 (R 4.5.0)
- S4Vectors                                    * 0.46.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- scales                                         1.4.0     2025-04-24 [1] CRAN (R 4.5.0)
- sessioninfo                                    1.2.3     2025-02-05 [1] CRAN (R 4.5.0)
- signal                                         1.8-1     2024-06-26 [1] CRAN (R 4.5.0)
- SparseArray                                    1.8.0     2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- SummarizedExperiment                         * 1.38.1    2025-04-30 [1] Bioconductor 3.21 (R 4.5.0)
- tibble                                         3.3.0     2025-06-08 [1] CRAN (R 4.5.0)
- tidyr                                          1.3.1     2024-01-24 [1] CRAN (R 4.5.0)
- tidyselect                                     1.2.1     2024-03-11 [1] CRAN (R 4.5.0)
- tweenr                                         2.0.3     2024-02-26 [1] CRAN (R 4.5.0)
- UCSC.utils                                     1.4.0     2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- vctrs                                          0.6.5     2023-12-01 [1] CRAN (R 4.5.0)
- viridisLite                                    0.4.2     2023-05-02 [1] CRAN (R 4.5.0)
- withr                                          3.0.2     2024-10-28 [1] CRAN (R 4.5.0)
- xfun                                           0.52      2025-04-02 [1] CRAN (R 4.5.0)
- XML                                            3.99-0.18 2025-01-01 [1] CRAN (R 4.5.0)
- XVector                                      * 0.48.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- yaml                                           2.3.10    2024-07-26 [1] CRAN (R 4.5.0)
- zoo                                            1.8-14    2025-04-10 [1] CRAN (R 4.5.0)
+ abind                                          1.4-8     2024-09-12 [1] CRAN (R 4.5.1)
+ basilisk                                       1.22.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ Biobase                                      * 2.70.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ BiocGenerics                                 * 0.56.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ BiocIO                                       * 1.20.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ BiocParallel                                   1.44.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ Biostrings                                   * 2.78.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ bitops                                         1.0-9     2024-10-03 [1] CRAN (R 4.5.1)
+ BSgenome                                     * 1.78.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34 * 0.1.0     2025-10-31 [1] Bioconductor
+ cigarillo                                      1.0.0     2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ class                                          7.3-23    2025-01-01 [2] CRAN (R 4.5.2)
+ cli                                            3.6.5     2025-04-23 [1] CRAN (R 4.5.1)
+ codetools                                      0.2-20    2024-03-31 [2] CRAN (R 4.5.2)
+ crayon                                         1.5.3     2024-06-20 [1] CRAN (R 4.5.1)
+ curl                                           7.0.0     2025-08-19 [1] CRAN (R 4.5.1)
+ data.table                                     1.18.0    2025-12-24 [1] CRAN (R 4.5.2)
+ DelayedArray                                   0.36.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ dichromat                                      2.0-0.1   2022-05-02 [1] CRAN (R 4.5.1)
+ digest                                         0.6.39    2025-11-19 [1] CRAN (R 4.5.2)
+ dir.expiry                                     1.18.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ dplyr                                          1.1.4     2023-11-17 [1] CRAN (R 4.5.1)
+ e1071                                          1.7-17    2025-12-18 [1] CRAN (R 4.5.2)
+ evaluate                                       1.0.5     2025-08-27 [1] CRAN (R 4.5.1)
+ farver                                         2.1.2     2024-05-13 [1] CRAN (R 4.5.1)
+ fastmap                                        1.2.0     2024-05-15 [1] CRAN (R 4.5.1)
+ filelock                                       1.0.3     2023-12-11 [1] CRAN (R 4.5.1)
+ footprintR                                   * 0.4.0     2026-01-23 [1] Bioconductor
+ generics                                     * 0.1.4     2025-05-09 [1] CRAN (R 4.5.1)
+ GenomeInfoDb                                 * 1.46.2    2025-12-04 [1] Bioconductor 3.22 (R 4.5.2)
+ GenomicAlignments                              1.46.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ GenomicRanges                                * 1.62.1    2025-12-08 [1] Bioconductor 3.22 (R 4.5.2)
+ ggforce                                        0.5.0     2025-06-18 [1] CRAN (R 4.5.1)
+ ggplot2                                      * 4.0.1     2025-11-14 [1] CRAN (R 4.5.2)
+ glue                                           1.8.0     2024-09-30 [1] CRAN (R 4.5.1)
+ gtable                                         0.3.6     2024-10-25 [1] CRAN (R 4.5.1)
+ htmltools                                      0.5.9     2025-12-04 [1] CRAN (R 4.5.2)
+ htmlwidgets                                    1.6.4     2023-12-06 [1] CRAN (R 4.5.1)
+ httr                                           1.4.7     2023-08-15 [1] CRAN (R 4.5.1)
+ IRanges                                      * 2.44.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ janeaustenr                                    1.0.0     2022-08-26 [1] CRAN (R 4.5.2)
+ jsonlite                                       2.0.0     2025-03-27 [1] CRAN (R 4.5.1)
+ knitr                                          1.51      2025-12-20 [1] CRAN (R 4.5.2)
+ labeling                                       0.4.3     2023-08-29 [1] CRAN (R 4.5.1)
+ lattice                                        0.22-7    2025-04-02 [2] CRAN (R 4.5.2)
+ lifecycle                                      1.0.5     2026-01-08 [1] CRAN (R 4.5.2)
+ magrittr                                       2.0.4     2025-09-12 [1] CRAN (R 4.5.1)
+ MASS                                           7.3-65    2025-02-28 [2] CRAN (R 4.5.2)
+ Matrix                                         1.7-4     2025-08-28 [2] CRAN (R 4.5.2)
+ MatrixGenerics                               * 1.22.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ matrixStats                                  * 1.5.0     2025-01-07 [1] CRAN (R 4.5.1)
+ otel                                           0.2.0     2025-08-29 [1] CRAN (R 4.5.1)
+ patchwork                                    * 1.3.2     2025-08-25 [1] CRAN (R 4.5.1)
+ pillar                                         1.11.1    2025-09-17 [1] CRAN (R 4.5.1)
+ pkgconfig                                      2.0.3     2019-09-22 [1] CRAN (R 4.5.1)
+ png                                            0.1-8     2022-11-29 [1] CRAN (R 4.5.1)
+ polyclip                                       1.10-7    2024-07-23 [1] CRAN (R 4.5.1)
+ proxy                                          0.4-29    2025-12-29 [1] CRAN (R 4.5.2)
+ purrr                                          1.2.1     2026-01-09 [1] CRAN (R 4.5.2)
+ R6                                             2.6.1     2025-02-15 [1] CRAN (R 4.5.1)
+ RColorBrewer                                   1.1-3     2022-04-03 [1] CRAN (R 4.5.1)
+ Rcpp                                           1.1.1     2026-01-10 [1] CRAN (R 4.5.2)
+ RCurl                                          1.98-1.17 2025-03-22 [1] CRAN (R 4.5.1)
+ restfulr                                       0.0.16    2025-06-27 [1] CRAN (R 4.5.1)
+ reticulate                                     1.44.1    2025-11-14 [1] CRAN (R 4.5.2)
+ rjson                                          0.2.23    2024-09-16 [1] CRAN (R 4.5.1)
+ rlang                                          1.1.7     2026-01-09 [1] CRAN (R 4.5.2)
+ rmarkdown                                      2.30      2025-09-28 [1] CRAN (R 4.5.1)
+ Rsamtools                                      2.26.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ rtracklayer                                  * 1.70.1    2025-12-22 [1] Bioconductor 3.22 (R 4.5.2)
+ S4Arrays                                       1.10.1    2025-12-02 [1] Github (Bioconductor/S4Arrays@a4cccba)
+ S4Vectors                                    * 0.48.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ S7                                             0.2.1     2025-11-14 [1] CRAN (R 4.5.2)
+ scales                                         1.4.0     2025-04-24 [1] CRAN (R 4.5.1)
+ Seqinfo                                      * 1.0.0     2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ sessioninfo                                    1.2.3     2025-02-05 [1] CRAN (R 4.5.1)
+ signal                                         1.8-1     2024-06-26 [1] CRAN (R 4.5.1)
+ SingleMoleculeGenomicsIO                     * 0.1.0     2026-01-19 [1] Bioconductor
+ SnowballC                                      0.7.1     2023-04-25 [1] CRAN (R 4.5.2)
+ SparseArray                                    1.10.8    2025-12-18 [1] Bioconductor 3.22 (R 4.5.2)
+ stringi                                        1.8.7     2025-03-27 [1] CRAN (R 4.5.1)
+ SummarizedExperiment                         * 1.40.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ tibble                                         3.3.1     2026-01-11 [1] CRAN (R 4.5.2)
+ tidyr                                          1.3.2     2025-12-19 [1] CRAN (R 4.5.2)
+ tidyselect                                     1.2.1     2024-03-11 [1] CRAN (R 4.5.1)
+ tidytext                                       0.4.3     2025-07-25 [1] CRAN (R 4.5.2)
+ tokenizers                                     0.3.0     2022-12-22 [1] CRAN (R 4.5.2)
+ tweenr                                         2.0.3     2024-02-26 [1] CRAN (R 4.5.1)
+ UCSC.utils                                     1.6.1     2025-12-11 [1] Bioconductor 3.22 (R 4.5.2)
+ vctrs                                          0.6.5     2023-12-01 [1] CRAN (R 4.5.1)
+ viridisLite                                    0.4.2     2023-05-02 [1] CRAN (R 4.5.1)
+ withr                                          3.0.2     2024-10-28 [1] CRAN (R 4.5.1)
+ xfun                                           0.55      2025-12-16 [1] CRAN (R 4.5.2)
+ XML                                            3.99-0.20 2025-11-08 [1] CRAN (R 4.5.2)
+ XVector                                      * 0.50.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ yaml                                           2.3.12    2025-12-10 [1] CRAN (R 4.5.2)
+ zoo                                            1.8-15    2025-12-15 [1] CRAN (R 4.5.2)
 
- [1] /tungstenfs/groups/gbioinfo/Appz/R/BioC/R-4.5-release-foss-2024.05_BioC-3.21-release-foss-2024.05
- [2] /tachyon/groups/gbioinfo/Appz/easybuild/software/R/4.5.0-foss-2024.05/lib64/R/library
+ [1] /tachyon/groups/gbioinfo/Appz/R/BioC/R-4.5-release-foss-2024.05_BioC-3.22-release-foss-2024.05
+ [2] /tachyon/groups/gbioinfo/Appz/easybuild/software/R/4.5.2-foss-2024.05/lib64/R/library
  * ── Packages attached to the search path.
 
-──────────────────────────────────────────────────────────────────────────────</code></pre>
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
 </div>
 </div>
 </details>
@@ -1216,251 +1266,283 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb28" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Nucleosome analyses {#sec-nucleosomes}</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>A prominent source of signal in single molecule footprinting data are nucleosomes that protect the DNA that is wound around the histones but leave the DNA between nucleosome particles, the linkers, accessible to modifications.</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>In this chapter, we illustrate how <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} can be used to place single nucleosomes onto individual reads (see @sec-place-nucleosomes) or estimate the average distance between neighboring nucleosomes (@sec-estimate-nrl).</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Preparation</span></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>We first load the packages and the genome needed for these tasks.</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load-packages</span></span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
-<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
-<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
-<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
-<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gnm) <span class="ot">&lt;-</span> <span class="st">"mm39"</span></span>
-<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## Read data</span></span>
-<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>Our data is obtained from <span class="in">`modBam`</span> file from a wild-type sample, for which 6mA modification calling has been performed. We use the <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fn} function to read data from an 2000-bp region around a CTCF binding site on chromosome 8 and store it in a <span class="in">`SummarizedExperiment`</span> object. </span>
-<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>For more information about reading data with <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg}, see @sec-reading-data. </span>
-<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-data-nrl</span></span>
-<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Read data</span></span>
-<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>ctcfsite <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="st">"chr8:6622465-6622483"</span>, <span class="st">"GRanges"</span>)</span>
-<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>reg <span class="ot">&lt;-</span> <span class="fu">resize</span>(ctcfsite, <span class="at">width =</span> <span class="dv">2000</span>, <span class="at">fix =</span> <span class="st">"center"</span>)</span>
-<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
-<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>),</span>
-<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
-<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> reg,</span>
-<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
-<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>, </span>
-<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm</span>
-<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a><span class="co"># add summary-level assays</span></span>
-<span id="cb28-55"><a href="#cb28-55" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">flattenReadLevelAssay</span>(se)</span>
-<span id="cb28-56"><a href="#cb28-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-57"><a href="#cb28-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-58"><a href="#cb28-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## Placing nucleosome footprints {#sec-place-nucleosomes}</span></span>
-<span id="cb28-59"><a href="#cb28-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-60"><a href="#cb28-60" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">calcFootprintScores</span><span class="co">]</span>{.fn} function uses a vector of weights to identify high-scoring regions on individual reads that show the modification pattern given in these weights. The score of a region on a read measures how well modification probabilities correlate with weights in the weight vector. High-scoring footprints that score above a provided threshold can be added to our <span class="in">`se`</span> object using <span class="co">[</span><span class="ot">addFootprints</span><span class="co">]</span>{.fn}, which will call <span class="co">[</span><span class="ot">calcFootprintScores</span><span class="co">]</span>{.fn} internally.</span>
-<span id="cb28-61"><a href="#cb28-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-62"><a href="#cb28-62" aria-hidden="true" tabindex="-1"></a>In order to find nucleosomes, we construct a weight vector called <span class="in">`wgt`</span> of a total length of 170 bp, consisting of a central 140 bp region in which we expect low modifications (the region protected by the nucleosome) flanked by two linker regions of 15 bp each in which we expect high modification. We adjust the weights in the flanks and central region such that the overall mean is close to zero:</span>
-<span id="cb28-63"><a href="#cb28-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-66"><a href="#cb28-66" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-67"><a href="#cb28-67" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 4</span></span>
-<span id="cb28-68"><a href="#cb28-68" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 6</span></span>
-<span id="cb28-69"><a href="#cb28-69" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-nucl-kernel</span></span>
-<span id="cb28-70"><a href="#cb28-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-71"><a href="#cb28-71" aria-hidden="true" tabindex="-1"></a><span class="co"># nucleosome footprint</span></span>
-<span id="cb28-72"><a href="#cb28-72" aria-hidden="true" tabindex="-1"></a>wgt <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fl">0.5</span>, <span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span>) <span class="sc">*</span> <span class="fu">c</span>(<span class="dv">140</span><span class="sc">/</span><span class="dv">170</span>, <span class="dv">30</span><span class="sc">/</span><span class="dv">170</span>, <span class="dv">140</span><span class="sc">/</span><span class="dv">170</span>), <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">140</span>, <span class="dv">15</span>))</span>
-<span id="cb28-73"><a href="#cb28-73" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(wgt)</span>
-<span id="cb28-74"><a href="#cb28-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-75"><a href="#cb28-75" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">Position =</span> <span class="fu">seq_along</span>(wgt), <span class="at">Weight =</span> wgt),</span>
-<span id="cb28-76"><a href="#cb28-76" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(Position, Weight)) <span class="sc">+</span></span>
-<span id="cb28-77"><a href="#cb28-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>() <span class="sc">+</span></span>
-<span id="cb28-78"><a href="#cb28-78" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb28-79"><a href="#cb28-79" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
-<span id="cb28-80"><a href="#cb28-80" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-81"><a href="#cb28-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-82"><a href="#cb28-82" aria-hidden="true" tabindex="-1"></a>Now we can scan the reads for high-scoring footprints and add them to the <span class="in">`colData`</span> of our <span class="in">`SummarizedExperiment`</span> object, under a column name given by the <span class="in">`name`</span> argument:</span>
-<span id="cb28-83"><a href="#cb28-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-86"><a href="#cb28-86" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-87"><a href="#cb28-87" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: add-footprints</span></span>
-<span id="cb28-88"><a href="#cb28-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-89"><a href="#cb28-89" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">addFootprints</span>(<span class="at">se =</span> se, <span class="at">wgt =</span> wgt, <span class="at">thresh =</span> <span class="fl">0.03</span>, <span class="at">name =</span> <span class="st">"nucl"</span>)</span>
-<span id="cb28-90"><a href="#cb28-90" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-91"><a href="#cb28-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-92"><a href="#cb28-92" aria-hidden="true" tabindex="-1"></a>The footprints are stored as a list with one element for each sample, containing an <span class="in">`IRangesList`</span>. Its elements are the reads of that sample, and the ranges correspond to individual footprints:</span>
-<span id="cb28-93"><a href="#cb28-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-96"><a href="#cb28-96" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-97"><a href="#cb28-97" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-footprints</span></span>
-<span id="cb28-98"><a href="#cb28-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-99"><a href="#cb28-99" aria-hidden="true" tabindex="-1"></a>se<span class="sc">$</span>nucl</span>
-<span id="cb28-100"><a href="#cb28-100" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-101"><a href="#cb28-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-102"><a href="#cb28-102" aria-hidden="true" tabindex="-1"></a>The nucleosome footprints can be visualized using <span class="co">[</span><span class="ot">plotRegion</span><span class="co">]</span>{.fn}:</span>
-<span id="cb28-103"><a href="#cb28-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-106"><a href="#cb28-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-107"><a href="#cb28-107" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 8</span></span>
-<span id="cb28-108"><a href="#cb28-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 7</span></span>
-<span id="cb28-109"><a href="#cb28-109" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-plot-footprints</span></span>
-<span id="cb28-110"><a href="#cb28-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-111"><a href="#cb28-111" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRegion</span>(se, <span class="at">region =</span> reg,</span>
-<span id="cb28-112"><a href="#cb28-112" aria-hidden="true" tabindex="-1"></a>           <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackData=</span><span class="st">"mod_prob"</span>, <span class="at">trackType=</span><span class="st">"Heatmap"</span>,</span>
-<span id="cb28-113"><a href="#cb28-113" aria-hidden="true" tabindex="-1"></a>                              <span class="at">interpolate =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb28-114"><a href="#cb28-114" aria-hidden="true" tabindex="-1"></a>                              <span class="at">footprintColumns =</span> <span class="st">"nucl"</span>,</span>
-<span id="cb28-115"><a href="#cb28-115" aria-hidden="true" tabindex="-1"></a>                              <span class="at">arglistFootprints =</span> <span class="fu">list</span>(<span class="at">nucl =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="fu">alpha</span>(<span class="st">"firebrick"</span>, <span class="fl">0.5</span>))),</span>
-<span id="cb28-116"><a href="#cb28-116" aria-hidden="true" tabindex="-1"></a>                              <span class="at">orderReads =</span> <span class="st">"squish"</span>),</span>
-<span id="cb28-117"><a href="#cb28-117" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Smooth"</span>,</span>
-<span id="cb28-118"><a href="#cb28-118" aria-hidden="true" tabindex="-1"></a>                              <span class="at">smoothMethod=</span><span class="st">"rollingMean"</span>, <span class="at">windowSize=</span><span class="dv">41</span>,</span>
-<span id="cb28-119"><a href="#cb28-119" aria-hidden="true" tabindex="-1"></a>                              <span class="at">highlightRegions =</span> ctcfsite)),</span>
-<span id="cb28-120"><a href="#cb28-120" aria-hidden="true" tabindex="-1"></a>                    <span class="at">sequenceContext =</span> <span class="st">"A"</span>) <span class="sc">+</span></span>
-<span id="cb28-121"><a href="#cb28-121" aria-hidden="true" tabindex="-1"></a>        patchwork<span class="sc">::</span><span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="fl">0.6</span>))</span>
-<span id="cb28-122"><a href="#cb28-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-123"><a href="#cb28-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-124"><a href="#cb28-124" aria-hidden="true" tabindex="-1"></a><span class="fu">## Estimating nucleosome repeat length {#sec-estimate-nrl}</span></span>
-<span id="cb28-125"><a href="#cb28-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-126"><a href="#cb28-126" aria-hidden="true" tabindex="-1"></a>Placing of individual nucleosomes in principle allows also measuring their average distance, the nucleosome repeat length (NRL). This measure can also be obtained without placing of nucleosomes, from the distribution of distances between modified bases in which multiples of the NRL are over-represented. This idea is related to the phasogram analysis described by @valouevDeterminantsNucleosomeOrganization2011.</span>
-<span id="cb28-127"><a href="#cb28-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-128"><a href="#cb28-128" aria-hidden="true" tabindex="-1"></a>In <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg}, this analysis can be performed by first calculating the distribution of distances between modified bases using <span class="co">[</span><span class="ot">calcModbaseSpacing</span><span class="co">]</span>{.fn}:</span>
-<span id="cb28-129"><a href="#cb28-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-132"><a href="#cb28-132" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-133"><a href="#cb28-133" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: calc-modbase-spacing</span></span>
-<span id="cb28-134"><a href="#cb28-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-135"><a href="#cb28-135" aria-hidden="true" tabindex="-1"></a>moddist <span class="ot">&lt;-</span> <span class="fu">calcModbaseSpacing</span>(se)</span>
-<span id="cb28-136"><a href="#cb28-136" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(moddist)</span>
-<span id="cb28-137"><a href="#cb28-137" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-138"><a href="#cb28-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-139"><a href="#cb28-139" aria-hidden="true" tabindex="-1"></a>From this distribution, which was obtained from just <span class="in">`r ncol(assay(se, "mod_prob")$wt2)`</span> reads, we can accurately estimate the NRL using <span class="co">[</span><span class="ot">estimateNRL</span><span class="co">]</span>{.fn}:</span>
-<span id="cb28-140"><a href="#cb28-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-143"><a href="#cb28-143" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-144"><a href="#cb28-144" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: estimate-nrl</span></span>
-<span id="cb28-145"><a href="#cb28-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-146"><a href="#cb28-146" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">estimateNRL</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt2)</span>
-<span id="cb28-147"><a href="#cb28-147" aria-hidden="true" tabindex="-1"></a>res[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
-<span id="cb28-148"><a href="#cb28-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-149"><a href="#cb28-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-150"><a href="#cb28-150" aria-hidden="true" tabindex="-1"></a>Alternatively, the distance distribution can also be visualized together with an estimate of the NRL using <span class="co">[</span><span class="ot">plotModbaseSpacing</span><span class="co">]</span>{.fn}, either as a summary plot:</span>
-<span id="cb28-151"><a href="#cb28-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-154"><a href="#cb28-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-155"><a href="#cb28-155" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 5</span></span>
-<span id="cb28-156"><a href="#cb28-156" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 5</span></span>
-<span id="cb28-157"><a href="#cb28-157" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-modbase-spacing-summary</span></span>
-<span id="cb28-158"><a href="#cb28-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-159"><a href="#cb28-159" aria-hidden="true" tabindex="-1"></a><span class="fu">plotModbaseSpacing</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt2)</span>
-<span id="cb28-160"><a href="#cb28-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-161"><a href="#cb28-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-162"><a href="#cb28-162" aria-hidden="true" tabindex="-1"></a>... or as a set of three plots that illustrate the different steps of the estimation:</span>
-<span id="cb28-163"><a href="#cb28-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-166"><a href="#cb28-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-167"><a href="#cb28-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 4.5</span></span>
-<span id="cb28-168"><a href="#cb28-168" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 13.5</span></span>
-<span id="cb28-169"><a href="#cb28-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-modbase-spacing-detailed</span></span>
-<span id="cb28-170"><a href="#cb28-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-171"><a href="#cb28-171" aria-hidden="true" tabindex="-1"></a><span class="fu">plotModbaseSpacing</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt2, <span class="at">detailedPlots =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb28-172"><a href="#cb28-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-173"><a href="#cb28-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-174"><a href="#cb28-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## Quantifying nucleosome phasing</span></span>
-<span id="cb28-175"><a href="#cb28-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-176"><a href="#cb28-176" aria-hidden="true" tabindex="-1"></a>Nucleosomes that occupy similar positions across reads are called phased and can result for example from a sequence-specific DNA binding protein that constrains their movement along the DNA. Genomic regions with phased nucleosomes can be identified on the summary-level data by <span class="co">[</span><span class="ot">phasingScoreFourier</span><span class="co">]</span>{.fn}, which calculates the strength of a periodic component in the summary-level data corresponding to the expected period of nucleosomes (see @sec-estimate-nrl for how that period can be estimated).</span>
-<span id="cb28-177"><a href="#cb28-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-178"><a href="#cb28-178" aria-hidden="true" tabindex="-1"></a>We start such an analysis by first reading summary-level data for a larger genomic region, in which we want to calculate phasing scores:</span>
-<span id="cb28-179"><a href="#cb28-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-182"><a href="#cb28-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-183"><a href="#cb28-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-data-phasing</span></span>
-<span id="cb28-184"><a href="#cb28-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-185"><a href="#cb28-185" aria-hidden="true" tabindex="-1"></a>reg <span class="ot">&lt;-</span> <span class="fu">GRanges</span>(<span class="st">"chr8"</span>, <span class="fu">IRanges</span>(<span class="dv">6637500</span>, <span class="dv">6642500</span>))</span>
-<span id="cb28-186"><a href="#cb28-186" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
-<span id="cb28-187"><a href="#cb28-187" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt2 =</span> <span class="st">"data/mESC_wt_6mA_rep2.bam"</span>),</span>
-<span id="cb28-188"><a href="#cb28-188" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
-<span id="cb28-189"><a href="#cb28-189" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> reg,</span>
-<span id="cb28-190"><a href="#cb28-190" aria-hidden="true" tabindex="-1"></a>    <span class="at">level =</span> <span class="st">"summary"</span>,</span>
-<span id="cb28-191"><a href="#cb28-191" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb28-192"><a href="#cb28-192" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
-<span id="cb28-193"><a href="#cb28-193" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>, </span>
-<span id="cb28-194"><a href="#cb28-194" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm</span>
-<span id="cb28-195"><a href="#cb28-195" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb28-196"><a href="#cb28-196" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-197"><a href="#cb28-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-198"><a href="#cb28-198" aria-hidden="true" tabindex="-1"></a>Next, we construct <span class="in">`windowgr`</span>, a <span class="in">`GRanges`</span> objects defining the windows in <span class="in">`reg`</span> for which we want to calculate a nucleosome phasing score:</span>
-<span id="cb28-199"><a href="#cb28-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-202"><a href="#cb28-202" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-203"><a href="#cb28-203" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: define-windows</span></span>
-<span id="cb28-204"><a href="#cb28-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-205"><a href="#cb28-205" aria-hidden="true" tabindex="-1"></a>windowStep <span class="ot">&lt;-</span> <span class="dv">190</span></span>
-<span id="cb28-206"><a href="#cb28-206" aria-hidden="true" tabindex="-1"></a>windowSize <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">*</span> windowStep</span>
-<span id="cb28-207"><a href="#cb28-207" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">start</span>(reg), <span class="fu">end</span>(reg) <span class="sc">-</span> (windowSize <span class="sc">-</span> windowStep) <span class="sc">+</span> <span class="dv">1</span>, <span class="at">by =</span> windowStep)</span>
-<span id="cb28-208"><a href="#cb28-208" aria-hidden="true" tabindex="-1"></a>windowgr <span class="ot">&lt;-</span> <span class="fu">GRanges</span>(<span class="at">seqnames =</span> <span class="fu">seqnames</span>(reg),</span>
-<span id="cb28-209"><a href="#cb28-209" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ranges =</span> <span class="fu">IRanges</span>(<span class="at">start =</span> s, <span class="at">width =</span> windowSize))</span>
-<span id="cb28-210"><a href="#cb28-210" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-211"><a href="#cb28-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-212"><a href="#cb28-212" aria-hidden="true" tabindex="-1"></a>Finally, we calculate phasing socres for the windows in <span class="in">`windowgr`</span>. The <span class="in">`windowSize`</span> and the value of the <span class="in">`numCoef`</span> argument define the period of interest $poi = windowSize / (numCoef - 1)$ (here: <span class="in">`r windowSize / (5 - 1)`</span> bp, see <span class="co">[</span><span class="ot">phasingScoreFourier</span><span class="co">]</span>{.fn} for details):</span>
-<span id="cb28-213"><a href="#cb28-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-216"><a href="#cb28-216" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-217"><a href="#cb28-217" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: calc-phasing-scores</span></span>
-<span id="cb28-218"><a href="#cb28-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-219"><a href="#cb28-219" aria-hidden="true" tabindex="-1"></a>seFourier <span class="ot">&lt;-</span> <span class="fu">phasingScoreFourier</span>(<span class="at">se =</span> se, <span class="at">gr =</span> windowgr, <span class="at">numCoef =</span> <span class="dv">5</span>)</span>
-<span id="cb28-220"><a href="#cb28-220" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-221"><a href="#cb28-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-222"><a href="#cb28-222" aria-hidden="true" tabindex="-1"></a>We can plot the window scores together with the fraction of modification. Note that the sequential windows for which the phasing score was calculated are overlapping (the window with the maximal phasing score is indicated by the red line below):</span>
-<span id="cb28-223"><a href="#cb28-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-226"><a href="#cb28-226" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-227"><a href="#cb28-227" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 4</span></span>
-<span id="cb28-228"><a href="#cb28-228" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 6</span></span>
-<span id="cb28-229"><a href="#cb28-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-phasingscore</span></span>
-<span id="cb28-230"><a href="#cb28-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-231"><a href="#cb28-231" aria-hidden="true" tabindex="-1"></a><span class="co"># get plotting data using plotRegion</span></span>
-<span id="cb28-232"><a href="#cb28-232" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plotRegion</span>(se, <span class="at">region =</span> reg,</span>
-<span id="cb28-233"><a href="#cb28-233" aria-hidden="true" tabindex="-1"></a>                <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Smooth"</span>,</span>
-<span id="cb28-234"><a href="#cb28-234" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">smoothMethod =</span> <span class="st">"rollingMean"</span>, <span class="at">windowSize =</span> <span class="dv">101</span>)))</span>
-<span id="cb28-235"><a href="#cb28-235" aria-hidden="true" tabindex="-1"></a>pd <span class="ot">&lt;-</span> p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>data</span>
-<span id="cb28-236"><a href="#cb28-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-237"><a href="#cb28-237" aria-hidden="true" tabindex="-1"></a><span class="co"># get phasing scores</span></span>
-<span id="cb28-238"><a href="#cb28-238" aria-hidden="true" tabindex="-1"></a>pd2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">rowRanges</span>(seFourier))</span>
-<span id="cb28-239"><a href="#cb28-239" aria-hidden="true" tabindex="-1"></a>pd2<span class="sc">$</span>position <span class="ot">&lt;-</span> <span class="fu">mid</span>(<span class="fu">rowRanges</span>(seFourier))</span>
-<span id="cb28-240"><a href="#cb28-240" aria-hidden="true" tabindex="-1"></a>pd2<span class="sc">$</span>phasingScoreAbs <span class="ot">&lt;-</span> <span class="fu">assay</span>(seFourier, <span class="st">"phasingScoreAbs"</span>)[, <span class="st">"wt2"</span>]</span>
-<span id="cb28-241"><a href="#cb28-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-242"><a href="#cb28-242" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize</span></span>
-<span id="cb28-243"><a href="#cb28-243" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> position)) <span class="sc">+</span></span>
-<span id="cb28-244"><a href="#cb28-244" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="at">data =</span> pd2,</span>
-<span id="cb28-245"><a href="#cb28-245" aria-hidden="true" tabindex="-1"></a>              <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">mean</span>(pd<span class="sc">$</span>value_smooth), <span class="at">fill =</span> phasingScoreAbs),</span>
-<span id="cb28-246"><a href="#cb28-246" aria-hidden="true" tabindex="-1"></a>              <span class="at">width =</span> windowStep, <span class="at">height =</span> <span class="cn">Inf</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb28-247"><a href="#cb28-247" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span></span>
-<span id="cb28-248"><a href="#cb28-248" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">data =</span> pd2[<span class="fu">which.max</span>(pd2<span class="sc">$</span>phasingScoreAbs), , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
-<span id="cb28-249"><a href="#cb28-249" aria-hidden="true" tabindex="-1"></a>                 <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb28-250"><a href="#cb28-250" aria-hidden="true" tabindex="-1"></a>                 <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> start, <span class="at">xend =</span> end, <span class="at">y =</span> <span class="fu">min</span>(pd<span class="sc">$</span>value_smooth)),</span>
-<span id="cb28-251"><a href="#cb28-251" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb28-252"><a href="#cb28-252" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">data =</span> pd,</span>
-<span id="cb28-253"><a href="#cb28-253" aria-hidden="true" tabindex="-1"></a>              <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">y =</span> value_smooth)) <span class="sc">+</span></span>
-<span id="cb28-254"><a href="#cb28-254" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylim</span>(<span class="fu">range</span>(pd<span class="sc">$</span>value_smooth)) <span class="sc">+</span></span>
-<span id="cb28-255"><a href="#cb28-255" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">"Position on "</span>, <span class="fu">seqnames</span>(reg), <span class="st">" (bp)"</span>),</span>
-<span id="cb28-256"><a href="#cb28-256" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Fraction of modified bases"</span>,</span>
-<span id="cb28-257"><a href="#cb28-257" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill =</span> <span class="fu">paste0</span>(<span class="st">"Phasing score</span><span class="sc">\n</span><span class="st">"</span>, windowStep, <span class="st">" bp period"</span>)) <span class="sc">+</span></span>
-<span id="cb28-258"><a href="#cb28-258" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb28-259"><a href="#cb28-259" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
-<span id="cb28-260"><a href="#cb28-260" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-261"><a href="#cb28-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-262"><a href="#cb28-262" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session info</span></span>
-<span id="cb28-263"><a href="#cb28-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-264"><a href="#cb28-264" aria-hidden="true" tabindex="-1"></a>&lt;details&gt;</span>
-<span id="cb28-265"><a href="#cb28-265" aria-hidden="true" tabindex="-1"></a>&lt;summary&gt;&lt;b&gt;</span>
-<span id="cb28-266"><a href="#cb28-266" aria-hidden="true" tabindex="-1"></a>Click to view session info</span>
-<span id="cb28-267"><a href="#cb28-267" aria-hidden="true" tabindex="-1"></a>&lt;/b&gt;&lt;/summary&gt;</span>
-<span id="cb28-270"><a href="#cb28-270" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-271"><a href="#cb28-271" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: session-info</span></span>
-<span id="cb28-272"><a href="#cb28-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-273"><a href="#cb28-273" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span>
-<span id="cb28-274"><a href="#cb28-274" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-275"><a href="#cb28-275" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
+<div class="sourceCode" id="cb31" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Nucleosome analyses {#sec-nucleosomes}</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>A prominent source of signal in single molecule footprinting data are nucleosomes that protect the DNA that is wound around the histones but leave the DNA between nucleosome particles, the linkers, accessible to modifications.</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>In this chapter, we illustrate how <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} can be used to place single nucleosomes onto individual reads (see @sec-place-nucleosomes) or estimate the average distance between neighboring nucleosomes (@sec-estimate-nrl).</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Preparation</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>We first load the packages and the genome needed for these tasks.</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load-packages</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SingleMoleculeGenomicsIO)</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Load genome</span></span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>gnm <span class="ot">&lt;-</span> <span class="fu">get</span>(BSgenomeName)</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gnm) <span class="ot">&lt;-</span> <span class="st">"mm39"</span></span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## Read data</span></span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>Our data is obtained from <span class="in">`modBam`</span> file from a wild-type sample, for which 6mA modification calling has been performed.</span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>We use the <span class="co">[</span><span class="ot">readModBam</span><span class="co">]</span>{.fnio} function to read data from an 2000-bp region around a CTCF binding site on chromosome 8 and store it in a <span class="in">`SummarizedExperiment`</span> object. </span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>For more information about reading data with <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg}, see @sec-reading-data. </span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-data-nrl</span></span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Read data</span></span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a>ctcfsite <span class="ot">&lt;-</span> <span class="fu">as</span>(<span class="st">"chr8:6622465-6622483"</span>, <span class="st">"GRanges"</span>)</span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a>reg <span class="ot">&lt;-</span> <span class="fu">resize</span>(ctcfsite, <span class="at">width =</span> <span class="dv">2000</span>, <span class="at">fix =</span> <span class="st">"center"</span>)</span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>),</span>
+<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
+<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> reg,</span>
+<span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
+<span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>, </span>
+<span id="cb31-53"><a href="#cb31-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm</span>
+<span id="cb31-54"><a href="#cb31-54" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-55"><a href="#cb31-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-56"><a href="#cb31-56" aria-hidden="true" tabindex="-1"></a><span class="co"># add summary-level assays</span></span>
+<span id="cb31-57"><a href="#cb31-57" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">flattenReadLevelAssay</span>(se)</span>
+<span id="cb31-58"><a href="#cb31-58" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-59"><a href="#cb31-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-60"><a href="#cb31-60" aria-hidden="true" tabindex="-1"></a><span class="fu">## Placing nucleosome footprints {#sec-place-nucleosomes}</span></span>
+<span id="cb31-61"><a href="#cb31-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-62"><a href="#cb31-62" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">calcFootprintScores</span><span class="co">]</span>{.fn} function uses a vector of weights to identify high-scoring regions on individual reads that show the modification pattern given in these weights.</span>
+<span id="cb31-63"><a href="#cb31-63" aria-hidden="true" tabindex="-1"></a>The score of a region on a read measures how well modification probabilities correlate with weights in the weight vector.</span>
+<span id="cb31-64"><a href="#cb31-64" aria-hidden="true" tabindex="-1"></a>High-scoring footprints that score above a provided threshold can be added to our <span class="in">`se`</span> object using <span class="co">[</span><span class="ot">addFootprints</span><span class="co">]</span>{.fn}, which will call <span class="co">[</span><span class="ot">calcFootprintScores</span><span class="co">]</span>{.fn} internally.</span>
+<span id="cb31-65"><a href="#cb31-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-66"><a href="#cb31-66" aria-hidden="true" tabindex="-1"></a>In order to find nucleosomes, we construct a weight vector called <span class="in">`wgt`</span> of a total length of 160 bp, consisting of a central 120 bp region in which we expect low modifications (the region protected by the nucleosome) flanked by two linker regions of 20 bp each in which we expect high modification.</span>
+<span id="cb31-67"><a href="#cb31-67" aria-hidden="true" tabindex="-1"></a>We adjust the weights in the flanks and central region such that the overall mean is close to zero:</span>
+<span id="cb31-68"><a href="#cb31-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-71"><a href="#cb31-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-72"><a href="#cb31-72" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 4</span></span>
+<span id="cb31-73"><a href="#cb31-73" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 6</span></span>
+<span id="cb31-74"><a href="#cb31-74" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-nucl-kernel</span></span>
+<span id="cb31-75"><a href="#cb31-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-76"><a href="#cb31-76" aria-hidden="true" tabindex="-1"></a><span class="co"># nucleosome footprint</span></span>
+<span id="cb31-77"><a href="#cb31-77" aria-hidden="true" tabindex="-1"></a>wgt <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fl">0.5</span>, <span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span>) <span class="sc">*</span> <span class="fu">c</span>(<span class="dv">120</span><span class="sc">/</span><span class="dv">160</span>, <span class="dv">40</span><span class="sc">/</span><span class="dv">160</span>, <span class="dv">120</span><span class="sc">/</span><span class="dv">160</span>), <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">120</span>, <span class="dv">20</span>))</span>
+<span id="cb31-78"><a href="#cb31-78" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(wgt)</span>
+<span id="cb31-79"><a href="#cb31-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-80"><a href="#cb31-80" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">Position =</span> <span class="fu">seq_along</span>(wgt), <span class="at">Weight =</span> wgt),</span>
+<span id="cb31-81"><a href="#cb31-81" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(Position, Weight)) <span class="sc">+</span></span>
+<span id="cb31-82"><a href="#cb31-82" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb31-83"><a href="#cb31-83" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb31-84"><a href="#cb31-84" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
+<span id="cb31-85"><a href="#cb31-85" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-86"><a href="#cb31-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-87"><a href="#cb31-87" aria-hidden="true" tabindex="-1"></a>Now we can scan the reads for high-scoring footprints and add them to the <span class="in">`colData`</span> of our <span class="in">`SummarizedExperiment`</span> object, under a column name given by the <span class="in">`name`</span> argument:</span>
+<span id="cb31-88"><a href="#cb31-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-91"><a href="#cb31-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-92"><a href="#cb31-92" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: add-footprints</span></span>
+<span id="cb31-93"><a href="#cb31-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-94"><a href="#cb31-94" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">addFootprints</span>(<span class="at">se =</span> se, <span class="at">wgt =</span> wgt, <span class="at">thresh =</span> <span class="fl">0.02</span>, <span class="at">name =</span> <span class="st">"nucl"</span>)</span>
+<span id="cb31-95"><a href="#cb31-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-96"><a href="#cb31-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-97"><a href="#cb31-97" aria-hidden="true" tabindex="-1"></a>The footprints are stored as a list with one element for each sample, containing an <span class="in">`IRangesList`</span>.</span>
+<span id="cb31-98"><a href="#cb31-98" aria-hidden="true" tabindex="-1"></a>Its elements are the reads of that sample, and the ranges correspond to individual footprints:</span>
+<span id="cb31-99"><a href="#cb31-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-102"><a href="#cb31-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-103"><a href="#cb31-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-footprints</span></span>
+<span id="cb31-104"><a href="#cb31-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-105"><a href="#cb31-105" aria-hidden="true" tabindex="-1"></a>se<span class="sc">$</span>nucl</span>
+<span id="cb31-106"><a href="#cb31-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-107"><a href="#cb31-107" aria-hidden="true" tabindex="-1"></a><span class="co"># total number of nucleosomes</span></span>
+<span id="cb31-108"><a href="#cb31-108" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">lengths</span>(se<span class="sc">$</span>nucl<span class="sc">$</span>wt1))</span>
+<span id="cb31-109"><a href="#cb31-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-110"><a href="#cb31-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-111"><a href="#cb31-111" aria-hidden="true" tabindex="-1"></a>The nucleosome footprints can be visualized using <span class="co">[</span><span class="ot">plotRegion</span><span class="co">]</span>{.fn}:</span>
+<span id="cb31-112"><a href="#cb31-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-115"><a href="#cb31-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-116"><a href="#cb31-116" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 8</span></span>
+<span id="cb31-117"><a href="#cb31-117" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 7</span></span>
+<span id="cb31-118"><a href="#cb31-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-plot-footprints</span></span>
+<span id="cb31-119"><a href="#cb31-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-120"><a href="#cb31-120" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRegion</span>(se, <span class="at">region =</span> reg, <span class="at">minCoveredFraction =</span> <span class="fl">0.7</span>,</span>
+<span id="cb31-121"><a href="#cb31-121" aria-hidden="true" tabindex="-1"></a>           <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackData=</span><span class="st">"mod_prob"</span>, <span class="at">trackType=</span><span class="st">"Heatmap"</span>,</span>
+<span id="cb31-122"><a href="#cb31-122" aria-hidden="true" tabindex="-1"></a>                              <span class="at">interpolate =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb31-123"><a href="#cb31-123" aria-hidden="true" tabindex="-1"></a>                              <span class="at">footprintColumns =</span> <span class="st">"nucl"</span>,</span>
+<span id="cb31-124"><a href="#cb31-124" aria-hidden="true" tabindex="-1"></a>                              <span class="at">arglistFootprints =</span> <span class="fu">list</span>(</span>
+<span id="cb31-125"><a href="#cb31-125" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">nucl =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="fu">alpha</span>(<span class="st">"firebrick"</span>, <span class="fl">0.5</span>))),</span>
+<span id="cb31-126"><a href="#cb31-126" aria-hidden="true" tabindex="-1"></a>                              <span class="at">orderReads =</span> <span class="st">"squish"</span>),</span>
+<span id="cb31-127"><a href="#cb31-127" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Smooth"</span>,</span>
+<span id="cb31-128"><a href="#cb31-128" aria-hidden="true" tabindex="-1"></a>                              <span class="at">smoothMethod=</span><span class="st">"rollingMean"</span>, <span class="at">windowSize=</span><span class="dv">41</span>,</span>
+<span id="cb31-129"><a href="#cb31-129" aria-hidden="true" tabindex="-1"></a>                              <span class="at">highlightRegions =</span> ctcfsite)),</span>
+<span id="cb31-130"><a href="#cb31-130" aria-hidden="true" tabindex="-1"></a>                    <span class="at">sequenceContext =</span> <span class="st">"A"</span>) <span class="sc">+</span></span>
+<span id="cb31-131"><a href="#cb31-131" aria-hidden="true" tabindex="-1"></a>        patchwork<span class="sc">::</span><span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="fl">0.6</span>))</span>
+<span id="cb31-132"><a href="#cb31-132" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-133"><a href="#cb31-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-134"><a href="#cb31-134" aria-hidden="true" tabindex="-1"></a><span class="fu">## Estimating nucleosome repeat length {#sec-estimate-nrl}</span></span>
+<span id="cb31-135"><a href="#cb31-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-136"><a href="#cb31-136" aria-hidden="true" tabindex="-1"></a>Placing of individual nucleosomes in principle allows also measuring their average distance, the nucleosome repeat length (NRL).</span>
+<span id="cb31-137"><a href="#cb31-137" aria-hidden="true" tabindex="-1"></a>This measure can also be obtained without placing of nucleosomes, from the distribution of distances between modified bases in which multiples of the NRL are over-represented.</span>
+<span id="cb31-138"><a href="#cb31-138" aria-hidden="true" tabindex="-1"></a>This idea is related to the phasogram analysis described by @valouevDeterminantsNucleosomeOrganization2011.</span>
+<span id="cb31-139"><a href="#cb31-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-140"><a href="#cb31-140" aria-hidden="true" tabindex="-1"></a>In <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg}, this analysis can be performed by first calculating the distribution of distances between modified bases using <span class="co">[</span><span class="ot">calcModbaseSpacing</span><span class="co">]</span>{.fn}:</span>
+<span id="cb31-141"><a href="#cb31-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-144"><a href="#cb31-144" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-145"><a href="#cb31-145" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: calc-modbase-spacing</span></span>
+<span id="cb31-146"><a href="#cb31-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-147"><a href="#cb31-147" aria-hidden="true" tabindex="-1"></a>moddist <span class="ot">&lt;-</span> <span class="fu">calcModbaseSpacing</span>(se)</span>
+<span id="cb31-148"><a href="#cb31-148" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(moddist)</span>
+<span id="cb31-149"><a href="#cb31-149" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-150"><a href="#cb31-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-151"><a href="#cb31-151" aria-hidden="true" tabindex="-1"></a>From this distribution, which was obtained from just <span class="in">`r ncol(assay(se, "mod_prob")$wt1)`</span> reads, we can accurately estimate the NRL using <span class="co">[</span><span class="ot">estimateNRL</span><span class="co">]</span>{.fn}:</span>
+<span id="cb31-152"><a href="#cb31-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-155"><a href="#cb31-155" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-156"><a href="#cb31-156" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: estimate-nrl</span></span>
+<span id="cb31-157"><a href="#cb31-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-158"><a href="#cb31-158" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">estimateNRL</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt1)</span>
+<span id="cb31-159"><a href="#cb31-159" aria-hidden="true" tabindex="-1"></a>res[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb31-160"><a href="#cb31-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-161"><a href="#cb31-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-162"><a href="#cb31-162" aria-hidden="true" tabindex="-1"></a>Alternatively, the distance distribution can also be visualized together with an estimate of the NRL using <span class="co">[</span><span class="ot">plotModbaseSpacing</span><span class="co">]</span>{.fn}, either as a summary plot:</span>
+<span id="cb31-163"><a href="#cb31-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-166"><a href="#cb31-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-167"><a href="#cb31-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 5</span></span>
+<span id="cb31-168"><a href="#cb31-168" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 5</span></span>
+<span id="cb31-169"><a href="#cb31-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-modbase-spacing-summary</span></span>
+<span id="cb31-170"><a href="#cb31-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-171"><a href="#cb31-171" aria-hidden="true" tabindex="-1"></a><span class="fu">plotModbaseSpacing</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt1)</span>
+<span id="cb31-172"><a href="#cb31-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-173"><a href="#cb31-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-174"><a href="#cb31-174" aria-hidden="true" tabindex="-1"></a>... or as a set of three plots that illustrate the different steps of the estimation:</span>
+<span id="cb31-175"><a href="#cb31-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-178"><a href="#cb31-178" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-179"><a href="#cb31-179" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 4.5</span></span>
+<span id="cb31-180"><a href="#cb31-180" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 13.5</span></span>
+<span id="cb31-181"><a href="#cb31-181" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-modbase-spacing-detailed</span></span>
+<span id="cb31-182"><a href="#cb31-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-183"><a href="#cb31-183" aria-hidden="true" tabindex="-1"></a><span class="fu">plotModbaseSpacing</span>(<span class="at">x =</span> moddist<span class="sc">$</span>wt1, <span class="at">detailedPlots =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-184"><a href="#cb31-184" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-185"><a href="#cb31-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-186"><a href="#cb31-186" aria-hidden="true" tabindex="-1"></a><span class="fu">## Read autocorrelation also shows nucleosomal signal</span></span>
+<span id="cb31-187"><a href="#cb31-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-188"><a href="#cb31-188" aria-hidden="true" tabindex="-1"></a>An alternative way to visualize or measure nucleosome repeat length is to plot the autocorrelation of reads.</span>
+<span id="cb31-189"><a href="#cb31-189" aria-hidden="true" tabindex="-1"></a>This is obtained by shifting the reads relative to themselves and calculating the pearson correlation of the modification vector in the overlapping range.</span>
+<span id="cb31-190"><a href="#cb31-190" aria-hidden="true" tabindex="-1"></a>As you can see in the plot below, this shows high correlation for the first ~50 nucleotides (corresponding to the average length of a nucleosome linker or footprint), then switches to negative correlations before rising again and peaking at about 190 nucleotides (the average nucleosome repeat length).</span>
+<span id="cb31-191"><a href="#cb31-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-194"><a href="#cb31-194" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-195"><a href="#cb31-195" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 5</span></span>
+<span id="cb31-196"><a href="#cb31-196" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 5</span></span>
+<span id="cb31-197"><a href="#cb31-197" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-read-autocorrelation</span></span>
+<span id="cb31-198"><a href="#cb31-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-199"><a href="#cb31-199" aria-hidden="true" tabindex="-1"></a><span class="fu">plotReadAutocorrelation</span>(se, <span class="at">refDists =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">147</span>, <span class="dv">190</span>)) <span class="sc">+</span></span>
+<span id="cb31-200"><a href="#cb31-200" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"inside"</span>,</span>
+<span id="cb31-201"><a href="#cb31-201" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.position.inside =</span> <span class="fu">c</span>(.<span class="dv">98</span>, .<span class="dv">98</span>),</span>
+<span id="cb31-202"><a href="#cb31-202" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb31-203"><a href="#cb31-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-204"><a href="#cb31-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-205"><a href="#cb31-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## Quantifying nucleosome phasing</span></span>
+<span id="cb31-206"><a href="#cb31-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-207"><a href="#cb31-207" aria-hidden="true" tabindex="-1"></a>Nucleosomes that occupy similar positions across reads are called phased and can result for example from a sequence-specific DNA binding protein that constrains their movement along the DNA.</span>
+<span id="cb31-208"><a href="#cb31-208" aria-hidden="true" tabindex="-1"></a>Genomic regions with phased nucleosomes can be identified on the summary-level data by <span class="co">[</span><span class="ot">phasingScoreFourier</span><span class="co">]</span>{.fn}, which calculates the strength of a periodic component in the summary-level data corresponding to the expected period of nucleosomes (see @sec-estimate-nrl for how that period can be estimated).</span>
+<span id="cb31-209"><a href="#cb31-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-210"><a href="#cb31-210" aria-hidden="true" tabindex="-1"></a>We start such an analysis by first reading summary-level data for a larger genomic region, in which we want to calculate phasing scores:</span>
+<span id="cb31-211"><a href="#cb31-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-214"><a href="#cb31-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-215"><a href="#cb31-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-data-phasing</span></span>
+<span id="cb31-216"><a href="#cb31-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-217"><a href="#cb31-217" aria-hidden="true" tabindex="-1"></a>reg <span class="ot">&lt;-</span> <span class="fu">GRanges</span>(<span class="st">"chr8"</span>, <span class="fu">IRanges</span>(<span class="dv">6637500</span>, <span class="dv">6642500</span>))</span>
+<span id="cb31-218"><a href="#cb31-218" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">readModBam</span>(</span>
+<span id="cb31-219"><a href="#cb31-219" aria-hidden="true" tabindex="-1"></a>    <span class="at">bamfiles =</span> <span class="fu">c</span>(<span class="at">wt1 =</span> <span class="st">"data/mESC_wt_6mA_rep1.bam"</span>),</span>
+<span id="cb31-220"><a href="#cb31-220" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>, </span>
+<span id="cb31-221"><a href="#cb31-221" aria-hidden="true" tabindex="-1"></a>    <span class="at">regions =</span> reg,</span>
+<span id="cb31-222"><a href="#cb31-222" aria-hidden="true" tabindex="-1"></a>    <span class="at">level =</span> <span class="st">"summary"</span>,</span>
+<span id="cb31-223"><a href="#cb31-223" aria-hidden="true" tabindex="-1"></a>    <span class="at">trim =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb31-224"><a href="#cb31-224" aria-hidden="true" tabindex="-1"></a>    <span class="at">seqinfo =</span> <span class="fu">seqinfo</span>(gnm), </span>
+<span id="cb31-225"><a href="#cb31-225" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceContextWidth =</span> <span class="dv">1</span>, </span>
+<span id="cb31-226"><a href="#cb31-226" aria-hidden="true" tabindex="-1"></a>    <span class="at">sequenceReference =</span> gnm</span>
+<span id="cb31-227"><a href="#cb31-227" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-228"><a href="#cb31-228" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-229"><a href="#cb31-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-230"><a href="#cb31-230" aria-hidden="true" tabindex="-1"></a>Next, we construct <span class="in">`windowgr`</span>, a <span class="in">`GRanges`</span> objects defining the windows in <span class="in">`reg`</span> for which we want to calculate a nucleosome phasing score:</span>
+<span id="cb31-231"><a href="#cb31-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-234"><a href="#cb31-234" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-235"><a href="#cb31-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: define-windows</span></span>
+<span id="cb31-236"><a href="#cb31-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-237"><a href="#cb31-237" aria-hidden="true" tabindex="-1"></a>windowStep <span class="ot">&lt;-</span> <span class="dv">190</span></span>
+<span id="cb31-238"><a href="#cb31-238" aria-hidden="true" tabindex="-1"></a>windowSize <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">*</span> windowStep</span>
+<span id="cb31-239"><a href="#cb31-239" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">start</span>(reg), <span class="fu">end</span>(reg) <span class="sc">-</span> (windowSize <span class="sc">-</span> windowStep) <span class="sc">+</span> <span class="dv">1</span>, <span class="at">by =</span> windowStep)</span>
+<span id="cb31-240"><a href="#cb31-240" aria-hidden="true" tabindex="-1"></a>windowgr <span class="ot">&lt;-</span> <span class="fu">GRanges</span>(<span class="at">seqnames =</span> <span class="fu">seqnames</span>(reg),</span>
+<span id="cb31-241"><a href="#cb31-241" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ranges =</span> <span class="fu">IRanges</span>(<span class="at">start =</span> s, <span class="at">width =</span> windowSize))</span>
+<span id="cb31-242"><a href="#cb31-242" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-243"><a href="#cb31-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-244"><a href="#cb31-244" aria-hidden="true" tabindex="-1"></a>Finally, we calculate phasing socres for the windows in <span class="in">`windowgr`</span>.</span>
+<span id="cb31-245"><a href="#cb31-245" aria-hidden="true" tabindex="-1"></a>The <span class="in">`windowSize`</span> and the value of the <span class="in">`numCoef`</span> argument define the period of interest $poi = windowSize / (numCoef - 1)$ (here: <span class="in">`r windowSize / (5 - 1)`</span> bp, see <span class="co">[</span><span class="ot">phasingScoreFourier</span><span class="co">]</span>{.fn} for details):</span>
+<span id="cb31-246"><a href="#cb31-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-249"><a href="#cb31-249" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-250"><a href="#cb31-250" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: calc-phasing-scores</span></span>
+<span id="cb31-251"><a href="#cb31-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-252"><a href="#cb31-252" aria-hidden="true" tabindex="-1"></a>seFourier <span class="ot">&lt;-</span> <span class="fu">phasingScoreFourier</span>(<span class="at">se =</span> se, <span class="at">gr =</span> windowgr, <span class="at">numCoef =</span> <span class="dv">5</span>)</span>
+<span id="cb31-253"><a href="#cb31-253" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-254"><a href="#cb31-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-255"><a href="#cb31-255" aria-hidden="true" tabindex="-1"></a>We can plot the window scores together with the fraction of modification.</span>
+<span id="cb31-256"><a href="#cb31-256" aria-hidden="true" tabindex="-1"></a>Note that the sequential windows for which the phasing score was calculated are overlapping (the window with the maximal phasing score is indicated by the red line below):</span>
+<span id="cb31-257"><a href="#cb31-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-260"><a href="#cb31-260" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-261"><a href="#cb31-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 4</span></span>
+<span id="cb31-262"><a href="#cb31-262" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 6</span></span>
+<span id="cb31-263"><a href="#cb31-263" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-phasingscore</span></span>
+<span id="cb31-264"><a href="#cb31-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-265"><a href="#cb31-265" aria-hidden="true" tabindex="-1"></a><span class="co"># get plotting data using plotRegion</span></span>
+<span id="cb31-266"><a href="#cb31-266" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plotRegion</span>(se, <span class="at">region =</span> reg,</span>
+<span id="cb31-267"><a href="#cb31-267" aria-hidden="true" tabindex="-1"></a>                <span class="at">tracks =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">trackData =</span> <span class="st">"FracMod"</span>, <span class="at">trackType =</span> <span class="st">"Smooth"</span>,</span>
+<span id="cb31-268"><a href="#cb31-268" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">smoothMethod =</span> <span class="st">"rollingMean"</span>, <span class="at">windowSize =</span> <span class="dv">101</span>)))</span>
+<span id="cb31-269"><a href="#cb31-269" aria-hidden="true" tabindex="-1"></a>pd <span class="ot">&lt;-</span> p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>data</span>
+<span id="cb31-270"><a href="#cb31-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-271"><a href="#cb31-271" aria-hidden="true" tabindex="-1"></a><span class="co"># get phasing scores</span></span>
+<span id="cb31-272"><a href="#cb31-272" aria-hidden="true" tabindex="-1"></a>pd2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">rowRanges</span>(seFourier))</span>
+<span id="cb31-273"><a href="#cb31-273" aria-hidden="true" tabindex="-1"></a>pd2<span class="sc">$</span>position <span class="ot">&lt;-</span> <span class="fu">mid</span>(<span class="fu">rowRanges</span>(seFourier))</span>
+<span id="cb31-274"><a href="#cb31-274" aria-hidden="true" tabindex="-1"></a>pd2<span class="sc">$</span>phasingScoreAbs <span class="ot">&lt;-</span> <span class="fu">assay</span>(seFourier, <span class="st">"phasingScoreAbs"</span>)[, <span class="st">"wt1"</span>]</span>
+<span id="cb31-275"><a href="#cb31-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-276"><a href="#cb31-276" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize</span></span>
+<span id="cb31-277"><a href="#cb31-277" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> position)) <span class="sc">+</span></span>
+<span id="cb31-278"><a href="#cb31-278" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="at">data =</span> pd2,</span>
+<span id="cb31-279"><a href="#cb31-279" aria-hidden="true" tabindex="-1"></a>              <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">mean</span>(pd<span class="sc">$</span>value_smooth), <span class="at">fill =</span> phasingScoreAbs),</span>
+<span id="cb31-280"><a href="#cb31-280" aria-hidden="true" tabindex="-1"></a>              <span class="at">width =</span> windowStep, <span class="at">height =</span> <span class="cn">Inf</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb31-281"><a href="#cb31-281" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb31-282"><a href="#cb31-282" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">data =</span> pd2[<span class="fu">which.max</span>(pd2<span class="sc">$</span>phasingScoreAbs), , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
+<span id="cb31-283"><a href="#cb31-283" aria-hidden="true" tabindex="-1"></a>                 <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb31-284"><a href="#cb31-284" aria-hidden="true" tabindex="-1"></a>                 <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> start, <span class="at">xend =</span> end, <span class="at">y =</span> <span class="fu">min</span>(pd<span class="sc">$</span>value_smooth)),</span>
+<span id="cb31-285"><a href="#cb31-285" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb31-286"><a href="#cb31-286" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">data =</span> pd,</span>
+<span id="cb31-287"><a href="#cb31-287" aria-hidden="true" tabindex="-1"></a>              <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">y =</span> value_smooth)) <span class="sc">+</span></span>
+<span id="cb31-288"><a href="#cb31-288" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylim</span>(<span class="fu">range</span>(pd<span class="sc">$</span>value_smooth)) <span class="sc">+</span></span>
+<span id="cb31-289"><a href="#cb31-289" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">"Position on "</span>, <span class="fu">seqnames</span>(reg), <span class="st">" (bp)"</span>),</span>
+<span id="cb31-290"><a href="#cb31-290" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Fraction of modified bases"</span>,</span>
+<span id="cb31-291"><a href="#cb31-291" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill =</span> <span class="fu">paste0</span>(<span class="st">"Phasing score</span><span class="sc">\n</span><span class="st">"</span>, windowStep, <span class="st">" bp period"</span>)) <span class="sc">+</span></span>
+<span id="cb31-292"><a href="#cb31-292" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb31-293"><a href="#cb31-293" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
+<span id="cb31-294"><a href="#cb31-294" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-295"><a href="#cb31-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-296"><a href="#cb31-296" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session info</span></span>
+<span id="cb31-297"><a href="#cb31-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-298"><a href="#cb31-298" aria-hidden="true" tabindex="-1"></a>&lt;details&gt;</span>
+<span id="cb31-299"><a href="#cb31-299" aria-hidden="true" tabindex="-1"></a>&lt;summary&gt;&lt;b&gt;</span>
+<span id="cb31-300"><a href="#cb31-300" aria-hidden="true" tabindex="-1"></a>Click to view session info</span>
+<span id="cb31-301"><a href="#cb31-301" aria-hidden="true" tabindex="-1"></a>&lt;/b&gt;&lt;/summary&gt;</span>
+<span id="cb31-304"><a href="#cb31-304" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-305"><a href="#cb31-305" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: session-info</span></span>
+<span id="cb31-306"><a href="#cb31-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-307"><a href="#cb31-307" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span>
+<span id="cb31-308"><a href="#cb31-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-309"><a href="#cb31-309" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
