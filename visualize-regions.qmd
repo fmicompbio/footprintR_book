@@ -21,8 +21,9 @@ In addition to the software package, we load a `BSgenome` and `TxDb` object prov
 BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
 TxDbName <- "TxDb.Mmusculus.GENCODE.GRCm39.gencodeM34"
 
-library(BiocParallel)
+library(SingleMoleculeGenomicsIO)
 library(footprintR)
+library(BiocParallel)
 library(ggplot2)
 library(patchwork)
 library(GenomicRanges)
@@ -41,7 +42,7 @@ ebt <- exonsBy(txdb, "tx", use.names = TRUE)
 ## Read data
 
 To exemplify the plotting capabilities of [plotRegion]{.fn}, we use `modBam` files from two wild-type samples, for which 6mA modification calling has been performed. 
-We use the [readModBam]{.fn} function to read data from an 800-bp region on chromosome 8 and store it in a `SummarizedExperiment` object. 
+We use the [readModBam]{.fnio} function to read data from an 800-bp region on chromosome 8 and store it in a `SummarizedExperiment` object. 
 For more information about reading data with [fmicompbio/footprintR]{.githubpkg}, see @sec-reading-data. 
 
 ```{r}
@@ -230,7 +231,7 @@ plotRegion(
 
 The read-level plots will display all reads overlapping the displayed region. 
 In cases where there are too many reads to display, we recommend subsetting the `SummarizedExperiment` object before calling [plotRegion]{.fn}. 
-This can be done conveniently using [subsetReads]{.fn}, which allows you to subset the object keeping either a pre-specified set of reads or a random subset. 
+This can be done conveniently using [subsetReads]{.fnio}, which allows you to subset the object keeping either a pre-specified set of reads or a random subset. 
 Here, we illustrate this workflow by subsetting the object to five randomly selected reads per sample before calling [plotRegion]{.fn}.
 
 ```{r}
@@ -372,7 +373,7 @@ plotRegion(
 
 In addition to read-level plots, [plotRegion]{.fn} can also display summary-level data (a single value per genomic position and sample), if they are present in the `SummarizedExperiment` object. 
 These values can be displayed as individual points, and/or with a smooth curve. 
-Summary-level assays can be generated from read-level values using, e.g., the [flattenReadLevelAssay]{.fn} function. 
+Summary-level assays can be generated from read-level values using, e.g., the [flattenReadLevelAssay]{.fnio} function. 
 
 ```{r}
 #| fig.height: 7
@@ -546,6 +547,59 @@ plotRegion(
     sequenceContext = "A"
 ) + 
     plot_layout(heights = c(2, 1, 0.5, 1))
+```
+
+
+## Example: A transcription factor binding site
+
+Most of the data that is used for illustration in this book has been generated on an Oxford Nanopore (ONT) sequencer, but `modBam` files are standardized and [fmicompbio/SingleMoleculeGenomicsIO]{.githubpkg} and [fmicompbio/footprintR]{.githubpkg} are agnostic to the sequencing technology used to generate them.
+In this example, we will visualize a single locus around a bound CTCF site for ONT- and a PacBio-generated datasets:
+
+```{r}
+#| fig.width: 10
+#| fig.height: 5
+#| label: fig-ont-vs-pacbio
+
+# Read data
+ctcfsite <- as("chr8:6622465-6622483", "GRanges")
+reg <- resize(ctcfsite, width = 2001, fix = "center")
+
+se <- readModBam(
+    bamfiles = c(ONT = "data/mESC_wt_6mA_rep1.bam",
+                 PacBio = "data/mESC_wt_6mA_5mCG_PacBio_rep1.bam"),
+    modbase = "a", 
+    regions = reg,
+    seqinfo = seqinfo(gnm), 
+    sequenceContextWidth = 1, 
+    sequenceReference = gnm
+)
+
+# add summary-level assays
+se <- flattenReadLevelAssay(se)
+
+# plot
+trackdef <- list(
+    list(trackType = "Heatmap", trackData = "mod_prob", interpolate = TRUE,
+         orderReads = "regionAvg", orderRegion = ctcfsite + 30,
+         orderReverse = TRUE, legendTitle = "6mA"),
+    list(trackType = "Smooth", trackData = "FracMod",
+         smoothMethod = "rollingMean", windowSize = 21,
+         arglistSmooth = list(linewidth = 1),
+         highlightRegions = ctcfsite, showLegend = FALSE))
+
+wrap_plots(
+    plotRegion(
+        se[, "ONT"], region = reg, minCoveredFraction = 0.8,
+        tracks = trackdef, 
+        sequenceContext = "A", referenceCoordinate = mid(ctcfsite)
+    ) + plot_layout(heights = c(3, 1)),
+    plotRegion(
+        se[, "PacBio"], region = reg, minCoveredFraction = 0.8,
+        tracks = trackdef, 
+        sequenceContext = "A", referenceCoordinate = mid(ctcfsite)
+    ) + plot_layout(heights = c(3, 1)),
+    nrow = 1, guides = "collect"
+)
 ```
 
 
