@@ -1,7 +1,12 @@
 function Span(el)
-  -- Check if the span contains the class "fn"
+  -- Check if the span contains the class "fn" or "fnio"
   for _, class in ipairs(el.classes) do
-    if class == "fn" then
+    if class == "fnio" then
+      local function_name = pandoc.utils.stringify(el.content)
+      local url = "https://fmicompbio.github.io/SingleMoleculeGenomicsIO/reference/" .. function_name .. ".html"
+      -- Return a hyperlink with monospace formatting
+      return pandoc.Link(pandoc.Code(function_name), url)
+    elseif class == "fn" then
       local function_name = pandoc.utils.stringify(el.content)
       local url = "https://fmicompbio.github.io/footprintR/reference/" .. function_name .. ".html"
       -- Return a hyperlink with monospace formatting
