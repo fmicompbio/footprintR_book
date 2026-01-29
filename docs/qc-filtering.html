@@ -246,14 +246,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This chapter explains how to use <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a> to filter single molecule footprinting data. The package contains functionality to calculate a collection of quality statistics for each read, and use these to filter out low-quality reads. This filtering can be done either on the imported <code>SummarizedExperiment</code> object, or directly on the <code>modBam</code> file (which would generate another, filtered <code>modBam</code> file). <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a> also provides several ways to filter out individual genomic positions based on, e.g.&nbsp;the genomic sequence or the read coverage.</p>
+<p>This chapter explains how to use <a href="https://github.com/fmicompbio/SingleMoleculeGenomicsIO"><em>SingleMoleculeGenomicsIO</em></a> to filter single molecule footprinting data. The package contains functionality to calculate a collection of quality statistics for each read, and use these to filter out low-quality reads. This filtering can be done either on the imported <code>SummarizedExperiment</code> object (both for <code>modBam</code> and <code>mismatchBam</code> file types), or directly on the bam file (currently only <code>modBam</code>, which will generate another, filtered <code>modBam</code> file). <a href="https://github.com/fmicompbio/SingleMoleculeGenomicsIO"><em>SingleMoleculeGenomicsIO</em></a> also provides several ways to filter out individual genomic positions based on, e.g.&nbsp;the genomic sequence or the read coverage.</p>
 <p>We start by loading the required packages. In addition to the software package, we load a <code>BSgenome</code> object providing the mouse genome sequence.</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SingleMoleculeGenomicsIO)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SparseArray)</span>
@@ -283,11 +283,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: RangedSummarizedExperiment 
-dim: 21456 2 
+dim: 31693 2 
 metadata(3): readLevelData variantPositions filteredOutReads
 assays(1): mod_prob
-rownames(21456): chr8:39269571:- chr8:39269579:- ... chr8:39303298:-
-  chr8:39303300:-
+rownames: NULL
 rowData names(1): sequenceContext
 colnames(2): wt1 wt2
 colData names(4): sample modbase n_reads readInfo</code></pre>
@@ -300,23 +299,23 @@ colData names(4): sample modbase n_reads readInfo</code></pre>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowData</span>(se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>DataFrame with 21456 rows and 1 column
-                sequenceContext
-                 &lt;DNAStringSet&gt;
-chr8:39269571:-               A
-chr8:39269579:-               A
-chr8:39269588:-               A
-chr8:39269589:-               A
-chr8:39269612:-               A
-...                         ...
-chr8:39303283:-               A
-chr8:39303284:-               A
-chr8:39303297:-               A
-chr8:39303298:-               C
-chr8:39303300:-               A</code></pre>
+<pre><code>DataFrame with 31693 rows and 1 column
+      sequenceContext
+       &lt;DNAStringSet&gt;
+1                   A
+2                   A
+3                   G
+4                   A
+5                   A
+...               ...
+31689               A
+31690               A
+31691               A
+31692               A
+31693               A</code></pre>
 </div>
 </div>
-<p>Position filtering can now be performed with the <a href="https://fmicompbio.github.io/footprintR/reference/filterPositions.html"><code>filterPositions</code></a> function. The <code>filters</code> argument define which filters to apply, as well as the order (sequence context, coverage, removal of positions without non-NA values). Here, we retain only positions where the genome sequence is an A, and the coverage (the number of overlapping reads) is at least five. The <code>assayNameCov</code> argument indicates which assay will be used to define the coverage. If this is a read-level assay (like here), coverage will first be calculated using <a href="https://fmicompbio.github.io/footprintR/reference/flattenReadLevelAssay.html"><code>flattenReadLevelAssay</code></a>. For more precise control, the summary assay can also be manually calculated and added to <code>se</code> beforehand, and specified in <code>assayNameCov</code>.</p>
+<p>Position filtering can now be performed with the <a href="https://fmicompbio.github.io/SingleMoleculeGenomicsIO/reference/filterPositions.html"><code>filterPositions</code></a> function. The <code>filters</code> argument define which filters to apply, as well as the order (sequence context, coverage, removal of positions without non-NA values). Here, we retain only positions where the genome sequence is an A, and the coverage (the number of overlapping reads) is at least five. The <code>assayNameCov</code> argument indicates which assay will be used to define the coverage. If this is a read-level assay (like here), coverage will first be calculated using <a href="https://fmicompbio.github.io/SingleMoleculeGenomicsIO/reference/flattenReadLevelAssay.html"><code>flattenReadLevelAssay</code></a>. For more precise control, the summary assay can also be manually calculated and added to <code>se</code> beforehand, and specified in <code>assayNameCov</code>.</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
@@ -331,24 +330,23 @@ chr8:39303300:-               A</code></pre>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: RangedSummarizedExperiment 
-dim: 10957 2 
+dim: 16729 2 
 metadata(3): readLevelData variantPositions filteredOutReads
 assays(1): mod_prob
-rownames(10957): chr8:39279307:- chr8:39279308:- ... chr8:39298917:-
-  chr8:39298921:-
+rownames: NULL
 rowData names(1): sequenceContext
 colnames(2): wt1 wt2
 colData names(4): sample modbase n_reads readInfo</code></pre>
 </div>
 </div>
-<p>In this case, the position filtering reduced the number of unique positions from 21456 to 10957 by 48.9%. However, the number of non-NA values in the matrix is only reduced from 165914 to 148815 (10.3%), confirming that the filtered-out positions are generally covered only by few reads.</p>
-<p>In addition to explicit filtering like here, many other functions in <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a> allow built-in filtering for a specific sequence context.</p>
+<p>In this case, the position filtering reduced the number of unique positions from 31693 to 16729 by 47.2%. However, the number of non-NA values in the matrix is only reduced from 333127 to 304984 (8.4%), confirming that the filtered-out positions are generally covered only by few reads.</p>
+<p>In addition to explicit filtering shown above, several functions in <a href="https://github.com/fmicompbio/SingleMoleculeGenomicsIO"><em>SingleMoleculeGenomicsIO</em></a> and <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a> allow on-the-fly filtering for a specific sequence context (for example <a href="https://fmicompbio.github.io/SingleMoleculeGenomicsIO/reference/calcReadStats.html"><code>calcReadStats</code></a> or <a href="https://fmicompbio.github.io/footprintR/reference/plotRegion.html"><code>plotRegion</code></a>).</p>
 </section>
 <section id="read-filtering" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="read-filtering"><span class="header-section-number">3.2</span> Read filtering</h2>
 <section id="filtering-a-summarizedexperiment-object" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="filtering-a-summarizedexperiment-object"><span class="header-section-number">3.2.1</span> Filtering a <code>SummarizedExperiment</code> object</h3>
-<p>In addition to the position filtering illustrated above, <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a> also provides functionality for calculating read-level quality scores and filtering out reads with low quality. The calculation of the quality scores is done using the <a href="https://fmicompbio.github.io/footprintR/reference/addReadStats.html"><code>addReadStats</code></a> function, and the filtering is performed via the <a href="https://fmicompbio.github.io/footprintR/reference/filterReads.html"><code>filterReads</code></a> function.</p>
+<p>In addition to the position filtering illustrated above, <a href="https://github.com/fmicompbio/SingleMoleculeGenomicsIO"><em>SingleMoleculeGenomicsIO</em></a> also provides functionality for calculating read-level quality scores and filtering out reads with low quality. The calculation of the quality scores is done using the <a href="https://fmicompbio.github.io/SingleMoleculeGenomicsIO/reference/addReadStats.html"><code>addReadStats</code></a> function, and the filtering is performed via the <a href="https://fmicompbio.github.io/SingleMoleculeGenomicsIO/reference/filterReads.html"><code>filterReads</code></a> function.</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
@@ -363,90 +361,60 @@ colData names(4): sample modbase n_reads readInfo</code></pre>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 2 rows and 5 columns
-         sample     modbase   n_reads
-    &lt;character&gt; &lt;character&gt; &lt;integer&gt;
-wt1         wt1           a        34
-wt2         wt2           a        41
-                                                                       readInfo
-                                                                         &lt;List&gt;
-wt1   20.3297:17986:17872:...,19.7905:10469:10421:...,13.2784:7876:7761:...,...
-wt2 14.1235:22453:22149:...,15.9814:15617:15460:...,14.3505:12359:12212:...,...
-                                                                                                        QC
-                                                                                                    &lt;List&gt;
-wt1 0.0618421:0.0455829:0.967676:...,0.0545563:0.0386562:0.971495:...,0.1317097:0.1049275:0.931608:...,...
-wt2       0.195971:0.186199:0.931852:...,0.169650:0.156304:0.944134:...,0.189312:0.176095:0.940588:...,...</code></pre>
+         sample     modbase   n_reads                                                                    readInfo
+    &lt;character&gt; &lt;character&gt; &lt;integer&gt;                                                                      &lt;List&gt;
+wt1         wt1           a        41 14.1235:22453:22149:...,15.9814:15617:15460:...,14.3505:12359:12212:...,...
+wt2         wt2           a        67 15.5769:39918:39406:...,15.4317:23376:23207:...,16.8065:23487:23313:...,...
+                                                                                                  QC
+                                                                                              &lt;List&gt;
+wt1 0.194044:0.186071:0.932636:...,0.157727:0.144965:0.947031:...,0.189361:0.176007:0.940345:...,...
+wt2 0.217511:0.202377:0.941197:...,0.232775:0.221732:0.940212:...,0.161989:0.146135:0.947654:...,...</code></pre>
 </div>
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sefilt<span class="sc">$</span>QC<span class="sc">$</span>wt1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>DataFrame with 34 rows and 11 columns
-                                         MeanModProb   FracMod  MeanConf
-                                           &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
-wt1-d914fb79-7d7a-4a67-bb98-5d1168b057b6   0.0618421 0.0455829  0.967676
-wt1-91aeb981-e093-449d-a6c1-63ad824c8d47   0.0545563 0.0386562  0.971495
-wt1-e3b1cc8a-cde6-4745-9f49-310e68242897   0.1317097 0.1049275  0.931608
-wt1-c5dbb0ee-edfa-4f52-b48b-ac34f7251364   0.1315284 0.1202325  0.953554
-wt1-e11adb8a-0c3d-45cf-9633-d67780a4185f   0.1023139 0.0596330  0.923058
-...                                              ...       ...       ...
-wt1-b47f7f9e-623a-4f68-ac0c-905b212f39d7   0.0596196 0.0461133  0.970019
-wt1-7f8eda94-bebd-4ccb-af87-c3e7d65be619   0.0958030 0.0778281  0.954483
-wt1-27f1bc2e-7b63-49b2-a773-0163334f7641   0.1107278 0.0993151  0.966969
-wt1-c32080be-75b0-4923-87dd-41a7cb69d379   0.0394939 0.0268914  0.978357
-wt1-6a7643fc-b95e-49ec-baa8-86fe294e473b   0.1471507 0.1341176  0.960524
-                                         MeanConfUnm MeanConfMod FracLowConf
-                                           &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;
-wt1-d914fb79-7d7a-4a67-bb98-5d1168b057b6    0.974548    0.823787   0.0367084
-wt1-91aeb981-e093-449d-a6c1-63ad824c8d47    0.976905    0.836961   0.0299126
-wt1-e3b1cc8a-cde6-4745-9f49-310e68242897    0.946834    0.801720   0.0765217
-wt1-c5dbb0ee-edfa-4f52-b48b-ac34f7251364    0.967183    0.853822   0.0584817
-wt1-e11adb8a-0c3d-45cf-9633-d67780a4185f    0.936395    0.712730   0.0880734
-...                                              ...         ...         ...
-wt1-b47f7f9e-623a-4f68-ac0c-905b212f39d7    0.977205    0.821373   0.0342556
-wt1-7f8eda94-bebd-4ccb-af87-c3e7d65be619    0.965575    0.823061   0.0565611
-wt1-27f1bc2e-7b63-49b2-a773-0163334f7641    0.975328    0.891164   0.0376712
-wt1-c32080be-75b0-4923-87dd-41a7cb69d379    0.982404    0.831901   0.0190032
-wt1-6a7643fc-b95e-49ec-baa8-86fe294e473b    0.969679    0.901419   0.0376471
-                                         IQRModProb sdModProb Lag1DModProb
-                                          &lt;numeric&gt; &lt;numeric&gt;    &lt;numeric&gt;
-wt1-d914fb79-7d7a-4a67-bb98-5d1168b057b6  0.0000000  0.185359    0.0573043
-wt1-91aeb981-e093-449d-a6c1-63ad824c8d47  0.0000000  0.173306    0.0598527
-wt1-e3b1cc8a-cde6-4745-9f49-310e68242897  0.1113281  0.254609    0.1531323
-wt1-c5dbb0ee-edfa-4f52-b48b-ac34f7251364  0.0683594  0.284379    0.1417151
-wt1-e11adb8a-0c3d-45cf-9633-d67780a4185f  0.1152344  0.188172    0.1021719
-...                                             ...       ...          ...
-wt1-b47f7f9e-623a-4f68-ac0c-905b212f39d7  0.0000000  0.184892    0.0676626
-wt1-7f8eda94-bebd-4ccb-af87-c3e7d65be619  0.0488281  0.232541    0.1095518
-wt1-27f1bc2e-7b63-49b2-a773-0163334f7641  0.0000000  0.272549    0.1233933
-wt1-c32080be-75b0-4923-87dd-41a7cb69d379  0.0000000  0.146425    0.0401722
-wt1-6a7643fc-b95e-49ec-baa8-86fe294e473b  0.0761719  0.310255    0.1415094
-                                                                       ACModProb
-                                                                          &lt;list&gt;
-wt1-d914fb79-7d7a-4a67-bb98-5d1168b057b6       0.0749726,0.0161444,0.0133524,...
-wt1-91aeb981-e093-449d-a6c1-63ad824c8d47  0.02945337,-0.00588547,-0.01550006,...
-wt1-e3b1cc8a-cde6-4745-9f49-310e68242897     0.0319851,-0.0100365, 0.0148677,...
-wt1-c5dbb0ee-edfa-4f52-b48b-ac34f7251364  0.02581876, 0.03198559,-0.00294165,...
-wt1-e11adb8a-0c3d-45cf-9633-d67780a4185f       0.0068839,0.0300003,0.0344642,...
-...                                                                          ...
-wt1-b47f7f9e-623a-4f68-ac0c-905b212f39d7  0.01516679, 0.00209322,-0.00613638,...
-wt1-7f8eda94-bebd-4ccb-af87-c3e7d65be619       0.0832970,0.0437754,0.0433326,...
-wt1-27f1bc2e-7b63-49b2-a773-0163334f7641    -0.0505126,-0.0494200,-0.0163033,...
-wt1-c32080be-75b0-4923-87dd-41a7cb69d379 -0.00921144, 0.01132777, 0.00043232,...
-wt1-6a7643fc-b95e-49ec-baa8-86fe294e473b    -0.0303490,-0.0681595,-0.0348878,...
-                                                                         PACModProb
-                                                                             &lt;list&gt;
-wt1-d914fb79-7d7a-4a67-bb98-5d1168b057b6    -0.05628108,-0.00550086, 0.00561907,...
-wt1-91aeb981-e093-449d-a6c1-63ad824c8d47       -0.0248721,-0.0272212,-0.0196893,...
-wt1-e3b1cc8a-cde6-4745-9f49-310e68242897       -0.0318656, 0.0126163, 0.0145030,...
-wt1-c5dbb0ee-edfa-4f52-b48b-ac34f7251364  0.000585163,-0.035027495,-0.036536268,...
-wt1-e11adb8a-0c3d-45cf-9633-d67780a4185f          0.0257367,0.0221382,0.0161219,...
-...                                                                             ...
-wt1-b47f7f9e-623a-4f68-ac0c-905b212f39d7       -0.0148931,-0.0104126,-0.0223420,...
-wt1-7f8eda94-bebd-4ccb-af87-c3e7d65be619 -0.023189216, 0.000722367,-0.018193456,...
-wt1-27f1bc2e-7b63-49b2-a773-0163334f7641       -0.0239780, 0.0296459,-0.0448544,...
-wt1-c32080be-75b0-4923-87dd-41a7cb69d379        0.0176851,-0.0107225, 0.0719348,...
-wt1-6a7643fc-b95e-49ec-baa8-86fe294e473b       -0.0609389, 0.0117622,-0.0752276,...</code></pre>
+<pre><code>DataFrame with 41 rows and 13 columns
+                                         MeanModProb   FracMod  MeanConf MeanConfUnm MeanConfMod FracLowConf IQRModProb
+                                           &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;  &lt;numeric&gt;
+wt1-5e78b10b-3b62-4d92-ae96-18aae3e13ae3    0.194044 0.1860714  0.932636    0.953720    0.840406   0.0864286  0.2324219
+wt1-d0e863ae-8127-4233-9eaa-3c17d2af3df5    0.157727 0.1449649  0.947031    0.961562    0.861322   0.0658080  0.1074219
+wt1-b1e35af5-efa1-4451-8870-0ccdee17c5c0    0.189361 0.1760073  0.940345    0.955699    0.868468   0.0702817  0.1855469
+wt1-a89d3c9f-fdba-4e41-a4ef-b810a166d46c    0.092727 0.0762226  0.959181    0.968973    0.840501   0.0458685  0.0000000
+wt1-b58992e1-d311-49d7-bf22-81fd390687b5    0.111052 0.0816633  0.935930    0.949115    0.787661   0.0731463  0.0996094
+...                                              ...       ...       ...         ...         ...         ...        ...
+wt1-a39caa23-800a-4e69-a56e-4e020e83c306    0.103593 0.0862342  0.964059    0.970835    0.892256   0.0332278  0.0527344
+wt1-b6efe1fe-f2b9-4f69-bb61-f4a741969a52    0.143284 0.1231672  0.919949    0.942881    0.756696   0.1070381  0.1542969
+wt1-d0b3f6f8-c5d3-477e-b4c4-02dcd4602767    0.149654 0.1382212  0.956477    0.968115    0.883916   0.0456731  0.0800781
+wt1-3d7ab39b-23d7-420d-8261-f0fff0569e84    0.195087 0.1826625  0.942946    0.957497    0.877836   0.0722394  0.1816406
+wt1-b754e197-532c-4782-9e91-22e8c58b6db6    0.184400 0.1745763  0.947155    0.962038    0.876782   0.0601695  0.1513672
+                                         sdModProb                               ACModProb
+                                         &lt;numeric&gt;                                  &lt;list&gt;
+wt1-5e78b10b-3b62-4d92-ae96-18aae3e13ae3  0.329855       0.0908535,0.0468121,0.0501233,...
+wt1-d0e863ae-8127-4233-9eaa-3c17d2af3df5  0.308085       0.0842872,0.0846944,0.0641687,...
+wt1-b1e35af5-efa1-4451-8870-0ccdee17c5c0  0.332203  0.04668755, 0.03179627,-0.00729562,...
+wt1-a89d3c9f-fdba-4e41-a4ef-b810a166d46c  0.233053  0.04755155, 0.02123325,-0.00550823,...
+wt1-b58992e1-d311-49d7-bf22-81fd390687b5  0.228051 -0.00865141, 0.01936452, 0.01258930,...
+...                                            ...                                     ...
+wt1-a39caa23-800a-4e69-a56e-4e020e83c306  0.256209    -0.0442483,-0.0664415,-0.0791683,...
+wt1-b6efe1fe-f2b9-4f69-bb61-f4a741969a52  0.258013       0.1143637,0.0983527,0.0838372,...
+wt1-d0b3f6f8-c5d3-477e-b4c4-02dcd4602767  0.308975     0.0474403,-0.0330583,-0.0253474,...
+wt1-3d7ab39b-23d7-420d-8261-f0fff0569e84  0.341323    -0.0811299,-0.0642624,-0.0958239,...
+wt1-b754e197-532c-4782-9e91-22e8c58b6db6  0.335256       -0.077225,-0.119359,-0.131436,...
+                                                                      PACModProb         SNR SignalVar  NoiseVar
+                                                                          &lt;list&gt;   &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
+wt1-5e78b10b-3b62-4d92-ae96-18aae3e13ae3    -0.0372147, 0.0052070,-0.0149203,...  0.15120358 0.0572504 0.0515539
+wt1-d0e863ae-8127-4233-9eaa-3c17d2af3df5  0.02170916,-0.00333282,-0.01792930,... -0.00904029 0.0473096 0.0476070
+wt1-b1e35af5-efa1-4451-8870-0ccdee17c5c0    -0.0031751,-0.0432073,-0.0319139,...  0.03159991 0.0557838 0.0545752
+wt1-a89d3c9f-fdba-4e41-a4ef-b810a166d46c -0.02789056,-0.03286089, 0.00103895,...  0.24072350 0.0294171 0.0248963
+wt1-b58992e1-d311-49d7-bf22-81fd390687b5    0.02233742,0.00779054,0.01249628,... -0.41498682 0.0222892 0.0297179
+...                                                                          ...         ...       ...       ...
+wt1-a39caa23-800a-4e69-a56e-4e020e83c306    -0.0391629,-0.0370244,-0.0125482,...  0.44897184 0.0378878 0.0277553
+wt1-b6efe1fe-f2b9-4f69-bb61-f4a741969a52  0.01864350, 0.00968442,-0.04217918,... -0.42904071 0.0283721 0.0381984
+wt1-d0b3f6f8-c5d3-477e-b4c4-02dcd4602767    -0.0804097,-0.0110440,-0.0389122,...  0.28448715 0.0524237 0.0430416
+wt1-3d7ab39b-23d7-420d-8261-f0fff0569e84    -0.0328237,-0.0444207,-0.0324546,...  0.00281814 0.0583075 0.0581937
+wt1-b754e197-532c-4782-9e91-22e8c58b6db6    -0.0731008,-0.0485207,-0.0638214,...  0.37076865 0.0633803 0.0490164</code></pre>
 </div>
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
@@ -454,33 +422,33 @@ wt1-6a7643fc-b95e-49ec-baa8-86fe294e473b       -0.0609389, 0.0117622,-0.0752276,
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>sefilt<span class="sc">$</span>readInfo<span class="sc">$</span>wt1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>DataFrame with 34 rows and 5 columns
-                                            qscore read_length aligned_length
-                                         &lt;numeric&gt;   &lt;integer&gt;      &lt;integer&gt;
-wt1-d914fb79-7d7a-4a67-bb98-5d1168b057b6   20.3297       17986          17872
-wt1-91aeb981-e093-449d-a6c1-63ad824c8d47   19.7905       10469          10421
-wt1-e3b1cc8a-cde6-4745-9f49-310e68242897   13.2784        7876           7761
-wt1-c5dbb0ee-edfa-4f52-b48b-ac34f7251364   16.2577        9694           9585
-wt1-e11adb8a-0c3d-45cf-9633-d67780a4185f   11.2134       14639          14236
-...                                            ...         ...            ...
-wt1-b47f7f9e-623a-4f68-ac0c-905b212f39d7   17.4973       11977           5871
-wt1-7f8eda94-bebd-4ccb-af87-c3e7d65be619   15.7355        9155           5711
-wt1-27f1bc2e-7b63-49b2-a773-0163334f7641   18.1292        9097           6047
-wt1-c32080be-75b0-4923-87dd-41a7cb69d379   22.4457        7597           7577
-wt1-6a7643fc-b95e-49ec-baa8-86fe294e473b   16.8056        4182           2419
-                                         variant_label aligned_fraction
-                                           &lt;character&gt;        &lt;numeric&gt;
-wt1-d914fb79-7d7a-4a67-bb98-5d1168b057b6            NA         0.993662
-wt1-91aeb981-e093-449d-a6c1-63ad824c8d47            NA         0.995415
-wt1-e3b1cc8a-cde6-4745-9f49-310e68242897            NA         0.985399
-wt1-c5dbb0ee-edfa-4f52-b48b-ac34f7251364            NA         0.988756
-wt1-e11adb8a-0c3d-45cf-9633-d67780a4185f            NA         0.972471
-...                                                ...              ...
-wt1-b47f7f9e-623a-4f68-ac0c-905b212f39d7            NA         0.490190
-wt1-7f8eda94-bebd-4ccb-af87-c3e7d65be619            NA         0.623812
-wt1-27f1bc2e-7b63-49b2-a773-0163334f7641            NA         0.664725
-wt1-c32080be-75b0-4923-87dd-41a7cb69d379            NA         0.997367
-wt1-6a7643fc-b95e-49ec-baa8-86fe294e473b            NA         0.578431</code></pre>
+<pre><code>DataFrame with 41 rows and 6 columns
+                                            qscore read_length aligned_length variant_label  ref_strand
+                                         &lt;numeric&gt;   &lt;integer&gt;      &lt;integer&gt;   &lt;character&gt; &lt;character&gt;
+wt1-5e78b10b-3b62-4d92-ae96-18aae3e13ae3   14.1235       22453          22149            NA           +
+wt1-d0e863ae-8127-4233-9eaa-3c17d2af3df5   15.9814       15617          15460            NA           -
+wt1-b1e35af5-efa1-4451-8870-0ccdee17c5c0   14.3505       12359          12212            NA           -
+wt1-a89d3c9f-fdba-4e41-a4ef-b810a166d46c   16.6668        8845           8769            NA           +
+wt1-b58992e1-d311-49d7-bf22-81fd390687b5   12.0795        6779           6601            NA           +
+...                                            ...         ...            ...           ...         ...
+wt1-a39caa23-800a-4e69-a56e-4e020e83c306   17.9399        9022           6511            NA           -
+wt1-b6efe1fe-f2b9-4f69-bb61-f4a741969a52   13.5355        6586           3588            NA           +
+wt1-d0b3f6f8-c5d3-477e-b4c4-02dcd4602767   16.6164        8536           4455            NA           -
+wt1-3d7ab39b-23d7-420d-8261-f0fff0569e84   14.3454        7815           5147            NA           -
+wt1-b754e197-532c-4782-9e91-22e8c58b6db6   15.2163       15363           6143            NA           -
+                                         aligned_fraction
+                                                &lt;numeric&gt;
+wt1-5e78b10b-3b62-4d92-ae96-18aae3e13ae3         0.986461
+wt1-d0e863ae-8127-4233-9eaa-3c17d2af3df5         0.989947
+wt1-b1e35af5-efa1-4451-8870-0ccdee17c5c0         0.988106
+wt1-a89d3c9f-fdba-4e41-a4ef-b810a166d46c         0.991408
+wt1-b58992e1-d311-49d7-bf22-81fd390687b5         0.973742
+...                                                   ...
+wt1-a39caa23-800a-4e69-a56e-4e020e83c306         0.721680
+wt1-b6efe1fe-f2b9-4f69-bb61-f4a741969a52         0.544792
+wt1-d0b3f6f8-c5d3-477e-b4c4-02dcd4602767         0.521907
+wt1-3d7ab39b-23d7-420d-8261-f0fff0569e84         0.658605
+wt1-b754e197-532c-4782-9e91-22e8c58b6db6         0.399857</code></pre>
 </div>
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
@@ -519,38 +487,50 @@ Figure&nbsp;3.1
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>$wt1
-&lt;9 x 8 SparseMatrix&gt; of type "logical" [nzcount=10 (14%)]:
-                                          Qscore Entropy ...   AllNA
-wt1-e11adb8a-0c3d-45cf-9633-d67780a4185f    TRUE   FALSE   .   FALSE
-wt1-1c916f3a-030c-4c18-9f76-408840e6a3fa    TRUE   FALSE   .   FALSE
-wt1-2f9885e3-91d5-4753-961d-439d64fbd301    TRUE   FALSE   .   FALSE
-wt1-840df614-693f-40f5-9b35-7495eac426f1   FALSE   FALSE   .   FALSE
-wt1-51e19b4b-6baa-4982-88f3-a16a9fad78c6   FALSE   FALSE   .   FALSE
-wt1-419d45a8-6e9e-41cc-ae32-9105049b8cd7    TRUE   FALSE   .   FALSE
-wt1-c1eef755-3d3f-4f33-b87a-d896ec1a26cc   FALSE   FALSE   .   FALSE
-wt1-d87a7efd-367f-42f6-b9af-e112610e945b    TRUE   FALSE   .   FALSE
-wt1-6a7643fc-b95e-49ec-baa8-86fe294e473b   FALSE   FALSE   .   FALSE
+&lt;12 x 9 SparseMatrix&gt; of type "logical" [nzcount=16 (15%)]:
+                                                  Qscore         Entropy     FracLowConf ... CoveredFraction
+wt1-b58992e1-d311-49d7-bf22-81fd390687b5            TRUE           FALSE           FALSE   .           FALSE
+wt1-e145db43-4658-4dcc-8f58-78fb09544770            TRUE           FALSE            TRUE   .           FALSE
+wt1-eac97b86-e3fc-4d19-8a02-08bd861077b5            TRUE           FALSE           FALSE   .           FALSE
+wt1-e06432c5-189d-4c1c-8a5b-025c2d68fee5            TRUE           FALSE            TRUE   .           FALSE
+wt1-5a2f30be-48c9-4b0a-8ab1-83d54c71ef56           FALSE           FALSE           FALSE   .           FALSE
+                                     ...               .               .               .   .               .
+wt1-fac12814-a86d-4d07-9596-d9ea4943580e           FALSE           FALSE           FALSE   .           FALSE
+wt1-f77f5ae9-dd3a-4e08-a390-7e80868433a7            TRUE           FALSE            TRUE   .           FALSE
+wt1-fda332ae-02de-4391-9cff-620c1ae8799f           FALSE           FALSE           FALSE   .           FALSE
+wt1-b6efe1fe-f2b9-4f69-bb61-f4a741969a52           FALSE           FALSE            TRUE   .           FALSE
+wt1-d0b3f6f8-c5d3-477e-b4c4-02dcd4602767           FALSE           FALSE           FALSE   .           FALSE
+                                                   AllNA
+wt1-b58992e1-d311-49d7-bf22-81fd390687b5           FALSE
+wt1-e145db43-4658-4dcc-8f58-78fb09544770           FALSE
+wt1-eac97b86-e3fc-4d19-8a02-08bd861077b5           FALSE
+wt1-e06432c5-189d-4c1c-8a5b-025c2d68fee5           FALSE
+wt1-5a2f30be-48c9-4b0a-8ab1-83d54c71ef56           FALSE
+                                     ...               .
+wt1-fac12814-a86d-4d07-9596-d9ea4943580e           FALSE
+wt1-f77f5ae9-dd3a-4e08-a390-7e80868433a7           FALSE
+wt1-fda332ae-02de-4391-9cff-620c1ae8799f           FALSE
+wt1-b6efe1fe-f2b9-4f69-bb61-f4a741969a52           FALSE
+wt1-d0b3f6f8-c5d3-477e-b4c4-02dcd4602767           FALSE
 
 $wt2
-&lt;12 x 8 SparseMatrix&gt; of type "logical" [nzcount=16 (17%)]:
-                                          Qscore Entropy ...   AllNA
-wt2-b58992e1-d311-49d7-bf22-81fd390687b5    TRUE   FALSE   .   FALSE
-wt2-e145db43-4658-4dcc-8f58-78fb09544770    TRUE   FALSE   .   FALSE
-wt2-eac97b86-e3fc-4d19-8a02-08bd861077b5    TRUE   FALSE   .   FALSE
-wt2-e06432c5-189d-4c1c-8a5b-025c2d68fee5    TRUE   FALSE   .   FALSE
-wt2-5a2f30be-48c9-4b0a-8ab1-83d54c71ef56   FALSE   FALSE   .   FALSE
-                                     ...       .       .   .       .
-wt2-fac12814-a86d-4d07-9596-d9ea4943580e   FALSE   FALSE   .   FALSE
-wt2-f77f5ae9-dd3a-4e08-a390-7e80868433a7    TRUE   FALSE   .   FALSE
-wt2-fda332ae-02de-4391-9cff-620c1ae8799f   FALSE   FALSE   .   FALSE
-wt2-b6efe1fe-f2b9-4f69-bb61-f4a741969a52   FALSE   FALSE   .   FALSE
-wt2-d0b3f6f8-c5d3-477e-b4c4-02dcd4602767   FALSE   FALSE   .   FALSE</code></pre>
+&lt;4 x 9 SparseMatrix&gt; of type "logical" [nzcount=4 (11%)]:
+                                                  Qscore         Entropy     FracLowConf ... CoveredFraction
+wt2-d428b49f-a652-42f3-a614-f4b431b8d024            TRUE           FALSE           FALSE   .           FALSE
+wt2-16d5f3d1-6ca4-448a-8d99-3b5c85f9b518           FALSE           FALSE           FALSE   .           FALSE
+wt2-8cf9d87a-3c82-4e3e-baf3-352b645b8b71           FALSE           FALSE           FALSE   .           FALSE
+wt2-1ddb16c7-dc0a-4ca8-a0c4-602e021561e2           FALSE           FALSE           FALSE   .           FALSE
+                                                   AllNA
+wt2-d428b49f-a652-42f3-a614-f4b431b8d024           FALSE
+wt2-16d5f3d1-6ca4-448a-8d99-3b5c85f9b518           FALSE
+wt2-8cf9d87a-3c82-4e3e-baf3-352b645b8b71           FALSE
+wt2-1ddb16c7-dc0a-4ca8-a0c4-602e021561e2           FALSE</code></pre>
 </div>
 </div>
 </section>
 <section id="filtering-a-modbam-file" class="level3" data-number="3.2.2">
 <h3 data-number="3.2.2" class="anchored" data-anchor-id="filtering-a-modbam-file"><span class="header-section-number">3.2.2</span> Filtering a <code>modBam</code> file</h3>
-<p>As mentioned above, <a href="https://github.com/fmicompbio/footprintR"><em>footprintR</em></a> can also be used to directly filter alignments in a <code>modBam</code> file. The <a href="https://fmicompbio.github.io/footprintR/reference/filterReadsBam.html"><code>filterReadsBam</code></a> function reads the alignments in the input file, parses them, and writes them to the output file if they pass all the designated filters. These filters are treated hierarchically - in other words, if a read does not pass a given filter, the remaining filters will not be examined and the processing continues with the next read. Here we illustrate the <code>modBam</code> filtering using two small example <code>modBam</code> files, each with 10 reads.</p>
+<p>As mentioned above, <a href="https://github.com/fmicompbio/SingleMoleculeGenomicsIO"><em>SingleMoleculeGenomicsIO</em></a> can also be used to directly filter alignments in a <code>modBam</code> file. The <a href="https://fmicompbio.github.io/SingleMoleculeGenomicsIO/reference/filterReadsModBam.html"><code>filterReadsModBam</code></a> function reads the alignments in the input file, parses them, and writes them to the output file if they pass all the designated filters. These filters are treated hierarchically - in other words, if a read does not pass a given filter, the remaining filters will not be examined and the processing continues with the next read. Here we illustrate the <code>modBam</code> filtering using two small example <code>modBam</code> files, each with 10 reads.</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
@@ -560,26 +540,33 @@ wt2-d0b3f6f8-c5d3-477e-b4c4-02dcd4602767   FALSE   FALSE   .   FALSE</code></pre
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># output files</span></span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>filtbamfiles <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.bam"</span>, <span class="st">"_filtered.bam"</span>, modbamfiles)</span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">filterReadsBam</span>(<span class="at">infiles =</span> modbamfiles, <span class="at">outfiles =</span> filtbamfiles,</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                      <span class="at">modbase =</span> <span class="st">"a"</span>, <span class="at">indexOutfiles =</span> <span class="cn">FALSE</span>, <span class="at">minReadLength =</span> <span class="dv">6746</span>,</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>                      <span class="at">minAlignedLength =</span> <span class="dv">6896</span>, <span class="at">minAlignedFraction =</span> <span class="fl">0.56</span>,</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>                      <span class="at">minQscore =</span> <span class="fl">9.7</span>, <span class="at">maxFracLowConf =</span> <span class="fl">0.11</span>, <span class="at">maxEntropy =</span> <span class="fl">0.29</span>,</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(), <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">filterReadsModBam</span>(</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">infiles =</span> modbamfiles,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">outfiles =</span> filtbamfiles,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>,</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">indexOutfiles =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">minReadLength =</span> <span class="dv">6746</span>,</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">minAlignedLength =</span> <span class="dv">6896</span>,</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">minAlignedFraction =</span> <span class="fl">0.56</span>,</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">minQscore =</span> <span class="fl">9.7</span>,</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">maxFracLowConf =</span> <span class="fl">0.11</span>,</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">maxEntropy =</span> <span class="fl">0.29</span>,</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ start filtering of 'data/6mA_1_10reads.bam' using 1 thread</code></pre>
+<pre><code>ℹ start filtering of 'data/6mA_1_10reads.bam' using 4 threads</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ merging 1 filtered chunks</code></pre>
+<pre><code>ℹ merging 62 filtered chunks</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>ℹ done filtering: retained 7 of 10 records (70%)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ start filtering of 'data/6mA_2_10reads.bam' using 1 thread</code></pre>
+<pre><code>ℹ start filtering of 'data/6mA_2_10reads.bam' using 4 threads</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ merging 1 filtered chunks</code></pre>
+<pre><code>ℹ merging 62 filtered chunks</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>ℹ done filtering: retained 7 of 10 records (70%)</code></pre>
@@ -592,18 +579,15 @@ wt2-d0b3f6f8-c5d3-477e-b4c4-02dcd4602767   FALSE   FALSE   .   FALSE</code></pre
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  sample                 infile                         outfile total retained
-1     s1 data/6mA_1_10reads.bam data/6mA_1_10reads_filtered.bam    10        7
-2     s2 data/6mA_2_10reads.bam data/6mA_2_10reads_filtered.bam    10        7
-  filtered_unmapped filtered_secondary filtered_supplementary
-1                 0                  0                      0
-2                 0                  0                      0
-  filtered_minReadLength filtered_minAlignedLength filtered_minAlignedFraction
-1                      0                         1                           1
-2                      1                         0                           0
-  filtered_minQscore filtered_maxFracLowConf filtered_maxEntropy
-1                  0                       0                   1
-2                  1                       1                   0</code></pre>
+<pre><code>  sample                 infile                         outfile total retained filtered_unmapped filtered_secondary
+1     s1 data/6mA_1_10reads.bam data/6mA_1_10reads_filtered.bam    10        7                 0                  0
+2     s2 data/6mA_2_10reads.bam data/6mA_2_10reads_filtered.bam    10        7                 0                  0
+  filtered_supplementary filtered_minReadLength filtered_minAlignedLength filtered_minAlignedFraction
+1                      0                      0                         1                           1
+2                      0                      1                         0                           0
+  filtered_minQscore filtered_minSNR filtered_maxFracLowConf filtered_maxEntropy
+1                  0               0                       0                   1
+2                  1               0                       1                   0</code></pre>
 </div>
 </div>
 </section>
@@ -620,93 +604,90 @@ wt2-d0b3f6f8-c5d3-477e-b4c4-02dcd4602767   FALSE   FALSE   .   FALSE</code></pre
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>═ Session info ═══════════════════════════════════════════════════════════════
-─ Packages ───────────────────────────────────────────────────────────────────
+<pre><code>═ Session info ═══════════════════════════════════════════════════════════════════════════════════════════════════════
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
  package                                      * version   date (UTC) lib source
- abind                                        * 1.4-8     2024-09-12 [1] CRAN (R 4.5.0)
- Biobase                                      * 2.68.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- BiocGenerics                                 * 0.54.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- BiocIO                                       * 1.18.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- BiocParallel                                   1.42.1    2025-06-01 [1] Bioconductor 3.21 (R 4.5.0)
- Biostrings                                   * 2.76.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- bitops                                         1.0-9     2024-10-03 [1] CRAN (R 4.5.0)
- BSgenome                                     * 1.76.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34 * 0.1.0     2025-04-17 [1] Bioconductor
- cli                                            3.6.5     2025-04-23 [1] CRAN (R 4.5.0)
- codetools                                      0.2-20    2024-03-31 [2] CRAN (R 4.5.0)
- crayon                                         1.5.3     2024-06-20 [1] CRAN (R 4.5.0)
- curl                                           6.3.0     2025-06-06 [1] CRAN (R 4.5.0)
- data.table                                     1.17.4    2025-05-26 [1] CRAN (R 4.5.0)
- DelayedArray                                   0.34.1    2025-04-17 [1] Bioconductor 3.21 (R 4.5.0)
- dichromat                                      2.0-0.1   2022-05-02 [1] CRAN (R 4.5.0)
- digest                                         0.6.37    2024-08-19 [1] CRAN (R 4.5.0)
- dplyr                                          1.1.4     2023-11-17 [1] CRAN (R 4.5.0)
- evaluate                                       1.0.3     2025-01-10 [1] CRAN (R 4.5.0)
- farver                                         2.1.2     2024-05-13 [1] CRAN (R 4.5.0)
- fastmap                                        1.2.0     2024-05-15 [1] CRAN (R 4.5.0)
- footprintR                                   * 0.3.5     2025-06-04 [1] Github (fmicompbio/footprintR@612f713)
- generics                                     * 0.1.4     2025-05-09 [1] CRAN (R 4.5.0)
- GenomeInfoDb                                 * 1.44.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- GenomeInfoDbData                               1.2.14    2025-04-17 [1] Bioconductor
- GenomicAlignments                              1.44.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- GenomicRanges                                * 1.60.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- ggforce                                        0.4.2     2024-02-19 [1] CRAN (R 4.5.0)
- ggplot2                                        3.5.2     2025-04-09 [1] CRAN (R 4.5.0)
- glue                                           1.8.0     2024-09-30 [1] CRAN (R 4.5.0)
- gtable                                         0.3.6     2024-10-25 [1] CRAN (R 4.5.0)
- htmltools                                      0.5.8.1   2024-04-04 [1] CRAN (R 4.5.0)
- htmlwidgets                                    1.6.4     2023-12-06 [1] CRAN (R 4.5.0)
- httr                                           1.4.7     2023-08-15 [1] CRAN (R 4.5.0)
- IRanges                                      * 2.42.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- jsonlite                                       2.0.0     2025-03-27 [1] CRAN (R 4.5.0)
- knitr                                          1.50      2025-03-16 [1] CRAN (R 4.5.0)
- labeling                                       0.4.3     2023-08-29 [1] CRAN (R 4.5.0)
- lattice                                        0.22-7    2025-04-02 [1] CRAN (R 4.5.0)
- lifecycle                                      1.0.4     2023-11-07 [1] CRAN (R 4.5.0)
- magrittr                                       2.0.3     2022-03-30 [1] CRAN (R 4.5.0)
- MASS                                           7.3-65    2025-02-28 [2] CRAN (R 4.5.0)
- Matrix                                       * 1.7-3     2025-03-11 [2] CRAN (R 4.5.0)
- MatrixGenerics                               * 1.20.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- matrixStats                                  * 1.5.0     2025-01-07 [1] CRAN (R 4.5.0)
- patchwork                                      1.3.0     2024-09-16 [1] CRAN (R 4.5.0)
- pillar                                         1.10.2    2025-04-05 [1] CRAN (R 4.5.0)
- pkgconfig                                      2.0.3     2019-09-22 [1] CRAN (R 4.5.0)
- polyclip                                       1.10-7    2024-07-23 [1] CRAN (R 4.5.0)
- purrr                                          1.0.4     2025-02-05 [1] CRAN (R 4.5.0)
- R6                                             2.6.1     2025-02-15 [1] CRAN (R 4.5.0)
- RColorBrewer                                   1.1-3     2022-04-03 [1] CRAN (R 4.5.0)
- Rcpp                                           1.0.14    2025-01-12 [1] CRAN (R 4.5.0)
- RCurl                                          1.98-1.17 2025-03-22 [1] CRAN (R 4.5.0)
- restfulr                                       0.0.15    2022-06-16 [1] CRAN (R 4.5.0)
- rjson                                          0.2.23    2024-09-16 [1] CRAN (R 4.5.0)
- rlang                                          1.1.6     2025-04-11 [1] CRAN (R 4.5.0)
- rmarkdown                                      2.29      2024-11-04 [1] CRAN (R 4.5.0)
- Rsamtools                                      2.24.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- rtracklayer                                  * 1.68.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- S4Arrays                                     * 1.8.1     2025-06-01 [1] Bioconductor 3.21 (R 4.5.0)
- S4Vectors                                    * 0.46.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- scales                                         1.4.0     2025-04-24 [1] CRAN (R 4.5.0)
- sessioninfo                                    1.2.3     2025-02-05 [1] CRAN (R 4.5.0)
- SparseArray                                  * 1.8.0     2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- SummarizedExperiment                         * 1.38.1    2025-04-30 [1] Bioconductor 3.21 (R 4.5.0)
- tibble                                         3.3.0     2025-06-08 [1] CRAN (R 4.5.0)
- tidyr                                          1.3.1     2024-01-24 [1] CRAN (R 4.5.0)
- tidyselect                                     1.2.1     2024-03-11 [1] CRAN (R 4.5.0)
- tweenr                                         2.0.3     2024-02-26 [1] CRAN (R 4.5.0)
- UCSC.utils                                     1.4.0     2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- vctrs                                          0.6.5     2023-12-01 [1] CRAN (R 4.5.0)
- withr                                          3.0.2     2024-10-28 [1] CRAN (R 4.5.0)
- xfun                                           0.52      2025-04-02 [1] CRAN (R 4.5.0)
- XML                                            3.99-0.18 2025-01-01 [1] CRAN (R 4.5.0)
- XVector                                      * 0.48.0    2025-04-15 [1] Bioconductor 3.21 (R 4.5.0)
- yaml                                           2.3.10    2024-07-26 [1] CRAN (R 4.5.0)
- zoo                                            1.8-14    2025-04-10 [1] CRAN (R 4.5.0)
+ abind                                        * 1.4-8     2024-09-12 [1] CRAN (R 4.5.1)
+ Biobase                                      * 2.70.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ BiocGenerics                                 * 0.56.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ BiocIO                                       * 1.20.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ BiocParallel                                   1.44.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ Biostrings                                   * 2.78.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ bitops                                         1.0-9     2024-10-03 [1] CRAN (R 4.5.1)
+ BSgenome                                     * 1.78.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34 * 0.1.0     2025-10-31 [1] Bioconductor
+ cigarillo                                      1.0.0     2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ cli                                            3.6.5     2025-04-23 [1] CRAN (R 4.5.1)
+ codetools                                      0.2-20    2024-03-31 [2] CRAN (R 4.5.2)
+ crayon                                         1.5.3     2024-06-20 [1] CRAN (R 4.5.1)
+ curl                                           7.0.0     2025-08-19 [1] CRAN (R 4.5.1)
+ data.table                                     1.18.0    2025-12-24 [1] CRAN (R 4.5.2)
+ DelayedArray                                   0.36.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ dichromat                                      2.0-0.1   2022-05-02 [1] CRAN (R 4.5.1)
+ digest                                         0.6.39    2025-11-19 [1] CRAN (R 4.5.2)
+ dplyr                                          1.1.4     2023-11-17 [1] CRAN (R 4.5.1)
+ evaluate                                       1.0.5     2025-08-27 [1] CRAN (R 4.5.1)
+ farver                                         2.1.2     2024-05-13 [1] CRAN (R 4.5.1)
+ fastmap                                        1.2.0     2024-05-15 [1] CRAN (R 4.5.1)
+ generics                                     * 0.1.4     2025-05-09 [1] CRAN (R 4.5.1)
+ GenomeInfoDb                                 * 1.46.2    2025-12-04 [1] Bioconductor 3.22 (R 4.5.2)
+ GenomicAlignments                              1.46.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ GenomicRanges                                * 1.62.1    2025-12-08 [1] Bioconductor 3.22 (R 4.5.2)
+ ggplot2                                        4.0.1     2025-11-14 [1] CRAN (R 4.5.2)
+ glue                                           1.8.0     2024-09-30 [1] CRAN (R 4.5.1)
+ gtable                                         0.3.6     2024-10-25 [1] CRAN (R 4.5.1)
+ htmltools                                      0.5.9     2025-12-04 [1] CRAN (R 4.5.2)
+ htmlwidgets                                    1.6.4     2023-12-06 [1] CRAN (R 4.5.1)
+ httr                                           1.4.7     2023-08-15 [1] CRAN (R 4.5.1)
+ IRanges                                      * 2.44.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ jsonlite                                       2.0.0     2025-03-27 [1] CRAN (R 4.5.1)
+ knitr                                          1.51      2025-12-20 [1] CRAN (R 4.5.2)
+ labeling                                       0.4.3     2023-08-29 [1] CRAN (R 4.5.1)
+ lattice                                        0.22-7    2025-04-02 [2] CRAN (R 4.5.2)
+ lifecycle                                      1.0.5     2026-01-08 [1] CRAN (R 4.5.2)
+ magrittr                                       2.0.4     2025-09-12 [1] CRAN (R 4.5.1)
+ Matrix                                       * 1.7-4     2025-08-28 [2] CRAN (R 4.5.2)
+ MatrixGenerics                               * 1.22.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ matrixStats                                  * 1.5.0     2025-01-07 [1] CRAN (R 4.5.1)
+ otel                                           0.2.0     2025-08-29 [1] CRAN (R 4.5.1)
+ pillar                                         1.11.1    2025-09-17 [1] CRAN (R 4.5.1)
+ pkgconfig                                      2.0.3     2019-09-22 [1] CRAN (R 4.5.1)
+ purrr                                          1.2.1     2026-01-09 [1] CRAN (R 4.5.2)
+ R6                                             2.6.1     2025-02-15 [1] CRAN (R 4.5.1)
+ RColorBrewer                                   1.1-3     2022-04-03 [1] CRAN (R 4.5.1)
+ Rcpp                                           1.1.1     2026-01-10 [1] CRAN (R 4.5.2)
+ RCurl                                          1.98-1.17 2025-03-22 [1] CRAN (R 4.5.1)
+ restfulr                                       0.0.16    2025-06-27 [1] CRAN (R 4.5.1)
+ rjson                                          0.2.23    2024-09-16 [1] CRAN (R 4.5.1)
+ rlang                                          1.1.7     2026-01-09 [1] CRAN (R 4.5.2)
+ rmarkdown                                      2.30      2025-09-28 [1] CRAN (R 4.5.1)
+ Rsamtools                                      2.26.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ rtracklayer                                  * 1.70.1    2025-12-22 [1] Bioconductor 3.22 (R 4.5.2)
+ S4Arrays                                     * 1.10.1    2025-12-02 [1] Github (Bioconductor/S4Arrays@a4cccba)
+ S4Vectors                                    * 0.48.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ S7                                             0.2.1     2025-11-14 [1] CRAN (R 4.5.2)
+ scales                                         1.4.0     2025-04-24 [1] CRAN (R 4.5.1)
+ Seqinfo                                      * 1.0.0     2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ sessioninfo                                    1.2.3     2025-02-05 [1] CRAN (R 4.5.1)
+ SingleMoleculeGenomicsIO                     * 0.1.0     2026-01-19 [1] Bioconductor
+ SparseArray                                  * 1.10.8    2025-12-18 [1] Bioconductor 3.22 (R 4.5.2)
+ SummarizedExperiment                         * 1.40.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ tibble                                         3.3.1     2026-01-11 [1] CRAN (R 4.5.2)
+ tidyr                                          1.3.2     2025-12-19 [1] CRAN (R 4.5.2)
+ tidyselect                                     1.2.1     2024-03-11 [1] CRAN (R 4.5.1)
+ UCSC.utils                                     1.6.1     2025-12-11 [1] Bioconductor 3.22 (R 4.5.2)
+ vctrs                                          0.7.1     2026-01-23 [1] CRAN (R 4.5.2)
+ withr                                          3.0.2     2024-10-28 [1] CRAN (R 4.5.1)
+ xfun                                           0.56      2026-01-18 [1] CRAN (R 4.5.2)
+ XML                                            3.99-0.20 2025-11-08 [1] CRAN (R 4.5.2)
+ XVector                                      * 0.50.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
+ yaml                                           2.3.12    2025-12-10 [1] CRAN (R 4.5.2)
 
- [1] /tungstenfs/groups/gbioinfo/Appz/R/BioC/R-4.5-release-foss-2024.05_BioC-3.21-release-foss-2024.05
- [2] /tachyon/groups/gbioinfo/Appz/easybuild/software/R/4.5.0-foss-2024.05/lib64/R/library
+ [1] /tachyon/groups/gbioinfo/Appz/R/BioC/R-4.5-release-foss-2024.05_BioC-3.22-release-foss-2024.05
+ [2] /tachyon/groups/gbioinfo/Appz/easybuild/software/R/4.5.2-foss-2024.05/lib64/R/library
  * ── Packages attached to the search path.
 
-──────────────────────────────────────────────────────────────────────────────</code></pre>
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
 </div>
 </div>
 </details>
@@ -1199,10 +1180,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="sourceCode" id="cb28" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Quality control and filtering {#sec-qc-filtering}</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>This chapter explains how to use <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} to filter single molecule footprinting data.</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>This chapter explains how to use <span class="co">[</span><span class="ot">fmicompbio/SingleMoleculeGenomicsIO</span><span class="co">]</span>{.githubpkg} to filter single molecule footprinting data.</span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>The package contains functionality to calculate a collection of quality statistics for each read, and use these to filter out low-quality reads. </span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>This filtering can be done either on the imported <span class="in">`SummarizedExperiment`</span> object, or directly on the <span class="in">`modBam`</span> file (which would generate another, filtered <span class="in">`modBam`</span> file).</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} also provides several ways to filter out individual genomic positions based on, e.g. the genomic sequence or the read coverage. </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>This filtering can be done either on the imported <span class="in">`SummarizedExperiment`</span> object (both for <span class="in">`modBam`</span> and <span class="in">`mismatchBam`</span> file types), or directly on the bam file (currently only <span class="in">`modBam`</span>, which will generate another, filtered <span class="in">`modBam`</span> file).</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">fmicompbio/SingleMoleculeGenomicsIO</span><span class="co">]</span>{.githubpkg} also provides several ways to filter out individual genomic positions based on, e.g. the genomic sequence or the read coverage. </span>
 <span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>We start by loading the required packages. </span>
 <span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>In addition to the software package, we load a <span class="in">`BSgenome`</span> object providing the mouse genome sequence.</span>
@@ -1213,7 +1194,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>BSgenomeName <span class="ot">&lt;-</span> <span class="st">"BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"</span></span>
 <span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(footprintR)</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SingleMoleculeGenomicsIO)</span>
 <span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenomeName, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
 <span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SparseArray)</span>
@@ -1253,11 +1234,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-60"><a href="#cb28-60" aria-hidden="true" tabindex="-1"></a><span class="fu">rowData</span>(se)</span>
 <span id="cb28-61"><a href="#cb28-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-62"><a href="#cb28-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-63"><a href="#cb28-63" aria-hidden="true" tabindex="-1"></a>Position filtering can now be performed with the <span class="co">[</span><span class="ot">filterPositions</span><span class="co">]</span>{.fn} function. </span>
+<span id="cb28-63"><a href="#cb28-63" aria-hidden="true" tabindex="-1"></a>Position filtering can now be performed with the <span class="co">[</span><span class="ot">filterPositions</span><span class="co">]</span>{.fnio} function. </span>
 <span id="cb28-64"><a href="#cb28-64" aria-hidden="true" tabindex="-1"></a>The <span class="in">`filters`</span> argument define which filters to apply, as well as the order (sequence context, coverage, removal of positions without non-NA values).</span>
 <span id="cb28-65"><a href="#cb28-65" aria-hidden="true" tabindex="-1"></a>Here, we retain only positions where the genome sequence is an A, and the coverage (the number of overlapping reads) is at least five. </span>
 <span id="cb28-66"><a href="#cb28-66" aria-hidden="true" tabindex="-1"></a>The <span class="in">`assayNameCov`</span> argument indicates which assay will be used to define the coverage. </span>
-<span id="cb28-67"><a href="#cb28-67" aria-hidden="true" tabindex="-1"></a>If this is a read-level assay (like here), coverage will first be calculated using <span class="co">[</span><span class="ot">flattenReadLevelAssay</span><span class="co">]</span>{.fn}. </span>
+<span id="cb28-67"><a href="#cb28-67" aria-hidden="true" tabindex="-1"></a>If this is a read-level assay (like here), coverage will first be calculated using <span class="co">[</span><span class="ot">flattenReadLevelAssay</span><span class="co">]</span>{.fnio}. </span>
 <span id="cb28-68"><a href="#cb28-68" aria-hidden="true" tabindex="-1"></a>For more precise control, the summary assay can also be manually calculated and added to <span class="in">`se`</span> beforehand, and specified in <span class="in">`assayNameCov`</span>.</span>
 <span id="cb28-69"><a href="#cb28-69" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-72"><a href="#cb28-72" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
@@ -1276,14 +1257,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-85"><a href="#cb28-85" aria-hidden="true" tabindex="-1"></a>In this case, the position filtering reduced the number of unique positions from <span class="in">`r nrow(se)`</span> to <span class="in">`r nrow(sefilt)`</span> by <span class="in">`r sprintf("%.1f%%", 100 * (nrow(se) - nrow(sefilt)) / nrow(se))`</span>. </span>
 <span id="cb28-86"><a href="#cb28-86" aria-hidden="true" tabindex="-1"></a>However, the number of non-NA values in the matrix is only reduced from <span class="in">`r sum(is_nonna(as.matrix(assay(se, "mod_prob"))))`</span> to <span class="in">`r sum(is_nonna(as.matrix(assay(sefilt, "mod_prob"))))`</span> (<span class="in">`r sprintf("%.1f%%", 100 * (sum(is_nonna(as.matrix(assay(se, "mod_prob")))) - sum(is_nonna(as.matrix(assay(sefilt, "mod_prob"))))) / sum(is_nonna(as.matrix(assay(se, "mod_prob")))))`</span>), confirming that the filtered-out positions are generally covered only by few reads. </span>
 <span id="cb28-87"><a href="#cb28-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-88"><a href="#cb28-88" aria-hidden="true" tabindex="-1"></a>In addition to explicit filtering like here, many other functions in <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} allow built-in filtering for a specific sequence context. </span>
+<span id="cb28-88"><a href="#cb28-88" aria-hidden="true" tabindex="-1"></a>In addition to explicit filtering shown above, several functions in <span class="co">[</span><span class="ot">fmicompbio/SingleMoleculeGenomicsIO</span><span class="co">]</span>{.githubpkg} and <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} allow on-the-fly filtering for a specific sequence context (for example <span class="co">[</span><span class="ot">calcReadStats</span><span class="co">]</span>{.fnio} or <span class="co">[</span><span class="ot">plotRegion</span><span class="co">]</span>{.fn}). </span>
 <span id="cb28-89"><a href="#cb28-89" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-90"><a href="#cb28-90" aria-hidden="true" tabindex="-1"></a><span class="fu">## Read filtering</span></span>
 <span id="cb28-91"><a href="#cb28-91" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-92"><a href="#cb28-92" aria-hidden="true" tabindex="-1"></a><span class="fu">### Filtering a `SummarizedExperiment` object</span></span>
 <span id="cb28-93"><a href="#cb28-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-94"><a href="#cb28-94" aria-hidden="true" tabindex="-1"></a>In addition to the position filtering illustrated above, <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} also provides functionality for calculating read-level quality scores and filtering out reads with low quality. </span>
-<span id="cb28-95"><a href="#cb28-95" aria-hidden="true" tabindex="-1"></a>The calculation of the quality scores is done using the <span class="co">[</span><span class="ot">addReadStats</span><span class="co">]</span>{.fn} function, and the filtering is performed via the <span class="co">[</span><span class="ot">filterReads</span><span class="co">]</span>{.fn} function.</span>
+<span id="cb28-94"><a href="#cb28-94" aria-hidden="true" tabindex="-1"></a>In addition to the position filtering illustrated above, <span class="co">[</span><span class="ot">fmicompbio/SingleMoleculeGenomicsIO</span><span class="co">]</span>{.githubpkg} also provides functionality for calculating read-level quality scores and filtering out reads with low quality. </span>
+<span id="cb28-95"><a href="#cb28-95" aria-hidden="true" tabindex="-1"></a>The calculation of the quality scores is done using the <span class="co">[</span><span class="ot">addReadStats</span><span class="co">]</span>{.fnio} function, and the filtering is performed via the <span class="co">[</span><span class="ot">filterReads</span><span class="co">]</span>{.fnio} function.</span>
 <span id="cb28-96"><a href="#cb28-96" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-99"><a href="#cb28-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb28-100"><a href="#cb28-100" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-filter-reads</span></span>
@@ -1327,8 +1308,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-140"><a href="#cb28-140" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-141"><a href="#cb28-141" aria-hidden="true" tabindex="-1"></a><span class="fu">### Filtering a `modBam` file</span></span>
 <span id="cb28-142"><a href="#cb28-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-143"><a href="#cb28-143" aria-hidden="true" tabindex="-1"></a>As mentioned above, <span class="co">[</span><span class="ot">fmicompbio/footprintR</span><span class="co">]</span>{.githubpkg} can also be used to directly filter alignments in a <span class="in">`modBam`</span> file.</span>
-<span id="cb28-144"><a href="#cb28-144" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">filterReadsBam</span><span class="co">]</span>{.fn} function reads the alignments in the input file, parses them, and writes them to the output file if they pass all the designated filters. </span>
+<span id="cb28-143"><a href="#cb28-143" aria-hidden="true" tabindex="-1"></a>As mentioned above, <span class="co">[</span><span class="ot">fmicompbio/SingleMoleculeGenomicsIO</span><span class="co">]</span>{.githubpkg} can also be used to directly filter alignments in a <span class="in">`modBam`</span> file.</span>
+<span id="cb28-144"><a href="#cb28-144" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">filterReadsModBam</span><span class="co">]</span>{.fnio} function reads the alignments in the input file, parses them, and writes them to the output file if they pass all the designated filters. </span>
 <span id="cb28-145"><a href="#cb28-145" aria-hidden="true" tabindex="-1"></a>These filters are treated hierarchically - in other words, if a read does not pass a given filter, the remaining filters will not be examined and the processing continues with the next read.</span>
 <span id="cb28-146"><a href="#cb28-146" aria-hidden="true" tabindex="-1"></a>Here we illustrate the <span class="in">`modBam`</span> filtering using two small example <span class="in">`modBam`</span> files, each with 10 reads. </span>
 <span id="cb28-147"><a href="#cb28-147" aria-hidden="true" tabindex="-1"></a></span>
@@ -1341,41 +1322,48 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-156"><a href="#cb28-156" aria-hidden="true" tabindex="-1"></a><span class="co"># output files</span></span>
 <span id="cb28-157"><a href="#cb28-157" aria-hidden="true" tabindex="-1"></a>filtbamfiles <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.bam"</span>, <span class="st">"_filtered.bam"</span>, modbamfiles)</span>
 <span id="cb28-158"><a href="#cb28-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-159"><a href="#cb28-159" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">filterReadsBam</span>(<span class="at">infiles =</span> modbamfiles, <span class="at">outfiles =</span> filtbamfiles,</span>
-<span id="cb28-160"><a href="#cb28-160" aria-hidden="true" tabindex="-1"></a>                      <span class="at">modbase =</span> <span class="st">"a"</span>, <span class="at">indexOutfiles =</span> <span class="cn">FALSE</span>, <span class="at">minReadLength =</span> <span class="dv">6746</span>,</span>
-<span id="cb28-161"><a href="#cb28-161" aria-hidden="true" tabindex="-1"></a>                      <span class="at">minAlignedLength =</span> <span class="dv">6896</span>, <span class="at">minAlignedFraction =</span> <span class="fl">0.56</span>,</span>
-<span id="cb28-162"><a href="#cb28-162" aria-hidden="true" tabindex="-1"></a>                      <span class="at">minQscore =</span> <span class="fl">9.7</span>, <span class="at">maxFracLowConf =</span> <span class="fl">0.11</span>, <span class="at">maxEntropy =</span> <span class="fl">0.29</span>,</span>
-<span id="cb28-163"><a href="#cb28-163" aria-hidden="true" tabindex="-1"></a>                      <span class="at">BPPARAM =</span> BiocParallel<span class="sc">::</span><span class="fu">SerialParam</span>(), <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb28-164"><a href="#cb28-164" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-165"><a href="#cb28-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-166"><a href="#cb28-166" aria-hidden="true" tabindex="-1"></a>The <span class="in">`res`</span> object provides details about the number of reads that were filtered out at each stage. </span>
-<span id="cb28-167"><a href="#cb28-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-170"><a href="#cb28-170" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-171"><a href="#cb28-171" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-filter-bamfile</span></span>
+<span id="cb28-159"><a href="#cb28-159" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">filterReadsModBam</span>(</span>
+<span id="cb28-160"><a href="#cb28-160" aria-hidden="true" tabindex="-1"></a>    <span class="at">infiles =</span> modbamfiles,</span>
+<span id="cb28-161"><a href="#cb28-161" aria-hidden="true" tabindex="-1"></a>    <span class="at">outfiles =</span> filtbamfiles,</span>
+<span id="cb28-162"><a href="#cb28-162" aria-hidden="true" tabindex="-1"></a>    <span class="at">modbase =</span> <span class="st">"a"</span>,</span>
+<span id="cb28-163"><a href="#cb28-163" aria-hidden="true" tabindex="-1"></a>    <span class="at">indexOutfiles =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb28-164"><a href="#cb28-164" aria-hidden="true" tabindex="-1"></a>    <span class="at">minReadLength =</span> <span class="dv">6746</span>,</span>
+<span id="cb28-165"><a href="#cb28-165" aria-hidden="true" tabindex="-1"></a>    <span class="at">minAlignedLength =</span> <span class="dv">6896</span>,</span>
+<span id="cb28-166"><a href="#cb28-166" aria-hidden="true" tabindex="-1"></a>    <span class="at">minAlignedFraction =</span> <span class="fl">0.56</span>,</span>
+<span id="cb28-167"><a href="#cb28-167" aria-hidden="true" tabindex="-1"></a>    <span class="at">minQscore =</span> <span class="fl">9.7</span>,</span>
+<span id="cb28-168"><a href="#cb28-168" aria-hidden="true" tabindex="-1"></a>    <span class="at">maxFracLowConf =</span> <span class="fl">0.11</span>,</span>
+<span id="cb28-169"><a href="#cb28-169" aria-hidden="true" tabindex="-1"></a>    <span class="at">maxEntropy =</span> <span class="fl">0.29</span>,</span>
+<span id="cb28-170"><a href="#cb28-170" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb28-171"><a href="#cb28-171" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-172"><a href="#cb28-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-173"><a href="#cb28-173" aria-hidden="true" tabindex="-1"></a>res</span>
-<span id="cb28-174"><a href="#cb28-174" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-175"><a href="#cb28-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-178"><a href="#cb28-178" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-179"><a href="#cb28-179" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb28-180"><a href="#cb28-180" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: remove-filtered-bamfiles</span></span>
-<span id="cb28-181"><a href="#cb28-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-182"><a href="#cb28-182" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(filtbamfiles)</span>
-<span id="cb28-183"><a href="#cb28-183" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-184"><a href="#cb28-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-185"><a href="#cb28-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-186"><a href="#cb28-186" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session info</span></span>
-<span id="cb28-187"><a href="#cb28-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-188"><a href="#cb28-188" aria-hidden="true" tabindex="-1"></a>&lt;details&gt;</span>
-<span id="cb28-189"><a href="#cb28-189" aria-hidden="true" tabindex="-1"></a>&lt;summary&gt;&lt;b&gt;</span>
-<span id="cb28-190"><a href="#cb28-190" aria-hidden="true" tabindex="-1"></a>Click to view session info</span>
-<span id="cb28-191"><a href="#cb28-191" aria-hidden="true" tabindex="-1"></a>&lt;/b&gt;&lt;/summary&gt;</span>
-<span id="cb28-194"><a href="#cb28-194" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb28-195"><a href="#cb28-195" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: session-info</span></span>
-<span id="cb28-196"><a href="#cb28-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-197"><a href="#cb28-197" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span>
-<span id="cb28-198"><a href="#cb28-198" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-199"><a href="#cb28-199" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
+<span id="cb28-173"><a href="#cb28-173" aria-hidden="true" tabindex="-1"></a>The <span class="in">`res`</span> object provides details about the number of reads that were filtered out at each stage. </span>
+<span id="cb28-174"><a href="#cb28-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-177"><a href="#cb28-177" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-178"><a href="#cb28-178" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: show-filter-bamfile</span></span>
+<span id="cb28-179"><a href="#cb28-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-180"><a href="#cb28-180" aria-hidden="true" tabindex="-1"></a>res</span>
+<span id="cb28-181"><a href="#cb28-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-182"><a href="#cb28-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-185"><a href="#cb28-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-186"><a href="#cb28-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb28-187"><a href="#cb28-187" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: remove-filtered-bamfiles</span></span>
+<span id="cb28-188"><a href="#cb28-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-189"><a href="#cb28-189" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>(filtbamfiles)</span>
+<span id="cb28-190"><a href="#cb28-190" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-191"><a href="#cb28-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-192"><a href="#cb28-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-193"><a href="#cb28-193" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session info</span></span>
+<span id="cb28-194"><a href="#cb28-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-195"><a href="#cb28-195" aria-hidden="true" tabindex="-1"></a>&lt;details&gt;</span>
+<span id="cb28-196"><a href="#cb28-196" aria-hidden="true" tabindex="-1"></a>&lt;summary&gt;&lt;b&gt;</span>
+<span id="cb28-197"><a href="#cb28-197" aria-hidden="true" tabindex="-1"></a>Click to view session info</span>
+<span id="cb28-198"><a href="#cb28-198" aria-hidden="true" tabindex="-1"></a>&lt;/b&gt;&lt;/summary&gt;</span>
+<span id="cb28-201"><a href="#cb28-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb28-202"><a href="#cb28-202" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: session-info</span></span>
+<span id="cb28-203"><a href="#cb28-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-204"><a href="#cb28-204" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">info =</span> <span class="st">"packages"</span>)</span>
+<span id="cb28-205"><a href="#cb28-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-206"><a href="#cb28-206" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

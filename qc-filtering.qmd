@@ -1,9 +1,9 @@
 # Quality control and filtering {#sec-qc-filtering}
 
-This chapter explains how to use [fmicompbio/footprintR]{.githubpkg} to filter single molecule footprinting data.
+This chapter explains how to use [fmicompbio/SingleMoleculeGenomicsIO]{.githubpkg} to filter single molecule footprinting data.
 The package contains functionality to calculate a collection of quality statistics for each read, and use these to filter out low-quality reads. 
-This filtering can be done either on the imported `SummarizedExperiment` object, or directly on the `modBam` file (which would generate another, filtered `modBam` file).
-[fmicompbio/footprintR]{.githubpkg} also provides several ways to filter out individual genomic positions based on, e.g. the genomic sequence or the read coverage. 
+This filtering can be done either on the imported `SummarizedExperiment` object (both for `modBam` and `mismatchBam` file types), or directly on the bam file (currently only `modBam`, which will generate another, filtered `modBam` file).
+[fmicompbio/SingleMoleculeGenomicsIO]{.githubpkg} also provides several ways to filter out individual genomic positions based on, e.g. the genomic sequence or the read coverage. 
 
 We start by loading the required packages. 
 In addition to the software package, we load a `BSgenome` object providing the mouse genome sequence.
@@ -14,7 +14,7 @@ In addition to the software package, we load a `BSgenome` object providing the m
 
 BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
 
-library(footprintR)
+library(SingleMoleculeGenomicsIO)
 library(BSgenomeName, character.only = TRUE)
 library(SummarizedExperiment)
 library(SparseArray)
@@ -54,11 +54,11 @@ The sequence information is stored in the `rowData` of `se`:
 rowData(se)
 ```
 
-Position filtering can now be performed with the [filterPositions]{.fn} function. 
+Position filtering can now be performed with the [filterPositions]{.fnio} function. 
 The `filters` argument define which filters to apply, as well as the order (sequence context, coverage, removal of positions without non-NA values).
 Here, we retain only positions where the genome sequence is an A, and the coverage (the number of overlapping reads) is at least five. 
 The `assayNameCov` argument indicates which assay will be used to define the coverage. 
-If this is a read-level assay (like here), coverage will first be calculated using [flattenReadLevelAssay]{.fn}. 
+If this is a read-level assay (like here), coverage will first be calculated using [flattenReadLevelAssay]{.fnio}. 
 For more precise control, the summary assay can also be manually calculated and added to `se` beforehand, and specified in `assayNameCov`.
 
 ```{r}
@@ -77,14 +77,14 @@ sefilt
 In this case, the position filtering reduced the number of unique positions from `r nrow(se)` to `r nrow(sefilt)` by `r sprintf("%.1f%%", 100 * (nrow(se) - nrow(sefilt)) / nrow(se))`. 
 However, the number of non-NA values in the matrix is only reduced from `r sum(is_nonna(as.matrix(assay(se, "mod_prob"))))` to `r sum(is_nonna(as.matrix(assay(sefilt, "mod_prob"))))` (`r sprintf("%.1f%%", 100 * (sum(is_nonna(as.matrix(assay(se, "mod_prob")))) - sum(is_nonna(as.matrix(assay(sefilt, "mod_prob"))))) / sum(is_nonna(as.matrix(assay(se, "mod_prob")))))`), confirming that the filtered-out positions are generally covered only by few reads. 
 
-In addition to explicit filtering like here, many other functions in [fmicompbio/footprintR]{.githubpkg} allow built-in filtering for a specific sequence context. 
+In addition to explicit filtering shown above, several functions in [fmicompbio/SingleMoleculeGenomicsIO]{.githubpkg} and [fmicompbio/footprintR]{.githubpkg} allow on-the-fly filtering for a specific sequence context (for example [calcReadStats]{.fnio} or [plotRegion]{.fn}). 
 
 ## Read filtering
 
 ### Filtering a `SummarizedExperiment` object
 
-In addition to the position filtering illustrated above, [fmicompbio/footprintR]{.githubpkg} also provides functionality for calculating read-level quality scores and filtering out reads with low quality. 
-The calculation of the quality scores is done using the [addReadStats]{.fn} function, and the filtering is performed via the [filterReads]{.fn} function.
+In addition to the position filtering illustrated above, [fmicompbio/SingleMoleculeGenomicsIO]{.githubpkg} also provides functionality for calculating read-level quality scores and filtering out reads with low quality. 
+The calculation of the quality scores is done using the [addReadStats]{.fnio} function, and the filtering is performed via the [filterReads]{.fnio} function.
 
 ```{r}
 #| label: fig-filter-reads
@@ -128,8 +128,8 @@ metadata(sefilt)$filteredOutReads
 
 ### Filtering a `modBam` file
 
-As mentioned above, [fmicompbio/footprintR]{.githubpkg} can also be used to directly filter alignments in a `modBam` file.
-The [filterReadsBam]{.fn} function reads the alignments in the input file, parses them, and writes them to the output file if they pass all the designated filters. 
+As mentioned above, [fmicompbio/SingleMoleculeGenomicsIO]{.githubpkg} can also be used to directly filter alignments in a `modBam` file.
+The [filterReadsModBam]{.fnio} function reads the alignments in the input file, parses them, and writes them to the output file if they pass all the designated filters. 
 These filters are treated hierarchically - in other words, if a read does not pass a given filter, the remaining filters will not be examined and the processing continues with the next read.
 Here we illustrate the `modBam` filtering using two small example `modBam` files, each with 10 reads. 
 
@@ -142,11 +142,18 @@ modbamfiles <- c("data/6mA_1_10reads.bam", "data/6mA_2_10reads.bam")
 # output files
 filtbamfiles <- sub("\\.bam", "_filtered.bam", modbamfiles)
 
-res <- filterReadsBam(infiles = modbamfiles, outfiles = filtbamfiles,
-                      modbase = "a", indexOutfiles = FALSE, minReadLength = 6746,
-                      minAlignedLength = 6896, minAlignedFraction = 0.56,
-                      minQscore = 9.7, maxFracLowConf = 0.11, maxEntropy = 0.29,
-                      BPPARAM = BiocParallel::SerialParam(), verbose = TRUE)
+res <- filterReadsModBam(
+    infiles = modbamfiles,
+    outfiles = filtbamfiles,
+    modbase = "a",
+    indexOutfiles = FALSE,
+    minReadLength = 6746,
+    minAlignedLength = 6896,
+    minAlignedFraction = 0.56,
+    minQscore = 9.7,
+    maxFracLowConf = 0.11,
+    maxEntropy = 0.29,
+    verbose = TRUE)
 ```
 
 The `res` object provides details about the number of reads that were filtered out at each stage. 
