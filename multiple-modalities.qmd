@@ -26,7 +26,7 @@ genome by injecting the SNVs into the genome assembly.
 
 # Packages
 BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
-library(footprintR)
+library(SingleMoleculeGenomicsIO)
 library(ggplot2)
 library(patchwork)
 library(dplyr)
