@@ -28,6 +28,7 @@ Below we will show several examples of using the scanning framework for differen
 
 BSgenomeName <- "BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34"
 
+library(SingleMoleculeGenomicsIO)
 library(footprintR)
 library(ggplot2)
 library(BSgenomeName, character.only = TRUE)
