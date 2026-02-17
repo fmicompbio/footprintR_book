@@ -1,0 +1,2 @@
+# set to 1 to re-compute long-running chunks
+RECOMPUTE=0
