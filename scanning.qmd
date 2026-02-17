@@ -378,11 +378,11 @@ ctcf_sites <- resize(ctcf_sites, width = windowSize, fix = "center")
 ctcf_sites <- unstrand(ctcf_sites)
 
 se <- readModBam(bamfiles = bamfiles, sampleAnnot = sampleAnnot, 
-                 regions = ctcf_sites, modbase = "a", 
+                 regions = ctcf_sites, modbase = "a",
+                 level = "summary",
                  seqinfo = seqinfo(gnm), sequenceContextWidth = 1, 
                  sequenceReference = gnm, trim = TRUE, 
                  verbose = interactive())
-se <- flattenReadLevelAssay(se)
 
 ctcf_sites$phasing_scores <- unlist(parallel::mclapply(
     seq_along(ctcf_sites),
