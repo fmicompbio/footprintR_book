@@ -56,6 +56,7 @@ In our case, we will compare wild-type mouse ES cells to 'TKO' mouse ES cells wh
 For time reasons, we limit the scanning to chromosome 19 - the most efficient way of performing a genome-wide analysis is typically to parallelize over chromosomes (e.g. by replacing the `lapply` call in the code below by a parallelized version).
 
 We tile the genome into 30bp windows (`windowSize`), shifted successively by 15bp (`windowStep`) to achieve a high resolution and minimize the risk of splitting a region of interest in the middle (thereby potentially losing the signal). 
+The data is read using [readModBam]{.fnio} (`readFunction` argument).
 We then use the [sumNmodNvalid]{.fn} function to count the number of modified As for each window, as well as the total number of As.
 The classification of nucleotides is obtained by thresholding the modification probability using the `modProbThreshold` value (0.5).
 Given the modified and total count for each sample, we next use the [getDifferentiallyModifiedWindows]{.fn} score function to perform the differential methylation analysis for each window. 
@@ -87,16 +88,23 @@ chrlens <- seqlengths(gnm)["chr19"]
 dmrL <- lapply(seq_along(chrlens), function(i) {
     scanForHighScoringRegions(
         bamfiles = bamfiles,
-        sampleAnnot = sampleAnnot,
+        readFunction = "readModBam",
+        readFunctionArgs = list(
+            sampleAnnot = sampleAnnot,
+            modbase = "a",
+            level = "summary",
+            trim = TRUE,
+            modProbThreshold = 0.5,
+            sequenceContextWidth = 1,
+            sequenceReference = gnm,
+            BPPARAM = bpParam,
+            verbose = interactive()
+        ),
         chromosomeLengths = chrlens[i],
         quantFunction = "sumNmodNvalid",
         scoreFunction = "getDifferentiallyModifiedWindows",
-        modbase = "a",
-        modProbThreshold = 0.5,
         tileSize = 2e+06,
         seqinfo = seqinfo(gnm),
-        sequenceContextWidth = 1,
-        sequenceReference = gnm,
         sequenceContext = "A",
         windowMode = "fixed",
         windowSize = 30,
@@ -106,7 +114,6 @@ dmrL <- lapply(seq_along(chrlens), function(i) {
         thresh = 3,
         minperiod = 3,
         maxGap = 50,
-        BPPARAM = bpParam,
         verbose = interactive())
 })
 ```
@@ -165,8 +172,10 @@ plotRegion(se, region = reg + 500, sequenceContext = "A",
 In the example above, we smooth the window scores and fuse neighboring windows with smoothed scores above a certain threshold (3).
 The parameters for this step of the analysis were determined by inspecting the intermediate results obtained from applying the quantification and scoring functions independently to a small region of the genome.
 Here we illustrate how this can be done, using a 5MB region on chromosome 19.
-First, we call the [quantifyWindowsInRegion]{.fn} function, with [sumNmodNvalid]{.fn} as the _quantFunction_, to get the total and modified nucleotide and the fraction of modified nucleotides for each window.
-The windows will be automatically defined within the specified `region`, given the indicated window size and step. 
+First, we call the [quantifyWindowsInRegion]{.fn} function.
+Since our data is stored in a modBam file, we use [readModBam]{.fnio} as the _readFunction_ with appropriate arguments in _readFunctionArgs_.
+We use [sumNmodNvalid]{.fn} as the _quantFunction_, to get the total and modified nucleotide and the fraction of modified nucleotides for each window.
+The windows will be automatically defined within the specified `regions` (here a single interval), given the indicated window size and step. 
 
 ```{r}
 #| label: quantify-windows-for-dmr
@@ -177,19 +186,24 @@ regSmall <- "chr19:31000000-36000000"
 # define windows in the small region and quantify data in windows
 se <- quantifyWindowsInRegion(bamfiles = bamfiles,
                               region = regSmall,
-                              modbase = "a",
-                              modProbThreshold = 0.5,
-                              sampleAnnot = sampleAnnot,
+                              readFunction = "readModBam",
+                              readFunctionArgs = list(
+                                  modbase = "a",
+                                  level = "summary",
+                                  trim = TRUE,
+                                  modProbThreshold = 0.5,
+                                  sampleAnnot = sampleAnnot,
+                                  sequenceContextWidth = 1,
+                                  sequenceReference = gnm,
+                                  BPPARAM = bpParam,
+                                  verbose = interactive()
+                              ),
                               seqinfo = seqinfo(gnm),
-                              sequenceContextWidth = 1,
-                              sequenceReference = gnm,
                               sequenceContext = "A",
                               windowMode = "fixed",
                               windowSize = 30,
                               windowStep = 15,
-                              quantFunction = "sumNmodNvalid",
-                              BPPARAM = bpParam,
-                              verbose = interactive())
+                              quantFunction = "sumNmodNvalid")
 ```
 
 The output of [quantifyWindowsInRegion]{.fn} is a `SummarizedExperiment` object, with assays for the `Nmod`, `Nvalid` and `FracMod` values for each window in each sample. 
@@ -285,25 +299,31 @@ chrlens <- seqlengths(gnm)["chr19"]
 rescpgL <- lapply(seq_along(chrlens), function(i) {
     scanForHighScoringRegions(
         bamfiles = bamfiles,
-        sampleAnnot = sampleAnnot,
+        readFunction = "readModBam",
+        readFunctionArgs = list(
+            sampleAnnot = sampleAnnot,
+            modbase = "m",
+            level = "summary",
+            trim = TRUE,
+            modProbThreshold = 0.5,
+            sequenceContextWidth = 3,
+            sequenceReference = gnm,
+            BPPARAM = bpParam,
+            verbose = FALSE
+        ),
         chromosomeLengths = chrlens[i],
         quantFunction = "sumNmodNvalid",
         quantFunctionArgs = list(),
         scoreFunction = "getRangesWithAssayValues",
         scoreFunctionArgs = list(assayName = c("FracMod", "Nvalid")),
-        modbase = "m",
-        modProbThreshold = 0.5,
         tileSize = 1e6,
         seqinfo = seqinfo(gnm),
-        sequenceContextWidth = 3,
-        sequenceReference = gnm,
         sequenceContext = "NCG",
         windowMode = "fixed",
         windowSize = 1,
         windowStep = 1,
         scoreCol = paste0("FracMod.", names(bamfiles)[1]),
         scoreAction = "pass",
-        BPPARAM = bpParam,
         verbose = FALSE
     )
 })
