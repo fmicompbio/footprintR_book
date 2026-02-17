@@ -223,7 +223,7 @@ GSM747535 and GSM747536 from @Stadler2011-xd.
 
 ```{r}
 #| label: annotate-heterozygous-sites
-#| eval: !expr isTRUE(exists("params") && is.list(params) && isTRUE(params$recompute))
+#| eval: !expr identical(Sys.getenv("RECOMPUTE"), "1")
 #| code-fold: true
 
 # expand sites to 180 bp windows centered on motif mid
@@ -397,7 +397,7 @@ pd <- do.call(rbind, mclapply(seq_along(hits_hetExt), function(i) {
 
 ```{r}
 #| label: save-annotated-sites
-#| eval: !expr isTRUE(exists("params") && is.list(params) && isTRUE(params$recompute))
+#| eval: !expr identical(Sys.getenv("RECOMPUTE"), "1")
 #| echo: false
 
 if (!file.exists("data/out")) {

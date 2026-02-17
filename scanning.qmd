@@ -80,8 +80,8 @@ sampleAnnot <- data.frame(sample = names(bamfiles),
 ```
 
 ```{r}
-#| eval: !expr isTRUE(exists("params") && is.list(params) && isTRUE(params$recompute))
 #| label: run-dmr-scanning
+#| eval: !expr identical(Sys.getenv("RECOMPUTE"), "1")
 
 # run scanning of chromosome 19
 chrlens <- seqlengths(gnm)["chr19"]
@@ -119,9 +119,9 @@ dmrL <- lapply(seq_along(chrlens), function(i) {
 ```
 
 ```{r}
-#| eval: !expr isTRUE(exists("params") && is.list(params) && isTRUE(params$recompute))
-#| echo: false
 #| label: save-dmr-scanning
+#| eval: !expr identical(Sys.getenv("RECOMPUTE"), "1")
+#| echo: false
 
 if (!file.exists("data/out")) {
     dir.create("data/out", recursive = TRUE)
@@ -130,8 +130,8 @@ saveRDS(dmrL, "data/out/scanning_dmr-list.rds")
 ```
 
 ```{r}
-#| echo: false
 #| label: load-dmr-scanning
+#| echo: false
 
 dmrL <- readRDS("data/out/scanning_dmr-list.rds")
 ```
