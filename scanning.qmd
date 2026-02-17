@@ -286,9 +286,9 @@ We use [getRangesWithAssayValues]{.fn} as the `scoreFunction`, which will move t
 By setting `scoreAction` to "pass", we instruct the scanning framework to not process the nucleotide-level scores further, but simply return the `GRanges` object with the added metadata columns. 
 Finally, by setting the `sequenceContext` to "NCG", we make sure to only retain positions where the genomic sequence is CG. 
 
-
 ```{r}
 #| label: run-cpg-methylation-scanning
+#| eval: !expr identical(Sys.getenv("RECOMPUTE"), "1")
 
 # Define the bam file to use and generate sample annotation table
 bamfiles <- c(wt2 = "data/mESC_wt_5mCG_5hmCG_rep2.bam")
@@ -327,6 +327,24 @@ rescpgL <- lapply(seq_along(chrlens), function(i) {
         verbose = FALSE
     )
 })
+```
+
+```{r}
+#| label: save-cpg-methylation-scanning
+#| eval: !expr identical(Sys.getenv("RECOMPUTE"), "1")
+#| echo: false
+
+if (!file.exists("data/out")) {
+    dir.create("data/out", recursive = TRUE)
+}
+saveRDS(rescpgL, "data/out/scanning_cpg-list.rds")
+```
+
+```{r}
+#| label: load-cpg-methylation-scanning
+#| echo: false
+
+rescpgL <- readRDS("data/out/scanning_cpg-list.rds")
 ```
 
 Next, we plot the distribution of modification fractions. 
