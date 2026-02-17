@@ -396,7 +396,7 @@ Figure&nbsp;8.1
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>hits <span class="ot">&lt;-</span> hits[<span class="fu">width</span>(hits) <span class="sc">==</span> <span class="fu">length</span>(tf_motif)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>At this point, we have 539 thousand hits to the CTCF motif in the genome. We next select the sites that overlap any of our heterozygous SNVs.</p>
+<p>At this point, we have 540 thousand hits to the CTCF motif in the genome. We next select the sites that overlap any of our heterozygous SNVs.</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
@@ -409,14 +409,14 @@ Figure&nbsp;8.1
 <div class="cell-output cell-output-stdout">
 <pre><code>nSNVs
    1    2    3    4    5    6 
-5136  651   96   25    4    2 </code></pre>
+5339  732  108   25    1    1 </code></pre>
 </div>
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>hits_het <span class="ot">&lt;-</span> hits_het[nSNVs <span class="sc">&lt;=</span> <span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Finally, we score the 5908 heterozygous hits to get a motif match score for both reference and alternative alleles. We get a symmetric distribution around zero with similar numbers of motifs that increase and decrease there match score in ALT compared to REF. Only few motifs change there score by more than 50% of the maximal score (22.6).</p>
+<p>Finally, we score the 6204 heterozygous hits to get a motif match score for both reference and alternative alleles. We get a symmetric distribution around zero with similar numbers of motifs that increase and decrease there match score in ALT compared to REF. Only few motifs change there score by more than 50% of the maximal score (22.6).</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Show/hide code</summary>
@@ -741,7 +741,7 @@ Figure&nbsp;8.4
  abind                                        * 1.4-8     2024-09-12 [1] CRAN (R 4.5.1)
  AnnotationDbi                                  1.72.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
  backports                                      1.5.0     2024-05-23 [1] CRAN (R 4.5.1)
- base64enc                                      0.1-3     2015-07-28 [1] CRAN (R 4.5.1)
+ base64enc                                      0.1-6     2026-02-02 [1] CRAN (R 4.5.2)
  Biobase                                      * 2.70.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
  BiocFileCache                                * 3.0.0     2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
  BiocGenerics                                 * 0.56.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
@@ -752,14 +752,14 @@ Figure&nbsp;8.4
  bit64                                          4.6.0-1   2025-01-16 [1] CRAN (R 4.5.1)
  bitops                                         1.0-9     2024-10-03 [1] CRAN (R 4.5.1)
  blob                                           1.3.0     2026-01-14 [1] CRAN (R 4.5.2)
- broom                                          1.0.11    2025-12-04 [1] CRAN (R 4.5.2)
+ broom                                          1.0.12    2026-01-27 [1] CRAN (R 4.5.2)
  BSgenome                                     * 1.78.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
  BSgenome.Mmusculus.GENCODE.GRCm39.gencodeM34 * 0.1.0     2025-10-31 [1] Bioconductor
  cachem                                         1.1.0     2024-05-16 [1] CRAN (R 4.5.1)
- car                                            3.1-3     2024-09-27 [1] CRAN (R 4.5.1)
- carData                                        3.0-5     2022-01-06 [1] CRAN (R 4.5.1)
+ car                                            3.1-5     2026-02-03 [1] CRAN (R 4.5.2)
+ carData                                        3.0-6     2026-01-30 [1] CRAN (R 4.5.2)
  caTools                                        1.18.3    2024-09-04 [1] CRAN (R 4.5.1)
- checkmate                                      2.3.3     2025-08-18 [1] CRAN (R 4.5.1)
+ checkmate                                      2.3.4     2026-02-03 [1] CRAN (R 4.5.2)
  cigarillo                                      1.0.0     2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
  cli                                            3.6.5     2025-04-23 [1] CRAN (R 4.5.1)
  cluster                                        2.1.8.1   2025-03-12 [2] CRAN (R 4.5.2)
@@ -767,14 +767,14 @@ Figure&nbsp;8.4
  colorspace                                     2.1-2     2025-09-22 [1] CRAN (R 4.5.1)
  crayon                                         1.5.3     2024-06-20 [1] CRAN (R 4.5.1)
  curl                                           7.0.0     2025-08-19 [1] CRAN (R 4.5.1)
- data.table                                     1.18.0    2025-12-24 [1] CRAN (R 4.5.2)
+ data.table                                     1.18.2.1  2026-01-27 [1] CRAN (R 4.5.2)
  DBI                                            1.2.3     2024-06-02 [1] CRAN (R 4.5.1)
  dbplyr                                       * 2.5.1     2025-09-10 [1] CRAN (R 4.5.1)
  DelayedArray                                   0.36.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
  dichromat                                      2.0-0.1   2022-05-02 [1] CRAN (R 4.5.1)
  digest                                         0.6.39    2025-11-19 [1] CRAN (R 4.5.2)
  DirichletMultinomial                           1.52.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
- dplyr                                        * 1.1.4     2023-11-17 [1] CRAN (R 4.5.1)
+ dplyr                                        * 1.2.0     2026-02-03 [1] CRAN (R 4.5.2)
  evaluate                                       1.0.5     2025-08-27 [1] CRAN (R 4.5.1)
  farver                                         2.1.2     2024-05-13 [1] CRAN (R 4.5.1)
  fastmap                                        1.2.0     2024-05-15 [1] CRAN (R 4.5.1)
@@ -787,7 +787,7 @@ Figure&nbsp;8.4
  GenomicAlignments                            * 1.46.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
  GenomicFeatures                                1.62.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
  GenomicRanges                                * 1.62.1    2025-12-08 [1] Bioconductor 3.22 (R 4.5.2)
- ggplot2                                      * 4.0.1     2025-11-14 [1] CRAN (R 4.5.2)
+ ggplot2                                      * 4.0.2     2026-02-03 [1] CRAN (R 4.5.2)
  ggpubr                                       * 0.6.2     2025-10-17 [1] CRAN (R 4.5.1)
  ggsignif                                       0.6.4     2022-10-13 [1] CRAN (R 4.5.1)
  glue                                           1.8.0     2024-09-30 [1] CRAN (R 4.5.1)
@@ -833,7 +833,7 @@ Figure&nbsp;8.4
  rmarkdown                                      2.30      2025-09-28 [1] CRAN (R 4.5.1)
  rpart                                          4.1.24    2025-01-07 [2] CRAN (R 4.5.2)
  Rsamtools                                    * 2.26.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
- RSQLite                                        2.4.5     2025-11-30 [1] CRAN (R 4.5.2)
+ RSQLite                                        2.4.6     2026-02-06 [1] CRAN (R 4.5.2)
  rstatix                                        0.7.3     2025-10-18 [1] CRAN (R 4.5.1)
  rstudioapi                                     0.18.0    2026-01-16 [1] CRAN (R 4.5.2)
  rtracklayer                                  * 1.70.1    2025-12-22 [1] Bioconductor 3.22 (R 4.5.2)
@@ -844,7 +844,7 @@ Figure&nbsp;8.4
  Seqinfo                                      * 1.0.0     2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
  seqLogo                                        1.76.0    2025-10-29 [1] Bioconductor 3.22 (R 4.5.1)
  sessioninfo                                    1.2.3     2025-02-05 [1] CRAN (R 4.5.1)
- SingleMoleculeGenomicsIO                     * 0.1.0     2026-01-29 [1] Bioconductor
+ SingleMoleculeGenomicsIO                     * 0.1.1     2026-02-16 [1] Bioconductor
  SparseArray                                  * 1.10.8    2025-12-18 [1] Bioconductor 3.22 (R 4.5.2)
  stringdist                                   * 0.9.17    2026-01-16 [1] CRAN (R 4.5.2)
  stringi                                        1.8.7     2025-03-27 [1] CRAN (R 4.5.1)
@@ -1593,7 +1593,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: annotate-heterozygous-sites</span></span>
-<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr isTRUE(exists("params") &amp;&amp; is.list(params) &amp;&amp; isTRUE(params$recompute))</span></span>
+<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr identical(Sys.getenv("RECOMPUTE"), "1")</span></span>
 <span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
 <span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a><span class="co"># expand sites to 180 bp windows centered on motif mid</span></span>
@@ -1767,7 +1767,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-409"><a href="#cb13-409" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-412"><a href="#cb13-412" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb13-413"><a href="#cb13-413" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: save-annotated-sites</span></span>
-<span id="cb13-414"><a href="#cb13-414" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr isTRUE(exists("params") &amp;&amp; is.list(params) &amp;&amp; isTRUE(params$recompute))</span></span>
+<span id="cb13-414"><a href="#cb13-414" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr identical(Sys.getenv("RECOMPUTE"), "1")</span></span>
 <span id="cb13-415"><a href="#cb13-415" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
 <span id="cb13-416"><a href="#cb13-416" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-417"><a href="#cb13-417" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">"data/out"</span>)) {</span>
